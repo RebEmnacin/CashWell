@@ -130,7 +130,7 @@ export default function Dashboard() {
                     <Tooltip cursor={{ fill: 'rgba(148,163,184,0.12)' }} formatter={(v) => money(Number(v))}
                       contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 13 }} />
                     <Legend iconType="circle" wrapperStyle={{ fontSize: 12 }} />
-                    <Bar dataKey="income" name="Income" fill="#10b981" radius={[6, 6, 0, 0]} />
+                    <Bar dataKey="income" name="Income" fill="#139A43" radius={[6, 6, 0, 0]} />
                     <Bar dataKey="expense" name="Expenses" fill="#f43f5e" radius={[6, 6, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
