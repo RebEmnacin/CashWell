@@ -72,7 +72,7 @@ export default function Login() {
             ))}
           </ul>
         </div>
-        <p className="relative text-xs text-emerald-100/50">Portfolio project · React, FastAPI, SQL</p>
+        <p className="relative text-xs text-emerald-100/50">Finance Tracker for Budget Breakdowns</p>
       </section>
 
       {/* Right form */}
