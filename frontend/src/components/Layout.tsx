@@ -69,7 +69,7 @@ export default function Layout() {
   }
 
   return (
-    <MotionConfig reducedMotion="user">
+    <MotionConfig reducedMotion="never">
       <div className="min-h-screen md:flex">
         {/* Sidebar (desktop): slim icon rail, the pocket slides to the active tab */}
         <div className="hidden w-44 shrink-0 md:block" aria-hidden="true" />
