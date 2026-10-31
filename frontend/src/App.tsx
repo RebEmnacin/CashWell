@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Layout from './components/Layout'
+import Account from './pages/Account'
 import Budgets from './pages/Budgets'
 import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
@@ -22,6 +23,7 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path="transactions" element={<Transactions />} />
           <Route path="budgets" element={<Budgets />} />
+          <Route path="account" element={<Account />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
