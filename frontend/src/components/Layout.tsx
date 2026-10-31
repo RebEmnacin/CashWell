@@ -21,7 +21,7 @@ export default function Layout() {
   return (
     <div className="min-h-screen md:flex">
       {/* Sidebar (desktop) */}
-      <aside className="sticky top-0 hidden h-screen w-56 shrink-0 flex-col bg-brand-900 py-5 text-white md:flex">
+      <aside className="sticky top-0 z-20 hidden h-screen w-56 shrink-0 flex-col bg-brand-900 py-5 text-white md:flex">
         <div className="mb-8 flex items-center gap-2.5 px-5">
           <span className="grid size-9 place-items-center rounded-xl bg-brand-500">
             <TrendingUp className="size-5" strokeWidth={2.5} />
@@ -31,18 +31,28 @@ export default function Layout() {
 
         <nav className="flex flex-1 flex-col gap-2">
           {links.map(({ to, label, icon: Icon, end }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={end}
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-xl px-5 py-2.5 text-sm font-semibold transition ${
-                  isActive ? 'bg-white/12 text-white' : 'text-emerald-100/70 hover:bg-white/8 hover:text-white'
-                }`
-              }
-            >
-              <Icon className="size-[18px]" />
-              {label}
+            <NavLink key={to} to={to} end={end} className="group relative block">
+              {({ isActive }) => (
+                <>
+                  <span
+                    className={`flex items-center gap-3 px-5 py-3.5 text-sm font-semibold transition ${
+                      isActive
+                        ? 'text-white'
+                        : 'text-emerald-100/70 group-hover:bg-white/8 group-hover:text-white'
+                    }`}
+                  >
+                    {/* small icon hides on the active row because the bubble shows it instead */}
+                    <Icon className={`size-[18px] ${isActive ? 'invisible' : ''}`} />
+                    {label}
+                  </span>
+
+                  {isActive && (
+                    <span className="absolute -right-6 top-1/2 grid size-12 -translate-y-1/2 animate-pop place-items-center rounded-full border-[6px] border-[#f6f8f7] bg-brand-500 text-white">
+                      <Icon className="size-5" />
+                    </span>
+                  )}
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
