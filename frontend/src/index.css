@@ -2,6 +2,16 @@
 
 @theme {
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+
+  /* Sharp corners: every rounded-* utility except rounded-full becomes square */
+  --radius-xs: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-4xl: 0px;
   --color-ink: #0f172a;
   --color-brand-50: #ecfdf5;
   --color-brand-100: #d1fae5;

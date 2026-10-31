@@ -26,7 +26,7 @@ export default function Layout() {
           <span className="grid size-9 place-items-center rounded-xl bg-brand-500">
             <TrendingUp className="size-5" strokeWidth={2.5} />
           </span>
-          <span className="text-lg font-extrabold tracking-tight">Ledgerly</span>
+          <span className="text-lg font-extrabold tracking-tight">CashWell</span>
         </div>
 
         <nav className="flex flex-1 flex-col gap-1">
@@ -62,7 +62,7 @@ export default function Layout() {
       {/* Mobile top bar */}
       <header className="sticky top-0 z-30 flex items-center justify-between bg-brand-900 px-4 py-3 text-white md:hidden">
         <div className="flex items-center gap-2 font-extrabold">
-          <TrendingUp className="size-5 text-brand-500" strokeWidth={2.5} /> Ledgerly
+          <TrendingUp className="size-5 text-brand-500" strokeWidth={2.5} /> CashWell
         </div>
         <button onClick={handleLogout} aria-label="Log out" className="cursor-pointer rounded-lg p-2 hover:bg-white/10">
           <LogOut className="size-4" />

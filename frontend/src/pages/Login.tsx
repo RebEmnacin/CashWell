@@ -54,7 +54,7 @@ export default function Login() {
           <span className="grid size-10 place-items-center rounded-xl bg-brand-500">
             <TrendingUp className="size-5" strokeWidth={2.5} />
           </span>
-          <span className="text-xl font-extrabold tracking-tight">Ledgerly</span>
+          <span className="text-xl font-extrabold tracking-tight">CashWell</span>
         </div>
         <div className="relative max-w-md animate-rise">
           <h1 className="text-5xl font-extrabold leading-[1.05] tracking-tight">
@@ -82,7 +82,7 @@ export default function Login() {
             <span className="grid size-9 place-items-center rounded-xl bg-brand-600 text-white">
               <TrendingUp className="size-5" strokeWidth={2.5} />
             </span>
-            Ledgerly
+            CashWell
           </div>
           <h2 className="text-2xl font-extrabold tracking-tight">
             {mode === 'login' ? 'Welcome back' : 'Create your account'}

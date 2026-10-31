@@ -1,4 +1,4 @@
-# Ledgerly — Personal Finance Tracker
+# CashWell — Personal Finance Tracker
 
 Log income and expenses, set monthly budgets, and see where your money goes on a live dashboard.
 
