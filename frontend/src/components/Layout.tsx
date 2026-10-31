@@ -21,50 +21,73 @@ export default function Layout() {
   return (
     <div className="min-h-screen md:flex">
       {/* Sidebar (desktop) */}
-      <aside className="sticky top-0 z-20 hidden h-screen w-56 shrink-0 flex-col bg-brand-900 py-5 text-white md:flex">
-        <div className="mb-8 flex items-center gap-2.5 px-5">
-          <span className="grid size-9 place-items-center rounded-xl bg-brand-500">
+            {/* Sidebar (desktop): icon rail that expands on hover */}
+      <div className="hidden w-20 shrink-0 md:block" aria-hidden="true" />
+      <aside className="group/side fixed inset-y-0 left-0 z-30 hidden w-20 flex-col overflow-hidden bg-brand-900 text-white transition-[width] duration-300 ease-out hover:w-60 focus-within:w-60 md:flex">
+        {/* Logo */}
+        <div className="relative h-20 shrink-0">
+          <span className="absolute left-[22px] top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-xl bg-brand-500">
             <TrendingUp className="size-5" strokeWidth={2.5} />
           </span>
-          <span className="text-lg font-extrabold tracking-tight">CashWell</span>
+          <span className="absolute left-[70px] top-1/2 -translate-y-1/2 whitespace-nowrap text-lg font-extrabold tracking-tight opacity-0 transition-opacity duration-200 group-hover/side:opacity-100 group-focus-within/side:opacity-100">
+            CashWell
+          </span>
         </div>
 
-        <nav className="flex flex-1 flex-col gap-2">
+        {/* Tabs */}
+        <nav className="flex flex-1 flex-col gap-1">
           {links.map(({ to, label, icon: Icon, end }) => (
-            <NavLink key={to} to={to} end={end} className="group relative block">
+            <NavLink key={to} to={to} end={end} aria-label={label} className="group/item relative block h-16 shrink-0">
               {({ isActive }) => (
                 <>
+                  {isActive ? (
+                    <>
+                      {/* light pocket carved into the panel, running out to the right edge */}
+                      <span className="absolute inset-y-0.5 left-[10px] right-0 rounded-l-full bg-[#f6f8f7]" />
+                      {/* smooth the two corners where the pocket meets the edge */}
+                      <span className="absolute -top-3 right-0 size-3.5 bg-[radial-gradient(circle_at_0_0,transparent_14px,#f6f8f7_14.5px)]" />
+                      <span className="absolute -bottom-3 right-0 size-3.5 bg-[radial-gradient(circle_at_0_100%,transparent_14px,#f6f8f7_14.5px)]" />
+                      {/* the colored bubble that holds the active icon */}
+                      <span className="absolute left-[16px] top-1/2 grid size-12 -translate-y-1/2 animate-pop place-items-center rounded-full bg-brand-500 text-white">
+                        <Icon className="size-5" />
+                      </span>
+                    </>
+                  ) : (
+                    <Icon className="absolute left-[30px] top-1/2 size-5 -translate-y-1/2 text-emerald-100/70 transition group-hover/item:text-white" />
+                  )}
                   <span
-                    className={`flex items-center gap-3 px-5 py-3.5 text-sm font-semibold transition ${
-                      isActive
-                        ? 'text-white'
-                        : 'text-emerald-100/70 group-hover:bg-white/8 group-hover:text-white'
+                    className={`absolute left-[88px] top-1/2 -translate-y-1/2 whitespace-nowrap text-sm opacity-0 transition-opacity duration-200 group-hover/side:opacity-100 group-focus-within/side:opacity-100 ${
+                      isActive ? 'font-extrabold text-brand-600' : 'font-semibold text-emerald-100/70 group-hover/item:text-white'
                     }`}
                   >
-                    {/* small icon hides on the active row because the bubble shows it instead */}
-                    <Icon className={`size-[18px] ${isActive ? 'invisible' : ''}`} />
                     {label}
                   </span>
-
-                  {isActive && (
-                    <span className="absolute -right-6 top-1/2 grid size-12 -translate-y-1/2 animate-pop place-items-center rounded-full border-[6px] border-[#f6f8f7] bg-brand-500 text-white">
-                      <Icon className="size-5" />
-                    </span>
-                  )}
                 </>
               )}
             </NavLink>
           ))}
         </nav>
 
-        <div className="border-t border-white/10 px-5 pt-4">
-          <p className="truncate text-sm font-semibold">{user?.name}</p>
-          <p className="truncate text-xs text-emerald-100/60">{user?.email}</p>
+        {/* User + logout */}
+        <div className="shrink-0 border-t border-white/10 py-2">
+          <div className="relative h-14">
+            <span className="absolute left-[22px] top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-full bg-brand-500 text-sm font-extrabold">
+              {user?.name?.[0]?.toUpperCase()}
+            </span>
+            <div className="absolute left-[70px] top-1/2 -translate-y-1/2 whitespace-nowrap opacity-0 transition-opacity duration-200 group-hover/side:opacity-100 group-focus-within/side:opacity-100">
+              <p className="text-sm font-semibold">{user?.name}</p>
+              <p className="text-xs text-emerald-100/60">{user?.email}</p>
+            </div>
+          </div>
           <button
             onClick={handleLogout}
-            className="mt-3 flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-white/10 py-2 text-xs font-semibold transition hover:bg-white/20"
+            aria-label="Log out"
+            className="relative block h-14 w-full cursor-pointer text-left text-emerald-100/70 transition hover:text-white"
           >
-            <LogOut className="size-3.5" /> Log out
+            <LogOut className="absolute left-[30px] top-1/2 size-5 -translate-y-1/2" />
+            <span className="absolute left-[88px] top-1/2 -translate-y-1/2 whitespace-nowrap text-sm font-semibold opacity-0 transition-opacity duration-200 group-hover/side:opacity-100 group-focus-within/side:opacity-100">
+              Log out
+            </span>
           </button>
         </div>
       </aside>
