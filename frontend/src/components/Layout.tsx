@@ -87,18 +87,31 @@ export default function Layout() {
 
         {/* User + logout */}
         <div className="shrink-0 border-t border-white/10 py-2">
-          <div className="group/item relative h-14">
-            <Pill
-              icon={
-                <span className="grid size-9 place-items-center rounded-full bg-brand-500 text-sm font-extrabold text-white">
-                  {user?.name?.[0]?.toUpperCase()}
-                </span>
-              }
-            >
-              <span className="block leading-tight">{user?.name}</span>
-              <span className="block text-xs font-normal text-emerald-100/70">{user?.email}</span>
-            </Pill>
-          </div>
+          <NavLink to="/account" aria-label="Account" title="Account" className="group/item relative block h-16">
+            {({ isActive }) => (
+              <>
+                {isActive && (
+                  <>
+                    {/* same carved pocket as the other tabs */}
+                    <span className="absolute inset-y-0.5 left-[10px] right-0 rounded-l-full bg-[#f6f8f7]" />
+                    <span className="absolute -top-3 right-0 size-3.5 bg-[radial-gradient(circle_at_0_0,transparent_14px,#f6f8f7_14.5px)]" />
+                    <span className="absolute -bottom-3 right-0 size-3.5 bg-[radial-gradient(circle_at_0_100%,transparent_14px,#f6f8f7_14.5px)]" />
+                  </>
+                )}
+                <Pill
+                  open={isActive}
+                  hoverOpen={false}
+                  icon={
+                    <span className="grid size-9 place-items-center rounded-full bg-brand-500 text-sm font-extrabold text-white">
+                      {user?.name?.[0]?.toUpperCase()}
+                    </span>
+                  }
+                >
+                  Account
+                </Pill>
+              </>
+            )}
+          </NavLink>
           <button onClick={handleLogout} aria-label="Log out" className="group/item relative block h-14 w-full cursor-pointer">
             <Pill icon={<LogOut className={`size-5 ${spring} group-hover/item:translate-x-1`} />}>Log out</Pill>
           </button>
