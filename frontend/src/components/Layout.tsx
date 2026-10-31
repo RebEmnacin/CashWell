@@ -1,4 +1,5 @@
 import { LayoutDashboard, LogOut, PiggyBank, ReceiptText, TrendingUp } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 
@@ -7,6 +8,33 @@ const links = [
   { to: '/transactions', label: 'Transactions', icon: ReceiptText, end: false },
   { to: '/budgets', label: 'Budgets', icon: PiggyBank, end: false },
 ]
+
+// Each tab's icon does its own little move on hover
+const spring = 'transition-transform duration-300 ease-[cubic-bezier(0.3,1.6,0.5,1)]'
+const iconFx: Record<string, string> = {
+  '/': 'group-hover/item:rotate-90',
+  '/transactions': 'group-hover/item:-rotate-12 group-hover/item:scale-110',
+  '/budgets': 'group-hover/item:-translate-y-0.5 group-hover/item:scale-125',
+}
+
+/**
+ * A circle (the icon) that stretches into a pill with the label when its row is hovered.
+ * It sits inside a parent that has the class "group/item".
+ */
+function Pill({ icon, active = false, children }: { icon: ReactNode; active?: boolean; children: ReactNode }) {
+  return (
+    <span
+      className={`absolute left-4 top-1/2 flex h-12 max-w-12 -translate-y-1/2 items-center overflow-hidden rounded-full transition-[max-width,background-color,box-shadow] duration-300 ease-out group-hover/item:max-w-64 group-hover/item:bg-brand-600 group-hover/item:text-white group-hover/item:shadow-lg group-focus-visible/item:max-w-64 ${
+        active ? 'animate-pop bg-brand-500 text-white' : 'bg-transparent text-emerald-100/70'
+      }`}
+    >
+      <span className="grid size-12 shrink-0 place-items-center">{icon}</span>
+      <span className="whitespace-nowrap pr-5 text-sm font-semibold opacity-0 transition-opacity duration-200 group-hover/item:opacity-100 group-hover/item:delay-100">
+        {children}
+      </span>
+    </span>
+  )
+}
 
 export default function Layout() {
   const user = useAuthStore((s) => s.user)
@@ -20,17 +48,13 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen md:flex">
-      {/* Sidebar (desktop) */}
-            {/* Sidebar (desktop): icon rail that expands on hover */}
+      {/* Sidebar (desktop): slim icon rail, icons stretch into pills on hover */}
       <div className="hidden w-20 shrink-0 md:block" aria-hidden="true" />
-      <aside className="group/side fixed inset-y-0 left-0 z-30 hidden w-20 flex-col overflow-hidden bg-brand-900 text-white transition-[width] duration-300 ease-out hover:w-60 focus-within:w-60 md:flex">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-20 flex-col bg-brand-900 text-white md:flex">
         {/* Logo */}
-        <div className="relative h-20 shrink-0">
-          <span className="absolute left-[22px] top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-xl bg-brand-500">
+        <div className="flex h-20 shrink-0 items-center justify-center" title="CashWell">
+          <span className="grid size-9 place-items-center rounded-xl bg-brand-500">
             <TrendingUp className="size-5" strokeWidth={2.5} />
-          </span>
-          <span className="absolute left-[70px] top-1/2 -translate-y-1/2 whitespace-nowrap text-lg font-extrabold tracking-tight opacity-0 transition-opacity duration-200 group-hover/side:opacity-100 group-focus-within/side:opacity-100">
-            CashWell
           </span>
         </div>
 
@@ -40,28 +64,18 @@ export default function Layout() {
             <NavLink key={to} to={to} end={end} aria-label={label} className="group/item relative block h-16 shrink-0">
               {({ isActive }) => (
                 <>
-                  {isActive ? (
+                  {isActive && (
                     <>
                       {/* light pocket carved into the panel, running out to the right edge */}
                       <span className="absolute inset-y-0.5 left-[10px] right-0 rounded-l-full bg-[#f6f8f7]" />
                       {/* smooth the two corners where the pocket meets the edge */}
                       <span className="absolute -top-3 right-0 size-3.5 bg-[radial-gradient(circle_at_0_0,transparent_14px,#f6f8f7_14.5px)]" />
                       <span className="absolute -bottom-3 right-0 size-3.5 bg-[radial-gradient(circle_at_0_100%,transparent_14px,#f6f8f7_14.5px)]" />
-                      {/* the colored bubble that holds the active icon */}
-                      <span className="absolute left-[16px] top-1/2 grid size-12 -translate-y-1/2 animate-pop place-items-center rounded-full bg-brand-500 text-white">
-                        <Icon className="size-5" />
-                      </span>
                     </>
-                  ) : (
-                    <Icon className="absolute left-[30px] top-1/2 size-5 -translate-y-1/2 text-emerald-100/70 transition group-hover/item:text-white" />
                   )}
-                  <span
-                    className={`absolute left-[88px] top-1/2 -translate-y-1/2 whitespace-nowrap text-sm opacity-0 transition-opacity duration-200 group-hover/side:opacity-100 group-focus-within/side:opacity-100 ${
-                      isActive ? 'font-extrabold text-brand-600' : 'font-semibold text-emerald-100/70 group-hover/item:text-white'
-                    }`}
-                  >
+                  <Pill active={isActive} icon={<Icon className={`size-5 ${spring} ${iconFx[to]}`} />}>
                     {label}
-                  </span>
+                  </Pill>
                 </>
               )}
             </NavLink>
@@ -70,24 +84,20 @@ export default function Layout() {
 
         {/* User + logout */}
         <div className="shrink-0 border-t border-white/10 py-2">
-          <div className="relative h-14">
-            <span className="absolute left-[22px] top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-full bg-brand-500 text-sm font-extrabold">
-              {user?.name?.[0]?.toUpperCase()}
-            </span>
-            <div className="absolute left-[70px] top-1/2 -translate-y-1/2 whitespace-nowrap opacity-0 transition-opacity duration-200 group-hover/side:opacity-100 group-focus-within/side:opacity-100">
-              <p className="text-sm font-semibold">{user?.name}</p>
-              <p className="text-xs text-emerald-100/60">{user?.email}</p>
-            </div>
+          <div className="group/item relative h-14">
+            <Pill
+              icon={
+                <span className="grid size-9 place-items-center rounded-full bg-brand-500 text-sm font-extrabold text-white">
+                  {user?.name?.[0]?.toUpperCase()}
+                </span>
+              }
+            >
+              <span className="block leading-tight">{user?.name}</span>
+              <span className="block text-xs font-normal text-emerald-100/70">{user?.email}</span>
+            </Pill>
           </div>
-          <button
-            onClick={handleLogout}
-            aria-label="Log out"
-            className="relative block h-14 w-full cursor-pointer text-left text-emerald-100/70 transition hover:text-white"
-          >
-            <LogOut className="absolute left-[30px] top-1/2 size-5 -translate-y-1/2" />
-            <span className="absolute left-[88px] top-1/2 -translate-y-1/2 whitespace-nowrap text-sm font-semibold opacity-0 transition-opacity duration-200 group-hover/side:opacity-100 group-focus-within/side:opacity-100">
-              Log out
-            </span>
+          <button onClick={handleLogout} aria-label="Log out" className="group/item relative block h-14 w-full cursor-pointer">
+            <Pill icon={<LogOut className={`size-5 ${spring} group-hover/item:translate-x-1`} />}>Log out</Pill>
           </button>
         </div>
       </aside>
