@@ -1,5 +1,5 @@
 import { LayoutDashboard, LogOut, PiggyBank, ReceiptText, TrendingUp } from 'lucide-react'
-import { AnimatePresence, MotionConfig, motion } from 'motion/react'
+import { MotionConfig, motion } from 'motion/react'
 import type { ReactNode } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
@@ -14,11 +14,11 @@ const links = [
 const spring = 'transition-transform duration-300 ease-[cubic-bezier(0.3,1.6,0.5,1)]'
 
 /**
- * The light notch cut into the rail PLUS the green circle inside it, moving as ONE object.
+ * The light notch cut into the rail, the label pill and the green circle, all moving as ONE object.
  * Every active tab renders one, but they all share layoutId="pocket", so Motion slides it
  * from the old tab to the new one.
  */
-function Pocket() {
+function Pocket({ label }: { label: string }) {
   return (
     <motion.span
       layoutId="pocket"
@@ -28,7 +28,22 @@ function Pocket() {
       <span className="absolute inset-y-0.5 left-[10px] right-0 rounded-l-full bg-[#f6f8f7]" />
       <span className="absolute -top-3 right-0 size-3.5 bg-[radial-gradient(circle_at_0_0,transparent_14px,#f6f8f7_14.5px)]" />
       <span className="absolute -bottom-3 right-0 size-3.5 bg-[radial-gradient(circle_at_0_100%,transparent_14px,#f6f8f7_14.5px)]" />
-      {/* the green circle that carries the icon */}
+
+      {/* Label window: hides everything left of the circle's centre line */}
+      <span className="absolute left-[40px] top-1/2 h-12 -translate-y-1/2 overflow-hidden">
+        {/* The finished pill (text is never squeezed). It starts fully hidden to the left and
+            slides out from behind the circle once the pocket has arrived. */}
+        <motion.span
+          initial={{ x: '-100%' }}
+          animate={{ x: 0 }}
+          transition={{ duration: 0.28, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
+          className="flex h-12 items-center whitespace-nowrap rounded-r-full bg-brand-600 pl-6 pr-5 text-sm font-semibold text-white"
+        >
+          {label}
+        </motion.span>
+      </span>
+
+      {/* the green circle that carries the icon (sits on top of the label) */}
       <span className="absolute left-4 top-1/2 size-12 -translate-y-1/2 rounded-full bg-brand-600" />
     </motion.span>
   )
@@ -37,32 +52,16 @@ function Pocket() {
 /**
  * One tab in the rail.
  * Order of events when you press it:
- *  1. the old tab's label snaps shut (fast, no fade)
+ *  1. the old tab's label disappears at once (nothing is left half-cut)
  *  2. the pocket + green circle slide to this tab
- *  3. once it has arrived, this tab's label stretches out to the right
+ *  3. once it has arrived, the label pill slides out to the right from behind the circle
  */
 function NavTab({ to, end = false, label, icon }: { to: string; end?: boolean; label: string; icon: ReactNode }) {
   return (
     <NavLink to={to} end={end} aria-label={label} title={label} className="group/item relative block h-16 shrink-0">
       {({ isActive }) => (
         <>
-          {isActive && <Pocket />}
-
-          <AnimatePresence initial={false}>
-            {isActive && (
-              <motion.span
-                key="label"
-                initial={{ width: 0 }}
-                animate={{ width: 'auto', transition: { type: 'spring', stiffness: 420, damping: 36, delay: 0.18 } }}
-                exit={{ width: 0, transition: { duration: 0.12, ease: 'easeIn' } }}
-                className="absolute left-[40px] top-1/2 h-12 -translate-y-1/2 overflow-hidden rounded-r-full bg-brand-600"
-              >
-                <span className="flex h-full items-center whitespace-nowrap pl-6 pr-5 text-sm font-semibold text-white">
-                  {label}
-                </span>
-              </motion.span>
-            )}
-          </AnimatePresence>
+          {isActive && <Pocket label={label} />}
 
           {/* the icon sits on top and just changes color, no movement */}
           <span
