@@ -8,19 +8,19 @@ from sqlalchemy.orm import Session
 from .models import Budget, Category, Transaction, User
 
 DEFAULT_CATEGORIES = [
-    # (name, type, color)
-    ("Salary", "income", "#10b981"),
-    ("Freelance", "income", "#14b8a6"),
-    ("Other Income", "income", "#84cc16"),
-    ("Food & Dining", "expense", "#f97316"),
-    ("Transport", "expense", "#3b82f6"),
-    ("Rent", "expense", "#8b5cf6"),
-    ("Utilities", "expense", "#06b6d4"),
-    ("Shopping", "expense", "#ec4899"),
-    ("Entertainment", "expense", "#eab308"),
-    ("Health", "expense", "#ef4444"),
-    ("Education", "expense", "#6366f1"),
-    ("Other", "expense", "#64748b"),
+    # (name, type, color)  ->  greens for income, deep earthy/jewel tones for expenses
+    ("Salary", "income", "#139A43"),
+    ("Freelance", "income", "#0B8F63"),
+    ("Other Income", "income", "#5F8F12"),
+    ("Food & Dining", "expense", "#C9702A"),
+    ("Transport", "expense", "#2F7DB5"),
+    ("Rent", "expense", "#6E52A0"),
+    ("Utilities", "expense", "#17808C"),
+    ("Shopping", "expense", "#C45A4F"),
+    ("Entertainment", "expense", "#B24565"),
+    ("Health", "expense", "#A8841C"),
+    ("Education", "expense", "#4A5FB8"),
+    ("Other", "expense", "#64748B"),
 ]
 
 

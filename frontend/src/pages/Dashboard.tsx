@@ -188,7 +188,7 @@ export default function Dashboard() {
                 {recent.map((t) => (
                   <li key={t.id} className="flex items-center gap-3 py-3">
                     <span className="grid size-10 shrink-0 place-items-center rounded-xl text-white"
-                      style={{ background: t.type === 'income' ? '#139A43' : '#0B5D1E' }}>
+                      style={{ background: t.category.color }}>
                       {t.type === 'income' ? <ArrowUpRight className="size-5" /> : <ArrowDownRight className="size-5" />}
                     </span>
                     <div className="min-w-0 flex-1">
