@@ -21,22 +21,22 @@ export default function Layout() {
   return (
     <div className="min-h-screen md:flex">
       {/* Sidebar (desktop) */}
-      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col bg-brand-900 p-5 text-white md:flex">
-        <div className="mb-10 flex items-center gap-2.5 px-2">
+      <aside className="sticky top-0 hidden h-screen w-56 shrink-0 flex-col bg-brand-900 py-5 text-white md:flex">
+        <div className="mb-8 flex items-center gap-2.5 px-5">
           <span className="grid size-9 place-items-center rounded-xl bg-brand-500">
             <TrendingUp className="size-5" strokeWidth={2.5} />
           </span>
           <span className="text-lg font-extrabold tracking-tight">CashWell</span>
         </div>
 
-        <nav className="flex flex-1 flex-col gap-1">
+        <nav className="flex flex-1 flex-col gap-2">
           {links.map(({ to, label, icon: Icon, end }) => (
             <NavLink
               key={to}
               to={to}
               end={end}
               className={({ isActive }) =>
-                `flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition ${
+                `flex items-center gap-3 rounded-xl px-5 py-2.5 text-sm font-semibold transition ${
                   isActive ? 'bg-white/12 text-white' : 'text-emerald-100/70 hover:bg-white/8 hover:text-white'
                 }`
               }
@@ -47,7 +47,7 @@ export default function Layout() {
           ))}
         </nav>
 
-        <div className="rounded-xl bg-white/8 p-3">
+        <div className="border-t border-white/10 px-5 pt-4">
           <p className="truncate text-sm font-semibold">{user?.name}</p>
           <p className="truncate text-xs text-emerald-100/60">{user?.email}</p>
           <button
