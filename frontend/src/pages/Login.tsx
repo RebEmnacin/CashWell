@@ -102,7 +102,7 @@ export default function Login() {
             <div>
               <label className="label" htmlFor="email">Email</label>
               <input id="email" className="input" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com" required autoComplete="email" />
+                placeholder="username@domain.com" required autoComplete="email" />
             </div>
             <div>
               <label className="label" htmlFor="password">Password</label>
