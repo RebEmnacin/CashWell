@@ -1,4 +1,4 @@
-import { LayoutDashboard, LogOut, PiggyBank, ReceiptText, TrendingUp } from 'lucide-react'
+import { LayoutDashboard, LogOut, PiggyBank, ReceiptText } from 'lucide-react'
 import { MotionConfig, motion } from 'motion/react'
 import type { ReactNode } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
@@ -107,9 +107,7 @@ export default function Layout() {
         <aside className="fixed inset-y-0 left-0 z-30 hidden w-20 flex-col bg-brand-900 text-white md:flex">
           {/* Logo */}
           <div className="flex h-20 shrink-0 items-center justify-center" title="CashWell">
-            <span className="grid size-9 place-items-center rounded-xl bg-brand-500">
-              <TrendingUp className="size-5" strokeWidth={2.5} />
-            </span>
+            <img src="/CashWell_Logo.png" alt="CashWell" className="size-9 object-contain" />
           </div>
 
           {/* Tabs */}
@@ -139,7 +137,7 @@ export default function Layout() {
         {/* Mobile top bar */}
         <header className="sticky top-0 z-30 flex items-center justify-between bg-brand-900 px-4 py-3 text-white md:hidden">
           <div className="flex items-center gap-2 font-extrabold">
-            <TrendingUp className="size-5 text-brand-500" strokeWidth={2.5} /> CashWell
+            <img src="/CashWell_Logo.png" alt="" className="size-6 object-contain" /> CashWell
           </div>
           <button onClick={handleLogout} aria-label="Log out" className="cursor-pointer rounded-lg p-2 hover:bg-white/10">
             <LogOut className="size-4" />
