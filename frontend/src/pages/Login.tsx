@@ -1,52 +1,19 @@
-import { ArrowRight, Lock, Mail, User } from 'lucide-react'
-import { useState, type FormEvent, type ReactNode } from 'react'
+import { useState, type FormEvent } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { errorMessage } from '../api/client'
 import { authApi } from '../api/endpoints'
 import { useAuthStore } from '../store/authStore'
 
-/** One underlined input with a little icon on the left. */
-function Field({
-  icon,
-  type = 'text',
-  placeholder,
-  value,
-  onChange,
-  autoComplete,
-  minLength,
-}: {
-  icon: ReactNode
-  type?: string
-  placeholder: string
-  value: string
-  onChange: (v: string) => void
-  autoComplete?: string
-  minLength?: number
-}) {
-  return (
-    <div className="relative my-2.5 flex h-12 items-center">
-      <span className="pointer-events-none absolute left-0 text-brand-600">{icon}</span>
-      <input
-        type={type}
-        required
-        minLength={minLength}
-        autoComplete={autoComplete}
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="h-full w-full border-0 border-b-2 border-slate-300 bg-transparent pl-8 pr-2 text-[15px] font-medium text-ink outline-none transition-colors placeholder:text-slate-400 focus:border-brand-600"
-      />
-    </div>
-  )
-}
+const input =
+  'block h-[42px] w-full border-0 border-b border-slate-200 bg-white px-4 text-[13px] text-ink outline-none placeholder:text-slate-400 last:border-b-0 focus:bg-brand-50'
 
 export default function Login() {
   const token = useAuthStore((s) => s.token)
   const setAuth = useAuthStore((s) => s.setAuth)
   const navigate = useNavigate()
 
-  // flipped = false -> sign in is showing, true -> sign up is showing
-  const [flipped, setFlipped] = useState(false)
+  // Which panel is open. The other one is "collapsed" (just its title is visible).
+  const [mode, setMode] = useState<'login' | 'signup'>('login')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -55,9 +22,11 @@ export default function Login() {
 
   if (token) return <Navigate to="/" replace />
 
-  const flip = (toSignUp: boolean) => {
+  const isLogin = mode === 'login'
+
+  const switchTo = (next: 'login' | 'signup') => {
     setError('')
-    setFlipped(toSignUp)
+    setMode(next)
   }
 
   const run = async (action: () => ReturnType<typeof authApi.demo>) => {
@@ -74,124 +43,151 @@ export default function Login() {
     }
   }
 
-  const submit = (e: FormEvent) => {
+  const onLogin = (e: FormEvent) => {
     e.preventDefault()
-    run(() => (flipped ? authApi.register(name, email, password) : authApi.login(email, password)))
+    run(() => authApi.login(email, password))
+  }
+
+  const onSignup = (e: FormEvent) => {
+    e.preventDefault()
+    run(() => authApi.register(name, email, password))
   }
 
   const errorBox = error && (
-    <p role="alert" className="mt-3 border-l-4 border-red-500 bg-red-50 px-3 py-2 text-sm font-medium text-red-700">
+    <p role="alert" className="mt-3 border-l-4 border-red-500 bg-red-50 px-3 py-2 text-xs font-medium text-red-700">
       {error}
     </p>
   )
 
-  const linkBtn = 'cursor-pointer font-semibold text-brand-600 hover:underline'
+  // things that fade out when a panel is collapsed
+  const fade = (open: boolean) =>
+    `transition-all duration-300 ${open ? 'visible opacity-100' : 'invisible opacity-0'}`
 
   return (
-    <div className="grid min-h-screen place-items-center bg-brand-900 p-4 sm:p-8">
-      <div
-        className="relative w-full max-w-[850px] bg-white px-6 py-10 shadow-2xl sm:px-8"
-        style={{ perspective: '2700px' }}
-      >
-        {/* ---------- The flipping cover (desktop only) ---------- */}
-        <div
-          className="absolute left-1/2 top-0 z-10 h-full w-1/2 transition-transform duration-1000 ease-in-out max-[730px]:hidden"
-          style={{
-            transformOrigin: 'left',
-            transformStyle: 'preserve-3d',
-            transform: flipped ? 'rotateY(-180deg)' : 'rotateY(0deg)',
-          }}
-        >
-          {/* front face (shown while Sign in is open) */}
-          <div className="absolute inset-0 bg-brand-600" style={{ backfaceVisibility: 'hidden' }}>
-            <CoverText title="Welcome back" sub="Sign in to see where your money went and where it's going." />
-          </div>
-          {/* back face (shown while Sign up is open) */}
-          <div
-            className="absolute inset-0 bg-brand-700"
-            style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
-          >
-            <CoverText title="Start tracking" sub="Create a free account and take control of your budget today." />
-          </div>
+    <div className="grid min-h-screen place-items-center bg-[#f6f8f7] p-4">
+      <div className="flex flex-col items-center gap-5">
+        {/* Brand above the card */}
+        <div className="flex items-center gap-3">
+          <img
+            src="/CashWell_Logo.png"
+            alt=""
+            className="size-10 object-contain"
+            onError={(e) => (e.currentTarget.style.display = 'none')}
+          />
+          <span className="text-2xl font-extrabold tracking-tight text-brand-900">CashWell</span>
         </div>
 
-        {/* ---------- The two forms ---------- */}
-        <form onSubmit={submit} className="flex items-center justify-between max-[730px]:block">
-          {/* Sign in */}
-          <div
-            className={`w-[calc(50%-25px)] max-[730px]:w-full ${flipped ? 'max-[730px]:hidden' : ''}`}
-            inert={flipped}
+        {/* ---------- The card ---------- */}
+        <div className="relative h-[560px] w-[350px] max-w-full overflow-hidden bg-brand-900 shadow-2xl">
+          {/* soft green glow so the dark panel isn't flat */}
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_100%,rgba(16,185,129,0.45),transparent_60%),radial-gradient(circle_at_90%_0%,rgba(52,211,153,0.18),transparent_45%)]" />
+
+          {/* ===== Sign up (top, dark) ===== */}
+          <form
+            onSubmit={onSignup}
+            className={`absolute left-1/2 z-[5] w-[65%] -translate-x-1/2 transition-all duration-300 ease-out ${
+              isLogin ? 'top-[5%] translate-y-0' : 'top-1/2 -translate-y-1/2'
+            }`}
           >
-            <h2 className="relative pb-1 text-2xl font-medium text-ink after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-6 after:bg-brand-600">
-              Sign in
+            <h2 className="text-center">
+              <button
+                type="button"
+                onClick={() => !isLogin || switchTo('signup')}
+                tabIndex={isLogin ? 0 : -1}
+                className={`font-semibold text-white transition-all duration-300 ${
+                  isLogin ? 'cursor-pointer text-base' : 'cursor-default text-[1.7rem]'
+                }`}
+              >
+                <span
+                  className={`text-white/50 transition-all duration-300 ${
+                    isLogin ? 'visible mr-1.5 opacity-100' : 'invisible opacity-0'
+                  }`}
+                >
+                  or
+                </span>
+                Sign up
+              </button>
             </h2>
-            <div className="mt-6">
-              <Field icon={<Mail className="size-[17px]" />} type="email" placeholder="Enter your email" value={email} onChange={setEmail} autoComplete="email" />
-              <Field icon={<Lock className="size-[17px]" />} type="password" placeholder="Enter your password" value={password} onChange={setPassword} autoComplete="current-password" />
+
+            <div className={`mt-12 overflow-hidden bg-white ${fade(!isLogin)}`}>
+              <input className={input} type="text" required placeholder="Name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} />
+              <input className={input} type="email" required placeholder="Email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <input className={input} type="password" required minLength={6} placeholder="Password (min. 6)" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
-            {!flipped && errorBox}
-            <button type="submit" disabled={loading} className="btn-primary mt-8 h-12 w-full disabled:opacity-60">
-              {loading && !flipped ? 'Signing in…' : 'Sign in'}
-            </button>
+
+            {!isLogin && errorBox}
+
             <button
-              type="button"
+              type="submit"
               disabled={loading}
-              onClick={() => run(authApi.demo)}
-              className="btn-ghost mt-3 h-12 w-full disabled:opacity-60"
+              className={`mt-4 block w-full cursor-pointer bg-brand-600 px-6 py-3.5 text-[13px] font-bold text-white hover:bg-brand-500 disabled:opacity-60 ${fade(!isLogin)}`}
             >
-              Try the demo account <ArrowRight className="size-4" />
+              {loading && !isLogin ? 'Creating account…' : 'Sign up'}
             </button>
-            <p className="mt-6 text-center text-sm font-medium text-slate-700">
-              Don't have an account?{' '}
-              <button type="button" className={linkBtn} onClick={() => flip(true)}>
-                Sign up now
-              </button>
-            </p>
-          </div>
+          </form>
 
-          {/* Sign up */}
+          {/* ===== Log in (bottom, white, curved top) ===== */}
           <div
-            className={`w-[calc(50%-25px)] max-[730px]:w-full ${flipped ? '' : 'max-[730px]:hidden'}`}
-            inert={!flipped}
+            className={`absolute inset-x-0 bottom-0 z-[5] bg-white transition-all duration-300 ease-out ${
+              isLogin ? 'top-[20%]' : 'top-[90%]'
+            }`}
           >
-            <h2 className="relative pb-1 text-2xl font-medium text-ink after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-5 after:bg-brand-600">
-              Sign up
-            </h2>
-            <div className="mt-6">
-              <Field icon={<User className="size-[17px]" />} placeholder="Enter your name" value={name} onChange={setName} autoComplete="name" />
-              <Field icon={<Mail className="size-[17px]" />} type="email" placeholder="Enter your email" value={email} onChange={setEmail} autoComplete="email" />
-              <Field icon={<Lock className="size-[17px]" />} type="password" placeholder="Create a password (min. 6)" value={password} onChange={setPassword} autoComplete="new-password" minLength={6} />
-            </div>
-            {flipped && errorBox}
-            <button type="submit" disabled={loading} className="btn-primary mt-8 h-12 w-full disabled:opacity-60">
-              {loading && flipped ? 'Creating account…' : 'Create account'}
-            </button>
-            <p className="mt-6 text-center text-sm font-medium text-slate-700">
-              Already have an account?{' '}
-              <button type="button" className={linkBtn} onClick={() => flip(false)}>
-                Sign in now
-              </button>
-            </p>
-          </div>
-        </form>
-      </div>
-    </div>
-  )
-}
+            {/* the big white ellipse that makes the curved edge */}
+            <span className="pointer-events-none absolute -top-5 left-1/2 z-[4] h-[250px] w-[200%] -translate-x-1/2 rounded-[50%] bg-white" />
 
-/** Logo + headline that sit on the cover. */
-function CoverText({ title, sub }: { title: string; sub: string }) {
-  return (
-    <div className="flex h-full flex-col items-center justify-center gap-4 px-8 text-center text-white">
-      <img
-        src="/CashWell_Logo.png"
-        alt=""
-        className="size-20 object-contain"
-        onError={(e) => (e.currentTarget.style.display = 'none')}
-      />
-      <p className="text-2xl font-semibold">{title}</p>
-      <p className="text-sm font-medium text-white/80">{sub}</p>
-      <p className="mt-2 text-xs font-bold uppercase tracking-[0.25em] text-white/60">CashWell</p>
+            <form
+              onSubmit={onLogin}
+              className={`absolute left-1/2 z-[5] w-[65%] -translate-x-1/2 transition-all duration-300 ease-out ${
+                isLogin ? 'top-[40%] -translate-y-1/2' : 'top-[10%] translate-y-0'
+              }`}
+            >
+              <h2 className="text-center">
+                <button
+                  type="button"
+                  onClick={() => isLogin || switchTo('login')}
+                  tabIndex={isLogin ? -1 : 0}
+                  className={`font-semibold text-ink transition-all duration-300 ${
+                    isLogin ? 'cursor-default text-[1.7rem]' : 'cursor-pointer text-base'
+                  }`}
+                >
+                  <span
+                    className={`text-slate-400 transition-all duration-300 ${
+                      isLogin ? 'invisible opacity-0' : 'visible mr-1.5 opacity-100'
+                    }`}
+                  >
+                    or
+                  </span>
+                  Log in
+                </button>
+              </h2>
+
+              <div className={`mt-12 overflow-hidden border border-slate-200 bg-white ${fade(isLogin)}`}>
+                <input className={input} type="email" required placeholder="Email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <input className={input} type="password" required placeholder="Password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+              </div>
+
+              {isLogin && errorBox}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className={`mt-4 block w-full cursor-pointer bg-brand-600 px-6 py-3.5 text-[13px] font-bold text-white hover:bg-brand-700 disabled:opacity-60 ${fade(isLogin)}`}
+              >
+                {loading && isLogin ? 'Logging in…' : 'Log in'}
+              </button>
+
+              <button
+                type="button"
+                disabled={loading}
+                onClick={() => run(authApi.demo)}
+                className={`mx-auto mt-3 block cursor-pointer text-xs font-semibold text-brand-600 hover:underline disabled:opacity-60 ${fade(isLogin)}`}
+              >
+                Or try the demo account →
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
