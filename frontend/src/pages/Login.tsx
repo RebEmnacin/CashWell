@@ -4,16 +4,25 @@ import { errorMessage } from '../api/client'
 import { authApi } from '../api/endpoints'
 import { useAuthStore } from '../store/authStore'
 
-const input =
-  'block h-[42px] w-full border-0 border-b border-slate-200 bg-white px-4 text-[13px] text-ink outline-none placeholder:text-slate-400 last:border-b-0 focus:bg-brand-50'
+const field =
+  'my-2 block w-full border-0 border-b-2 border-transparent bg-slate-100 px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-slate-400 focus:border-brand-600 focus:bg-white'
+
+const solidBtn =
+  'mt-4 cursor-pointer border border-brand-600 bg-brand-600 px-11 py-3 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-brand-700 active:scale-95 disabled:cursor-default disabled:opacity-60'
+
+const ghostBtn =
+  'cursor-pointer border border-white bg-transparent px-11 py-3 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-white/15 active:scale-95'
+
+// How the panels slide (0.6s, same as the reference)
+const SLIDE = 'transition-transform duration-[600ms] ease-in-out'
 
 export default function Login() {
   const token = useAuthStore((s) => s.token)
   const setAuth = useAuthStore((s) => s.setAuth)
   const navigate = useNavigate()
 
-  // Which panel is open. The other one is "collapsed" (just its title is visible).
-  const [mode, setMode] = useState<'login' | 'signup'>('login')
+  // false = Sign in is showing, true = Sign up is showing (the overlay slides to the left)
+  const [signUp, setSignUp] = useState(false)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -22,11 +31,9 @@ export default function Login() {
 
   if (token) return <Navigate to="/" replace />
 
-  const isLogin = mode === 'login'
-
-  const switchTo = (next: 'login' | 'signup') => {
+  const switchTo = (toSignUp: boolean) => {
     setError('')
-    setMode(next)
+    setSignUp(toSignUp)
   }
 
   const run = async (action: () => ReturnType<typeof authApi.demo>) => {
@@ -43,151 +50,150 @@ export default function Login() {
     }
   }
 
-  const onLogin = (e: FormEvent) => {
+  const onSignIn = (e: FormEvent) => {
     e.preventDefault()
     run(() => authApi.login(email, password))
   }
 
-  const onSignup = (e: FormEvent) => {
+  const onSignUp = (e: FormEvent) => {
     e.preventDefault()
     run(() => authApi.register(name, email, password))
   }
 
   const errorBox = error && (
-    <p role="alert" className="mt-3 border-l-4 border-red-500 bg-red-50 px-3 py-2 text-xs font-medium text-red-700">
+    <p role="alert" className="mt-2 w-full border-l-4 border-red-500 bg-red-50 px-3 py-2 text-left text-xs font-medium text-red-700">
       {error}
     </p>
   )
 
-  // things that fade out when a panel is collapsed
-  const fade = (open: boolean) =>
-    `transition-all duration-300 ${open ? 'visible opacity-100' : 'invisible opacity-0'}`
+  const formBox = 'flex h-full flex-col items-center justify-center bg-white px-10 text-center max-[640px]:px-6'
+  const mobileSwitch = 'mt-5 hidden text-sm text-slate-600 max-[640px]:block'
+  const linkBtn = 'cursor-pointer font-bold text-brand-600 hover:underline'
 
   return (
-    <div className="grid min-h-screen place-items-center bg-[#f6f8f7] p-4">
-      <div className="flex flex-col items-center gap-5">
-        {/* Brand above the card */}
-        <div className="flex items-center gap-3">
-          <img
-            src="/CashWell_Logo.png"
-            alt=""
-            className="size-10 object-contain"
-            onError={(e) => (e.currentTarget.style.display = 'none')}
-          />
-          <span className="text-2xl font-extrabold tracking-tight text-brand-900">CashWell</span>
+    <div className="grid min-h-screen grid-cols-[minmax(0,1fr)] place-items-center bg-[#f6f8f7] p-4">
+      <div className="relative min-h-[520px] w-[768px] max-w-full overflow-hidden bg-white shadow-2xl max-[640px]:min-h-[560px]">
+        {/* ================= Sign up form (waits behind, slides to the right half) ================= */}
+        <div
+          inert={!signUp}
+          className={`absolute left-0 top-0 h-full w-1/2 max-[640px]:w-full ${SLIDE} ${
+            signUp
+              ? 'z-[5] translate-x-full opacity-100 max-[640px]:translate-x-0'
+              : 'z-[1] opacity-0 max-[640px]:hidden'
+          }`}
+          // opacity + z-index jump at the half-way point so the form appears while the overlay covers it
+          style={{ transitionProperty: 'transform, opacity, z-index', transitionDuration: '0.6s, 0s, 0s', transitionDelay: '0s, 0.3s, 0.3s' }}
+        >
+          <form onSubmit={onSignUp} className={formBox}>
+            <h1 className="text-3xl font-extrabold text-brand-900">Create Account</h1>
+            <p className="mb-3 mt-2 text-xs text-slate-500">Use your email to start tracking</p>
+            <input className={field} type="text" required placeholder="Name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} />
+            <input className={field} type="email" required placeholder="Email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input className={field} type="password" required minLength={6} placeholder="Password (min. 6)" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            {signUp && errorBox}
+            <button type="submit" disabled={loading} className={solidBtn}>
+              {loading && signUp ? 'Creating…' : 'Sign Up'}
+            </button>
+            <p className={mobileSwitch}>
+              Already have an account?{' '}
+              <button type="button" className={linkBtn} onClick={() => switchTo(false)}>
+                Sign in
+              </button>
+            </p>
+          </form>
         </div>
 
-        {/* ---------- The card ---------- */}
-        <div className="relative h-[560px] w-[350px] max-w-full overflow-hidden bg-brand-900 shadow-2xl">
-          {/* soft green glow so the dark panel isn't flat */}
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_100%,rgba(16,185,129,0.45),transparent_60%),radial-gradient(circle_at_90%_0%,rgba(52,211,153,0.18),transparent_45%)]" />
-
-          {/* ===== Sign up (top, dark) ===== */}
-          <form
-            onSubmit={onSignup}
-            className={`absolute left-1/2 z-[5] w-[65%] -translate-x-1/2 transition-all duration-300 ease-out ${
-              isLogin ? 'top-[5%] translate-y-0' : 'top-1/2 -translate-y-1/2'
-            }`}
-          >
-            <h2 className="text-center">
-              <button
-                type="button"
-                onClick={() => !isLogin || switchTo('signup')}
-                tabIndex={isLogin ? 0 : -1}
-                className={`font-semibold text-white transition-all duration-300 ${
-                  isLogin ? 'cursor-pointer text-base' : 'cursor-default text-[1.7rem]'
-                }`}
-              >
-                <span
-                  className={`text-white/50 transition-all duration-300 ${
-                    isLogin ? 'visible mr-1.5 opacity-100' : 'invisible opacity-0'
-                  }`}
-                >
-                  or
-                </span>
-                Sign up
-              </button>
-            </h2>
-
-            <div className={`mt-12 overflow-hidden bg-white ${fade(!isLogin)}`}>
-              <input className={input} type="text" required placeholder="Name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} />
-              <input className={input} type="email" required placeholder="Email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-              <input className={input} type="password" required minLength={6} placeholder="Password (min. 6)" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
-            </div>
-
-            {!isLogin && errorBox}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className={`mt-4 block w-full cursor-pointer bg-brand-600 px-6 py-3.5 text-[13px] font-bold text-white hover:bg-brand-500 disabled:opacity-60 ${fade(!isLogin)}`}
-            >
-              {loading && !isLogin ? 'Creating account…' : 'Sign up'}
+        {/* ================= Sign in form (left half, slides right when Sign up is active) ================= */}
+        <div
+          inert={signUp}
+          className={`absolute left-0 top-0 z-[2] h-full w-1/2 max-[640px]:w-full ${SLIDE} ${
+            signUp ? 'translate-x-full max-[640px]:hidden max-[640px]:translate-x-0' : ''
+          }`}
+        >
+          <form onSubmit={onSignIn} className={formBox}>
+            <h1 className="text-3xl font-extrabold text-brand-900">Sign in</h1>
+            <p className="mb-3 mt-2 text-xs text-slate-500">Use your CashWell account</p>
+            <input className={field} type="email" required placeholder="Email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input className={field} type="password" required placeholder="Password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            {!signUp && errorBox}
+            <button type="submit" disabled={loading} className={solidBtn}>
+              {loading && !signUp ? 'Signing in…' : 'Sign In'}
             </button>
+            <button
+              type="button"
+              disabled={loading}
+              onClick={() => run(authApi.demo)}
+              className="mt-4 cursor-pointer text-xs font-semibold text-brand-600 hover:underline disabled:opacity-60"
+            >
+              Or try the demo account →
+            </button>
+            <p className={mobileSwitch}>
+              New here?{' '}
+              <button type="button" className={linkBtn} onClick={() => switchTo(true)}>
+                Create an account
+              </button>
+            </p>
           </form>
+        </div>
 
-          {/* ===== Log in (bottom, white, curved top) ===== */}
+        {/* ================= Sliding green overlay (desktop only) ================= */}
+        <div
+          className={`absolute left-1/2 top-0 z-[100] h-full w-1/2 overflow-hidden max-[640px]:hidden ${SLIDE} ${
+            signUp ? '-translate-x-full' : ''
+          }`}
+        >
+          {/* the overlay is 2x wide; we only ever see one half of it */}
           <div
-            className={`absolute inset-x-0 bottom-0 z-[5] bg-white transition-all duration-300 ease-out ${
-              isLogin ? 'top-[20%]' : 'top-[90%]'
+            className={`relative -left-full h-full w-[200%] bg-linear-to-r from-brand-900 via-brand-700 to-brand-500 text-white ${SLIDE} ${
+              signUp ? 'translate-x-1/2' : 'translate-x-0'
             }`}
           >
-            {/* the big white ellipse that makes the curved edge */}
-            <span className="pointer-events-none absolute -top-5 left-1/2 z-[4] h-[250px] w-[200%] -translate-x-1/2 rounded-[50%] bg-white" />
-
-            <form
-              onSubmit={onLogin}
-              className={`absolute left-1/2 z-[5] w-[65%] -translate-x-1/2 transition-all duration-300 ease-out ${
-                isLogin ? 'top-[40%] -translate-y-1/2' : 'top-[10%] translate-y-0'
+            {/* left panel: visible while Sign up is open */}
+            <div
+              className={`absolute top-0 flex h-full w-1/2 flex-col items-center justify-center px-10 text-center ${SLIDE} ${
+                signUp ? 'translate-x-0' : '-translate-x-1/5'
               }`}
             >
-              <h2 className="text-center">
-                <button
-                  type="button"
-                  onClick={() => isLogin || switchTo('login')}
-                  tabIndex={isLogin ? -1 : 0}
-                  className={`font-semibold text-ink transition-all duration-300 ${
-                    isLogin ? 'cursor-default text-[1.7rem]' : 'cursor-pointer text-base'
-                  }`}
-                >
-                  <span
-                    className={`text-slate-400 transition-all duration-300 ${
-                      isLogin ? 'invisible opacity-0' : 'visible mr-1.5 opacity-100'
-                    }`}
-                  >
-                    or
-                  </span>
-                  Log in
-                </button>
-              </h2>
-
-              <div className={`mt-12 overflow-hidden border border-slate-200 bg-white ${fade(isLogin)}`}>
-                <input className={input} type="email" required placeholder="Email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                <input className={input} type="password" required placeholder="Password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
-              </div>
-
-              {isLogin && errorBox}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className={`mt-4 block w-full cursor-pointer bg-brand-600 px-6 py-3.5 text-[13px] font-bold text-white hover:bg-brand-700 disabled:opacity-60 ${fade(isLogin)}`}
-              >
-                {loading && isLogin ? 'Logging in…' : 'Log in'}
+              <Logo />
+              <h1 className="text-3xl font-extrabold">Welcome Back!</h1>
+              <p className="mb-8 mt-5 text-sm leading-5 tracking-wide text-white/85">
+                Already tracking with us? Sign in to pick up right where you left off.
+              </p>
+              <button type="button" className={ghostBtn} onClick={() => switchTo(false)}>
+                Sign In
               </button>
+            </div>
 
-              <button
-                type="button"
-                disabled={loading}
-                onClick={() => run(authApi.demo)}
-                className={`mx-auto mt-3 block cursor-pointer text-xs font-semibold text-brand-600 hover:underline disabled:opacity-60 ${fade(isLogin)}`}
-              >
-                Or try the demo account →
+            {/* right panel: visible while Sign in is open */}
+            <div
+              className={`absolute right-0 top-0 flex h-full w-1/2 flex-col items-center justify-center px-10 text-center ${SLIDE} ${
+                signUp ? 'translate-x-1/5' : 'translate-x-0'
+              }`}
+            >
+              <Logo />
+              <h1 className="text-3xl font-extrabold">Hello, Friend!</h1>
+              <p className="mb-8 mt-5 text-sm leading-5 tracking-wide text-white/85">
+                New to CashWell? Create a free account and take control of your money.
+              </p>
+              <button type="button" className={ghostBtn} onClick={() => switchTo(true)}>
+                Sign Up
               </button>
-            </form>
+            </div>
           </div>
         </div>
       </div>
     </div>
+  )
+}
+
+/** Logo that sits above the overlay headline (hides itself if the file is missing). */
+function Logo() {
+  return (
+    <img
+      src="/CashWell_Logo.png"
+      alt="CashWell"
+      className="mb-5 size-16 object-contain"
+      onError={(e) => (e.currentTarget.style.display = 'none')}
+    />
   )
 }
