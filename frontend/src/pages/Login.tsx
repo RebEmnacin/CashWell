@@ -54,7 +54,7 @@ export default function Login() {
           <span>
             <img src="/CashWell_Logo.png" alt="CashWell" className="size-9 object-contain" />
           </span>
-          <span className="text-xl font-extrabold tracking-tight">CashWell</span>
+          <span className="text-2xl font-extrabold tracking-tight">CashWell</span>
         </div>
         <div className="relative max-w-md animate-rise">
           <h1 className="text-5xl font-extrabold leading-[1.05] tracking-tight">
