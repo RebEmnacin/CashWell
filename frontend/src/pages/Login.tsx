@@ -51,8 +51,8 @@ export default function Login() {
         <div className="pointer-events-none absolute -right-24 -top-24 size-96 rounded-full bg-brand-500/20 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-32 -left-16 size-96 rounded-full bg-emerald-300/10 blur-3xl" />
         <div className="relative flex items-center gap-2.5">
-          <span className="grid size-10 place-items-center rounded-xl bg-brand-500">
-            <TrendingUp className="size-5" strokeWidth={2.5} />
+          <span>
+            <img src="/CashWell_Logo.png" alt="CashWell" className="size-9 object-contain" />
           </span>
           <span className="text-xl font-extrabold tracking-tight">CashWell</span>
         </div>
