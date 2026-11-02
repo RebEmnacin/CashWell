@@ -129,7 +129,7 @@ export default function About() {
             <Reveal key={s.name} delay={(i % 2) * 0.08}>
               <div className="flex h-full gap-4 rounded-none bg-white p-5 shadow-sm ring-1 ring-slate-200/70">
                 <span className="grid size-9 shrink-0 place-items-center rounded-full bg-brand-600 text-white">
-                  <LineIcon icon={Check} className="size-4" strokeWidth={3} delay={0.2 + (i % 2) * 0.08} replayOnHover={false} />
+                  <LineIcon icon={Check} className="size-4" strokeWidth={3} delay={0.2 + (i % 2) * 0.08} loop={false} reverse />
                 </span>
                 <div>
                   <h3 className="font-extrabold text-ink">{s.name}</h3>
