@@ -29,11 +29,14 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  // which fields failed the check on submit (field name -> message); they get a red box instead of the browser bubble
+  const [invalid, setInvalid] = useState<Record<string, string>>({})
 
   if (token) return <Navigate to="/dashboard" replace />
 
   const switchTo = (toSignUp: boolean) => {
     setError('')
+    setInvalid({})
     setSignUp(toSignUp)
   }
 
@@ -51,13 +54,29 @@ export default function Login() {
     }
   }
 
+  const check = (rules: Record<string, string | null>) => {
+    const bad = Object.fromEntries(Object.entries(rules).filter(([, msg]) => msg)) as Record<string, string>
+    setInvalid(bad)
+    return Object.keys(bad).length === 0
+  }
+  const emailRule = !email.trim() ? 'Enter your email' : /^\S+@\S+\.\S+$/.test(email) ? null : 'Enter a valid email'
+
   const onSignIn = (e: FormEvent) => {
     e.preventDefault()
+    if (!check({ email: emailRule, password: password ? null : 'Enter your password' })) return
     run(() => authApi.login(email, password))
   }
 
   const onSignUp = (e: FormEvent) => {
     e.preventDefault()
+    if (
+      !check({
+        name: name.trim() ? null : 'Enter your name',
+        email: emailRule,
+        password: password.length >= 6 ? null : 'Use at least 6 characters',
+      })
+    )
+      return
     run(() => authApi.register(name, email, password))
   }
 
@@ -66,6 +85,11 @@ export default function Login() {
       {error}
     </p>
   )
+
+  const clear = (f: string) => setInvalid((v) => (v[f] ? { ...v, [f]: '' } : v))
+  const fieldClass = (f: string) => (invalid[f] ? `${field} border-red-500! bg-red-50! placeholder:text-red-300` : field)
+  const hint = (f: string) =>
+    invalid[f] ? <span className="-mt-1.5 mb-1 block w-full text-left text-xs font-semibold text-red-600">{invalid[f]}</span> : null
 
   const formBox = 'flex h-full flex-col items-center justify-center bg-brand-50 px-16 text-center max-[640px]:px-6'
   const mobileSwitch = 'mt-5 hidden text-sm text-slate-600 max-[640px]:block'
@@ -101,12 +125,15 @@ export default function Login() {
           // opacity + z-index jump at the half-way point so the form appears while the overlay covers it
           style={{ transitionProperty: 'transform, opacity, z-index', transitionDuration: '0.6s, 0s, 0s', transitionDelay: '0s, 0.3s, 0.3s' }}
         >
-          <form onSubmit={onSignUp} className={formBox}>
+          <form noValidate onSubmit={onSignUp} className={formBox}>
             <h1 className="text-4xl font-extrabold text-brand-900">Create Account</h1>
             <p className="mb-4 mt-2 text-sm text-slate-500">Use your email to start tracking</p>
-            <input className={field} type="text" required placeholder="Name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} />
-            <input className={field} type="email" required placeholder="Email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <input className={field} type="password" required minLength={6} placeholder="Password (min. 6)" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <input className={fieldClass('name')} aria-invalid={!!invalid.name} type="text" placeholder="Name" autoComplete="name" value={name} onChange={(e) => { setName(e.target.value); clear('name') }} />
+            {hint('name')}
+            <input className={fieldClass('email')} aria-invalid={!!invalid.email} type="email" placeholder="Email" autoComplete="email" value={email} onChange={(e) => { setEmail(e.target.value); clear('email') }} />
+            {hint('email')}
+            <input className={fieldClass('password')} aria-invalid={!!invalid.password} type="password" placeholder="Password (min. 6)" autoComplete="new-password" value={password} onChange={(e) => { setPassword(e.target.value); clear('password') }} />
+            {hint('password')}
             {signUp && errorBox}
             <button type="submit" disabled={loading} className={solidBtn}>
               {loading && signUp ? 'Creating…' : 'Sign Up'}
@@ -127,11 +154,13 @@ export default function Login() {
             signUp ? 'translate-x-full max-[640px]:hidden max-[640px]:translate-x-0' : ''
           }`}
         >
-          <form onSubmit={onSignIn} className={formBox}>
+          <form noValidate onSubmit={onSignIn} className={formBox}>
             <h1 className="text-4xl font-extrabold text-brand-900">Sign in</h1>
             <p className="mb-4 mt-2 text-sm text-slate-500">Use your CashWell account</p>
-            <input className={field} type="email" required placeholder="Email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <input className={field} type="password" required placeholder="Password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <input className={fieldClass('email')} aria-invalid={!!invalid.email} type="email" placeholder="Email" autoComplete="email" value={email} onChange={(e) => { setEmail(e.target.value); clear('email') }} />
+            {hint('email')}
+            <input className={fieldClass('password')} aria-invalid={!!invalid.password} type="password" placeholder="Password" autoComplete="current-password" value={password} onChange={(e) => { setPassword(e.target.value); clear('password') }} />
+            {hint('password')}
             {!signUp && errorBox}
             <button type="submit" disabled={loading} className={solidBtn}>
               {loading && !signUp ? 'Signing in…' : 'Sign In'}

@@ -123,7 +123,7 @@ export default function About() {
       <section className="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-[1fr_2fr] lg:gap-16">
         <Reveal>
           <h2 className="text-3xl font-extrabold text-ink md:text-4xl">What it's built with</h2>
-          <p className="mt-3 max-w-sm text-slate-600">And a one-line reason for each choice.</p>
+          <p className="mt-3 max-w-sm text-slate-600">Tech Stack used for development</p>
         </Reveal>
         <div className="grid gap-4 sm:grid-cols-2">
           {stack.map((s, i) => (
