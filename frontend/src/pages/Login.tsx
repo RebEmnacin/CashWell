@@ -9,10 +9,10 @@ const field =
   'my-2.5 block w-full border-0 border-b-2 border-transparent bg-white px-5 py-4 text-base text-ink outline-none transition-colors placeholder:text-slate-400 focus:border-brand-600 focus:bg-white'
 
 const solidBtn =
-  'mt-4 cursor-pointer border border-brand-600 bg-brand-600 px-14 py-4 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-brand-700 active:scale-95 disabled:cursor-default disabled:opacity-60'
+  'mt-4 cursor-pointer rounded-full border border-brand-600 bg-brand-600 px-14 py-4 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-brand-700 active:scale-95 disabled:cursor-default disabled:opacity-60'
 
 const ghostBtn =
-  'cursor-pointer border border-white bg-transparent px-14 py-4 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-white/15 active:scale-95'
+  'cursor-pointer rounded-full border border-white bg-transparent px-14 py-4 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-white/15 active:scale-95'
 
 // How the panels slide (0.6s, same as the reference)
 const SLIDE = 'transition-transform duration-[600ms] ease-in-out'
@@ -245,14 +245,12 @@ export default function Login() {
   )
 }
 
-/** Logo that sits above the overlay headline: floats gently (hides itself if the file is missing). */
+/** Logo that sits above the overlay headline (hides itself if the file is missing). */
 function Logo() {
   return (
-    <motion.img
+    <img
       src="/CashWell_Logo.png"
       alt="CashWell"
-      animate={{ y: [0, -8, 0] }}
-      transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
       className="mb-6 size-20 object-contain drop-shadow-xl"
       onError={(e) => (e.currentTarget.style.display = 'none')}
     />

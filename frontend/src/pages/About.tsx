@@ -67,11 +67,9 @@ export default function About() {
                 Money tracking that stays out of your way
               </motion.h1>
             </div>
-            <motion.img
+            <img
               src="/CashWell_Logo.png"
               alt="CashWell logo"
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
               className="mx-auto hidden w-60 object-contain drop-shadow-2xl lg:block"
             />
           </div>
@@ -104,7 +102,7 @@ export default function About() {
           <div className="mt-10 grid gap-6 md:grid-cols-3">
             {values.map(({ icon: Icon, title, text }, i) => (
               <Reveal key={title} delay={i * 0.1}>
-                <div className="group h-full rounded-[1.75rem] bg-white p-8 text-center shadow-md ring-1 ring-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+                <div className="group h-full rounded-none bg-white p-8 text-center shadow-md ring-1 ring-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
                   <span className="mx-auto grid size-32 place-items-center rounded-full bg-brand-50 ring-1 ring-brand-100 transition duration-300 group-hover:scale-105">
                     <span className="grid size-24 place-items-center rounded-full bg-brand-600 text-white shadow-lg">
                       <Icon className="size-12" strokeWidth={1.75} />
@@ -128,7 +126,7 @@ export default function About() {
         <div className="grid gap-4 sm:grid-cols-2">
           {stack.map((s, i) => (
             <Reveal key={s.name} delay={(i % 2) * 0.08}>
-              <div className="flex h-full gap-4 rounded-[1.5rem] bg-white p-5 shadow-sm ring-1 ring-slate-200/70">
+              <div className="flex h-full gap-4 rounded-none bg-white p-5 shadow-sm ring-1 ring-slate-200/70">
                 <span className="grid size-9 shrink-0 place-items-center rounded-full bg-brand-600 text-white">
                   <Check className="size-4" strokeWidth={3} />
                 </span>

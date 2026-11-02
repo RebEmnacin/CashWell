@@ -66,9 +66,9 @@ function Reveal({ children, delay = 0, className = '' }: { children: ReactNode; 
 }
 
 const primaryBtn =
-  'inline-flex cursor-pointer items-center justify-center gap-2 bg-white px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-brand-900 transition hover:bg-brand-50 active:scale-95 disabled:opacity-60'
+  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-brand-900 transition hover:bg-brand-50 active:scale-95 disabled:opacity-60'
 const outlineBtn =
-  'inline-flex cursor-pointer items-center justify-center gap-2 border border-white/70 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-white/10 active:scale-95 disabled:opacity-60'
+  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border border-white/70 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-white/10 active:scale-95 disabled:opacity-60'
 
 /* ---------------- the page ---------------- */
 
@@ -191,11 +191,9 @@ export default function Landing() {
                 transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
                 className="relative mx-auto grid w-full max-w-[300px] place-items-center lg:max-w-[380px]"
               >
-                <motion.img
+                <img
                   src="/CashWell_Logo.png"
                   alt="CashWell logo"
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
                   className="w-[85%] max-w-[340px] object-contain drop-shadow-2xl"
                 />
               </motion.div>
@@ -292,7 +290,7 @@ export default function Landing() {
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {features.map(({ icon: Icon, title, text }, i) => (
               <Reveal key={title} delay={i * 0.08}>
-                <div className="group h-full rounded-[1.75rem] bg-white p-8 text-center shadow-md ring-1 ring-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+                <div className="group h-full rounded-none bg-white p-8 text-center shadow-md ring-1 ring-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
                   {/* big graphic icon: solid disc with a soft ring around it */}
                   <span className="mx-auto grid size-32 place-items-center rounded-full bg-brand-50 ring-1 ring-brand-100 transition duration-300 group-hover:scale-105">
                     <span className="grid size-24 place-items-center rounded-full bg-brand-600 text-white shadow-lg">
@@ -387,7 +385,7 @@ export default function Landing() {
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
               to={token ? '/dashboard' : '/login'}
-              className="inline-flex items-center gap-2 bg-brand-600 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-brand-700 active:scale-95"
+              className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-brand-700 active:scale-95"
             >
               {token ? 'Open dashboard' : 'Get started'} <ArrowRight className="size-4" />
             </Link>
@@ -395,7 +393,7 @@ export default function Landing() {
               type="button"
               onClick={tryDemo}
               disabled={busy}
-              className="inline-flex cursor-pointer items-center gap-2 border border-brand-600 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-brand-600 transition hover:bg-brand-50 active:scale-95 disabled:opacity-60"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-brand-600 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-brand-600 transition hover:bg-brand-50 active:scale-95 disabled:opacity-60"
             >
               Try the demo
             </button>
