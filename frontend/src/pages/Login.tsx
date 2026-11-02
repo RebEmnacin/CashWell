@@ -1,3 +1,4 @@
+import { motion } from 'motion/react'
 import { useState, type FormEvent } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { errorMessage } from '../api/client'
@@ -72,7 +73,7 @@ export default function Login() {
 
   return (
     <div className="grid min-h-screen grid-cols-[minmax(0,1fr)] place-items-center bg-[#f6f8f7] p-4 md:pl-56 md:pr-8">
-      <div className="relative min-h-[620px] w-[1040px] max-w-full overflow-hidden bg-brand-50 shadow-2xl max-[640px]:min-h-[560px]">
+      <div className="relative min-h-[620px] w-[1040px] max-w-full overflow-hidden bg-brand-50 shadow-2xl animate-rise max-[640px]:min-h-[560px]">
         {/* ================= Sign up form (waits behind, slides to the right half) ================= */}
         <div
           inert={!signUp}
@@ -148,6 +149,19 @@ export default function Login() {
               signUp ? 'translate-x-1/2' : 'translate-x-0'
             }`}
           >
+            {/* soft pulsing rings, same motif as the hero */}
+            {[0, 1].map((i) => (
+              <motion.span
+                key={i}
+                aria-hidden
+                animate={{ scale: [1, 1.08, 1], opacity: [0.05, 0.1, 0.05] }}
+                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: i * 2 }}
+                className={`pointer-events-none absolute size-[420px] rounded-full border-[56px] border-white ${
+                  i === 0 ? '-top-40 left-[8%]' : '-bottom-48 right-[8%]'
+                }`}
+              />
+            ))}
+
             {/* left panel: visible while Sign up is open */}
             <div
               className={`absolute top-0 flex h-full w-1/2 flex-col items-center justify-center px-14 text-center ${SLIDE} ${
@@ -186,13 +200,15 @@ export default function Login() {
   )
 }
 
-/** Logo that sits above the overlay headline (hides itself if the file is missing). */
+/** Logo that sits above the overlay headline: floats gently (hides itself if the file is missing). */
 function Logo() {
   return (
-    <img
+    <motion.img
       src="/CashWell_Logo.png"
       alt="CashWell"
-      className="mb-6 size-20 object-contain"
+      animate={{ y: [0, -8, 0] }}
+      transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
+      className="mb-6 size-20 object-contain drop-shadow-xl"
       onError={(e) => (e.currentTarget.style.display = 'none')}
     />
   )
