@@ -29,7 +29,7 @@ export default function Login() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  if (token) return <Navigate to="/dashboard" replace />>
+  if (token) return <Navigate to="/dashboard" replace />
 
   const switchTo = (toSignUp: boolean) => {
     setError('')
