@@ -189,14 +189,14 @@ export default function Landing() {
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-                className="relative mx-auto grid h-[340px] w-full max-w-[300px] place-items-center rounded-t-[150px] bg-linear-to-b from-brand-500/30 to-brand-400/5 ring-1 ring-white/10 lg:h-[440px] lg:max-w-[380px] lg:rounded-t-[190px]"
+                className="relative mx-auto grid w-full max-w-[300px] place-items-center lg:max-w-[380px]"
               >
                 <motion.img
                   src="/CashWell_Logo.png"
                   alt="CashWell logo"
                   animate={{ y: [0, -10, 0] }}
                   transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-                  className="w-[78%] max-w-[300px] object-contain drop-shadow-2xl"
+                  className="w-[85%] max-w-[340px] object-contain drop-shadow-2xl"
                 />
               </motion.div>
             </div>
