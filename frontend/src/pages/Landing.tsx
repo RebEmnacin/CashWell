@@ -123,7 +123,7 @@ export default function Landing() {
         <div className="pointer-events-none absolute -bottom-56 right-[18%] size-[560px] rounded-full border-[70px] border-white/[0.05]" />
         <div className="pointer-events-none absolute right-[-120px] top-10 size-[320px] rounded-full border-[50px] border-brand-500/10" />
 
-        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 md:py-28 lg:grid-cols-[1fr_320px]">
+        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 md:pl-28 py-20 md:py-28 lg:grid-cols-[1fr_320px]">
           <div>
             <div className="min-h-[300px] sm:min-h-[280px]">
               <AnimatePresence mode="wait">
@@ -195,7 +195,7 @@ export default function Landing() {
       </section>
 
       {/* ============ INTRO ============ */}
-      <section className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+      <section className="mx-auto max-w-6xl px-6 md:pl-28 py-16 md:py-20">
         <Reveal>
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400">Home</p>
           <h2 className="mt-3 max-w-3xl text-3xl font-extrabold leading-tight text-brand-600 md:text-4xl">
@@ -210,7 +210,7 @@ export default function Landing() {
 
       {/* ============ FEATURES ============ */}
       <section className="border-y border-slate-200 bg-white">
-        <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+        <div className="mx-auto max-w-6xl px-6 md:pl-28 py-16 md:py-20">
           <Reveal>
             <h2 className="text-3xl font-extrabold text-ink">Everything you need, nothing you don't</h2>
             <p className="mt-3 max-w-2xl text-slate-600">Four things CashWell does well.</p>
@@ -232,7 +232,7 @@ export default function Landing() {
       </section>
 
       {/* ============ HOW IT WORKS ============ */}
-      <section className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+      <section className="mx-auto max-w-6xl px-6 md:pl-28 py-16 md:py-20">
         <Reveal>
           <h2 className="text-3xl font-extrabold text-ink">How it works</h2>
         </Reveal>
@@ -251,7 +251,7 @@ export default function Landing() {
 
       {/* ============ DASHBOARD PREVIEW ============ */}
       <section className="bg-brand-900 text-white">
-        <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-16 md:py-20 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 md:pl-28 py-16 md:py-20 lg:grid-cols-2">
           <Reveal>
             <h2 className="text-3xl font-extrabold leading-tight md:text-4xl">A dashboard that tells the story at a glance</h2>
             <p className="mt-5 text-lg leading-8 text-white/80">
@@ -298,7 +298,7 @@ export default function Landing() {
       </section>
 
       {/* ============ FINAL CTA ============ */}
-      <section className="mx-auto max-w-6xl px-6 py-20 text-center">
+      <section className="mx-auto max-w-6xl px-6 md:px-28 py-20 text-center">
         <Reveal>
           <h2 className="text-3xl font-extrabold text-ink md:text-4xl">Ready to see where your money goes?</h2>
           <p className="mx-auto mt-4 max-w-xl text-slate-600">Create a free account, or have a look around with the demo first.</p>
@@ -323,7 +323,7 @@ export default function Landing() {
 
       {/* ============ FOOTER ============ */}
       <footer className="border-t border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-6 text-sm text-slate-500">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 md:pl-28 py-6 text-sm text-slate-500">
           <p>© 2026 CashWell. A full-stack portfolio project.</p>
           <div className="flex gap-5 font-semibold">
             <Link to="/" className="hover:text-brand-600">Home</Link>

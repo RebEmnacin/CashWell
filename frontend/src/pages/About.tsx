@@ -40,7 +40,7 @@ export default function About() {
       {/* header band */}
       <section className="relative overflow-hidden bg-linear-to-br from-brand-900 via-brand-900 to-brand-700 text-white">
         <div className="pointer-events-none absolute -right-32 -top-40 size-[460px] rounded-full border-[64px] border-white/[0.05]" />
-        <div className="relative mx-auto max-w-6xl px-6 py-20 md:py-28">
+        <div className="relative mx-auto max-w-6xl px-6 md:pl-28 py-20 md:py-28">
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -61,7 +61,7 @@ export default function About() {
       </section>
 
       {/* story */}
-      <section className="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:py-20 lg:grid-cols-[1fr_2fr]">
+      <section className="mx-auto grid max-w-6xl gap-10 px-6 md:pl-28 py-16 md:py-20 lg:grid-cols-[1fr_2fr]">
         <Reveal>
           <h2 className="text-3xl font-extrabold leading-tight text-brand-600">Why CashWell exists</h2>
         </Reveal>
@@ -79,7 +79,7 @@ export default function About() {
 
       {/* values */}
       <section className="border-y border-slate-200 bg-white">
-        <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+        <div className="mx-auto max-w-6xl px-6 md:pl-28 py-16 md:py-20">
           <Reveal>
             <h2 className="text-3xl font-extrabold text-ink">What we care about</h2>
           </Reveal>
@@ -100,7 +100,7 @@ export default function About() {
       </section>
 
       {/* tech stack */}
-      <section className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+      <section className="mx-auto max-w-6xl px-6 md:pl-28 py-16 md:py-20">
         <Reveal>
           <h2 className="text-3xl font-extrabold text-ink">What it's built with</h2>
           <p className="mt-3 max-w-2xl text-slate-600">And a one-line reason for each choice.</p>
@@ -119,7 +119,7 @@ export default function About() {
 
       {/* CTA */}
       <section className="bg-brand-900 text-white">
-        <Reveal className="mx-auto max-w-6xl px-6 py-16 text-center">
+        <Reveal className="mx-auto max-w-6xl px-6 md:px-28 py-16 text-center">
           <h2 className="text-3xl font-extrabold md:text-4xl">Give it a try</h2>
           <p className="mx-auto mt-4 max-w-xl text-white/80">Create an account, or open the demo from the login page.</p>
           <Link
