@@ -36,7 +36,10 @@ You need **Python 3.10+** and **Node 18+**.
 ```bash
 cd backend
 python -m venv venv
+
+Required:
 # Windows: venv\Scripts\activate     Mac/Linux: source venv/bin/activate
+
 pip install -r requirements.txt
 cp .env.example .env        # Windows: copy .env.example .env
 uvicorn app.main:app --reload
