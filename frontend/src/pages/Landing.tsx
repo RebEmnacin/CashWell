@@ -131,10 +131,10 @@ export default function Landing() {
               <span className="text-lg font-extrabold tracking-tight">CashWell</span>
             </div>
 
-            <div className="mt-10 grid items-center gap-12 lg:mt-6 lg:grid-cols-[1fr_380px]">
+            <div className="mt-10 grid items-center gap-x-12 gap-y-8 lg:mt-6 lg:grid-cols-[1fr_380px]">
               {/* text side */}
-              <div>
-                <div className="min-h-[300px] sm:min-h-[280px]">
+              <div className="lg:col-start-1 lg:row-start-1">
+                <div className="min-h-[300px] sm:min-h-[280px] lg:min-h-[240px]">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={slide}
@@ -158,30 +158,6 @@ export default function Landing() {
                   </button>
                 </div>
                 {demoError && <p className="mt-3 text-sm font-medium text-red-300">{demoError}</p>}
-
-                {/* slide controls: arrows + (on phones) horizontal dots */}
-                <div className="mt-10 flex items-center gap-4">
-                  <button type="button" aria-label="Previous slide" onClick={() => go(-1)} className="grid size-10 cursor-pointer place-items-center rounded-full border border-white/30 transition hover:bg-white/10">
-                    <ChevronLeft className="size-5" />
-                  </button>
-                  <div className="flex gap-2 lg:hidden">
-                    {slides.map((_, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        aria-label={`Go to slide ${i + 1}`}
-                        onClick={() => setSlide(i)}
-                        className={`h-1.5 cursor-pointer rounded-full transition-all duration-300 ${i === slide ? 'w-10 bg-white' : 'w-5 bg-white/30 hover:bg-white/50'}`}
-                      />
-                    ))}
-                  </div>
-                  <span className="hidden text-sm font-bold tabular-nums tracking-widest text-white/70 lg:block">
-                    0{slide + 1} / 0{slides.length}
-                  </span>
-                  <button type="button" aria-label="Next slide" onClick={() => go(1)} className="grid size-10 cursor-pointer place-items-center rounded-full border border-white/30 transition hover:bg-white/10">
-                    <ChevronRight className="size-5" />
-                  </button>
-                </div>
               </div>
 
               {/* image side: the logo in a tall, round-topped panel */}
@@ -189,7 +165,7 @@ export default function Landing() {
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-                className="relative mx-auto grid w-full max-w-[300px] place-items-center lg:max-w-[380px]"
+                className="relative order-3 mx-auto grid w-full max-w-[300px] place-items-center lg:order-none lg:col-start-2 lg:row-start-1 lg:max-w-[380px]"
               >
                 <img
                   src="/CashWell_Logo.png"
@@ -197,6 +173,27 @@ export default function Landing() {
                   className="w-[85%] max-w-[340px] object-contain drop-shadow-2xl"
                 />
               </motion.div>
+              {/* slide controls: plain arrows only (plus horizontal dots on phones), no hover highlight.
+                  Phones: right under the buttons. Desktop: under the text column. */}
+            <div className="order-2 flex items-center gap-4 lg:order-none lg:col-start-1 lg:row-start-2">
+                <button type="button" aria-label="Previous slide" onClick={() => go(-1)} className="grid size-10 cursor-pointer place-items-center text-white">
+                  <ChevronLeft className="size-8" strokeWidth={1.75} />
+                </button>
+                <div className="flex gap-2 lg:hidden">
+                  {slides.map((_, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      aria-label={`Go to slide ${i + 1}`}
+                      onClick={() => setSlide(i)}
+                      className={`h-1.5 cursor-pointer rounded-full transition-all duration-300 ${i === slide ? 'w-10 bg-white' : 'w-5 bg-white/30'}`}
+                    />
+                  ))}
+                </div>
+                <button type="button" aria-label="Next slide" onClick={() => go(1)} className="grid size-10 cursor-pointer place-items-center text-white">
+                  <ChevronRight className="size-8" strokeWidth={1.75} />
+                </button>
+              </div>
             </div>
           </div>
 
