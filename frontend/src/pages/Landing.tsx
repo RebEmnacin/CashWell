@@ -292,22 +292,15 @@ export default function Landing() {
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {features.map(({ icon: Icon, title, text }, i) => (
               <Reveal key={title} delay={i * 0.08}>
-                <div className="group flex h-full flex-col overflow-hidden rounded-[1.75rem] bg-white shadow-md ring-1 ring-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
-                  <div className="grid h-36 place-items-center bg-linear-to-br from-brand-900 to-brand-600">
-                    <span className="grid size-16 place-items-center rounded-full bg-white/15 text-white ring-1 ring-white/30 transition group-hover:scale-110">
-                      <Icon className="size-7" />
+                <div className="group h-full rounded-[1.75rem] bg-white p-8 text-center shadow-md ring-1 ring-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+                  {/* big graphic icon: solid disc with a soft ring around it */}
+                  <span className="mx-auto grid size-32 place-items-center rounded-full bg-brand-50 ring-1 ring-brand-100 transition duration-300 group-hover:scale-105">
+                    <span className="grid size-24 place-items-center rounded-full bg-brand-600 text-white shadow-lg">
+                      <Icon className="size-12" strokeWidth={1.75} />
                     </span>
-                  </div>
-                  <div className="flex flex-1 flex-col p-6">
-                    <h3 className="text-lg font-extrabold text-ink">{title}</h3>
-                    <p className="mt-2 flex-1 text-sm leading-6 text-slate-600">{text}</p>
-                    <Link
-                      to={token ? '/dashboard' : '/login'}
-                      className="mt-5 inline-flex w-fit items-center gap-1.5 rounded-full bg-brand-600 px-5 py-2 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-brand-700 active:scale-95"
-                    >
-                      Try it <ArrowRight className="size-3.5" />
-                    </Link>
-                  </div>
+                  </span>
+                  <h3 className="mt-6 text-lg font-extrabold text-ink">{title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
                 </div>
               </Reveal>
             ))}
