@@ -84,19 +84,6 @@ Frontend routes: `/` (landing), `/login`, `/about`, and the protected `/dashboar
 4. **Date-range correctness.** Month queries use `date >= first_of_month AND date < first_of_next_month` (end exclusive), so no day is missed or counted twice.
 5. **Debounced search.** The search box waits 350 ms after typing stops, so the API isn't called on every keystroke.
 
-## API overview
 
-Interactive docs are served at `/docs` when the backend is running.
-
-| Method | Endpoint | Purpose |
-|---|---|---|
-| POST | `/api/auth/register` · `/login` · `/demo` | Create an account, log in, or open the demo account |
-| GET | `/api/auth/me` | Current user |
-| GET / POST / DELETE | `/api/categories` | Manage categories |
-| GET / POST / PUT / DELETE | `/api/transactions` | CRUD with filters and pagination |
-| GET | `/api/transactions/export` | CSV download |
-| GET | `/api/budgets?month=YYYY-MM` | Budgets with the amount spent |
-| PUT / DELETE | `/api/budgets/{category_id}` | Set (upsert) or remove a budget |
-| GET | `/api/analytics/summary` · `/by-category` · `/monthly` | Dashboard data |
 
 

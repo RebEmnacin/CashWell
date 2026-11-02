@@ -236,3 +236,18 @@ The full step-by-step guide, environment variables, deployment notes and trouble
 - [ ] Automated tests (Pytest for the API, Playwright end to end)
 - [ ] Docker Compose (API + Postgres) and a CI workflow
 - [ ] Dark mode, multiple currencies, receipt uploads
+
+## 16. API overview
+
+Interactive docs are served at `/docs` when the backend is running.
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| POST | `/api/auth/register` · `/login` · `/demo` | Create an account, log in, or open the demo account |
+| GET | `/api/auth/me` | Current user |
+| GET / POST / DELETE | `/api/categories` | Manage categories |
+| GET / POST / PUT / DELETE | `/api/transactions` | CRUD with filters and pagination |
+| GET | `/api/transactions/export` | CSV download |
+| GET | `/api/budgets?month=YYYY-MM` | Budgets with the amount spent |
+| PUT / DELETE | `/api/budgets/{category_id}` | Set (upsert) or remove a budget |
+| GET | `/api/analytics/summary` · `/by-category` · `/monthly` | Dashboard data |
