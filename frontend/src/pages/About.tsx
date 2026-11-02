@@ -1,4 +1,4 @@
-import { ArrowRight, Eye, Feather, Lock, type LucideIcon } from 'lucide-react'
+import { ArrowRight, Check, Eye, Feather, Lock, type LucideIcon } from 'lucide-react'
 import { motion } from 'motion/react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
@@ -40,23 +40,41 @@ export default function About() {
       {/* header band */}
       <section className="relative overflow-hidden bg-linear-to-br from-brand-900 via-brand-900 to-brand-700 text-white">
         <div className="pointer-events-none absolute -right-32 -top-40 size-[460px] rounded-full border-[64px] border-white/[0.05]" />
-        <div className="relative mx-auto max-w-6xl px-6 md:pl-28 py-20 md:py-28">
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="text-sm font-bold uppercase tracking-[0.2em] text-brand-400"
-          >
-            About us
-          </motion.p>
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-4 max-w-3xl text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl"
-          >
-            Money tracking that stays out of your way
-          </motion.h1>
+        <div className="pointer-events-none absolute -bottom-56 left-[30%] size-[520px] rounded-full border-[64px] border-white/[0.04]" />
+        <div className="relative mx-auto max-w-6xl px-6 pb-16 pt-8 md:pl-28 md:pb-24">
+          {/* brand mark, top left (same as the home page) */}
+          <div className="flex items-center gap-3">
+            <img src="/CashWell_Logo.png" alt="" className="size-9 object-contain" />
+            <span className="text-lg font-extrabold tracking-tight">CashWell</span>
+          </div>
+
+          <div className="mt-12 grid items-center gap-10 lg:grid-cols-[1fr_300px]">
+            <div>
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="text-sm font-bold uppercase tracking-[0.2em] text-brand-400"
+              >
+                About us
+              </motion.p>
+              <motion.h1
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+                className="mt-4 max-w-3xl text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl"
+              >
+                Money tracking that stays out of your way
+              </motion.h1>
+            </div>
+            <motion.img
+              src="/CashWell_Logo.png"
+              alt="CashWell logo"
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+              className="mx-auto hidden w-60 object-contain drop-shadow-2xl lg:block"
+            />
+          </div>
         </div>
       </section>
 
@@ -78,19 +96,21 @@ export default function About() {
       </section>
 
       {/* values */}
-      <section className="border-y border-slate-200 bg-white">
-        <div className="mx-auto max-w-6xl px-6 md:pl-28 py-16 md:py-20">
-          <Reveal>
+      <section className="bg-brand-50">
+        <div className="mx-auto max-w-6xl px-6 py-16 md:pl-28 md:py-20">
+          <Reveal className="text-center">
             <h2 className="text-3xl font-extrabold text-ink">What we care about</h2>
           </Reveal>
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
             {values.map(({ icon: Icon, title, text }, i) => (
               <Reveal key={title} delay={i * 0.1}>
-                <div className="group h-full border border-slate-200 bg-[#f6f8f7] p-7 transition duration-300 hover:-translate-y-1 hover:border-brand-500 hover:shadow-lg">
-                  <span className="grid size-12 place-items-center rounded-full bg-brand-600 text-white transition group-hover:scale-110">
-                    <Icon className="size-5" />
+                <div className="group h-full rounded-[1.75rem] bg-white p-8 text-center shadow-md ring-1 ring-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+                  <span className="mx-auto grid size-32 place-items-center rounded-full bg-brand-50 ring-1 ring-brand-100 transition duration-300 group-hover:scale-105">
+                    <span className="grid size-24 place-items-center rounded-full bg-brand-600 text-white shadow-lg">
+                      <Icon className="size-12" strokeWidth={1.75} />
+                    </span>
                   </span>
-                  <h3 className="mt-5 text-xl font-extrabold text-ink">{title}</h3>
+                  <h3 className="mt-6 text-xl font-extrabold text-ink">{title}</h3>
                   <p className="mt-2 leading-7 text-slate-600">{text}</p>
                 </div>
               </Reveal>
@@ -100,17 +120,22 @@ export default function About() {
       </section>
 
       {/* tech stack */}
-      <section className="mx-auto max-w-6xl px-6 md:pl-28 py-16 md:py-20">
+      <section className="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-[1fr_2fr] lg:gap-16">
         <Reveal>
-          <h2 className="text-3xl font-extrabold text-ink">What it's built with</h2>
-          <p className="mt-3 max-w-2xl text-slate-600">And a one-line reason for each choice.</p>
+          <h2 className="text-3xl font-extrabold text-ink md:text-4xl">What it's built with</h2>
+          <p className="mt-3 max-w-sm text-slate-600">And a one-line reason for each choice.</p>
         </Reveal>
-        <div className="mt-10 grid gap-x-10 gap-y-6 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           {stack.map((s, i) => (
             <Reveal key={s.name} delay={(i % 2) * 0.08}>
-              <div className="border-l-4 border-brand-600 pl-5">
-                <h3 className="font-extrabold text-ink">{s.name}</h3>
-                <p className="mt-1 text-sm leading-6 text-slate-600">{s.why}</p>
+              <div className="flex h-full gap-4 rounded-[1.5rem] bg-white p-5 shadow-sm ring-1 ring-slate-200/70">
+                <span className="grid size-9 shrink-0 place-items-center rounded-full bg-brand-600 text-white">
+                  <Check className="size-4" strokeWidth={3} />
+                </span>
+                <div>
+                  <h3 className="font-extrabold text-ink">{s.name}</h3>
+                  <p className="mt-1 text-sm leading-6 text-slate-600">{s.why}</p>
+                </div>
               </div>
             </Reveal>
           ))}
@@ -124,7 +149,7 @@ export default function About() {
           <p className="mx-auto mt-4 max-w-xl text-white/80">Create an account, or open the demo from the login page.</p>
           <Link
             to="/login"
-            className="mt-8 inline-flex items-center gap-2 bg-white px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-brand-900 transition hover:bg-brand-50 active:scale-95"
+            className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-bold uppercase tracking-wider text-brand-900 transition hover:bg-brand-50 active:scale-95"
           >
             Login / Sign up <ArrowRight className="size-4" />
           </Link>
