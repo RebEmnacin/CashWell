@@ -23,7 +23,9 @@ Log income and expenses, set monthly budgets, and watch a live dashboard update 
 
 ## Screenshots
 
-> Add your screenshots to `docs/screenshots/` and uncomment the lines below.
+<p align="center">
+  <img src="docs/screenshots/CashWell-Screenshot.png" alt="CashWell landing page" width="800" />
+</p>
 
 <!--
 | Dashboard | Budgets |
