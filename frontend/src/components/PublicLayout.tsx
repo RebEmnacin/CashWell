@@ -29,7 +29,7 @@ function Tab({ to, end, label, icon: Icon }: (typeof tabs)[number]) {
                   initial={{ x: '-100%' }}
                   animate={{ x: 0 }}
                   transition={{ duration: 0.3, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-                  className="flex h-16 items-center whitespace-nowrap rounded-r-full border-4 border-l-0 border-white bg-brand-600 pl-9 pr-7 text-[15px] font-semibold text-white"
+                  className="flex h-16 items-center whitespace-nowrap rounded-r-full border-4 border-l-0 border-white bg-white pl-9 pr-7 text-[15px] font-semibold text-brand-700"
                 >
                   {label}
                 </motion.span>
