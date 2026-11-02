@@ -58,6 +58,9 @@ def list_transactions(
              .offset((page - 1) * limit).limit(limit).all())
     return {"items": items, "total": total}
 
+def _csv_safe(value: str) -> str:
+    """Stop Excel/Sheets from running a note like =HYPERLINK(...) as a formula."""
+    return "'" + value if value[:1] in ("=", "+", "-", "@", "\t", "\r") else value
 
 @router.get("/export")
 def export_csv(
@@ -75,7 +78,7 @@ def export_csv(
     writer = csv.writer(buf)
     writer.writerow(["Date", "Type", "Category", "Description", "Amount"])
     for t in rows:
-        writer.writerow([t.date.isoformat(), t.type, t.category.name, t.description, f"{t.amount:.2f}"])
+        writer.writerow([t.date.isoformat(), t.type, _csv_safe(t.category.name), _csv_safe(t.description), f"{t.amount:.2f}"])
     return Response(
         content=buf.getvalue(),
         media_type="text/csv",
