@@ -21,6 +21,10 @@ const SHAPES = 'path, circle, rect, line, polyline, polygon, ellipse'
 // so offset 1 = fully hidden, offset 0 = fully drawn.
 const DASH = '1 1.5'
 
+// false = always play the drawing, even if the computer has "reduce motion" / "animation effects off" turned on.
+// true  = respect that accessibility setting (those people just see the finished icon, no drawing).
+const RESPECT_REDUCED_MOTION = false
+
 type LineIconProps = {
   icon: LucideIcon
   className?: string
@@ -42,14 +46,15 @@ export default function LineIcon({
   const hasDrawn = useRef(false)
   const inView = useInView(ref, { once: true, margin: '-60px' })
 
-  // people who turned on "reduce motion" in their OS just see the finished icon
-  const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  // only true when the switch above is on AND the person's computer asks for reduced motion
+  const reduced =
+    RESPECT_REDUCED_MOTION && typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   const getShapes = () => Array.from(ref.current?.querySelectorAll<SVGElement>(SHAPES) ?? [])
 
   // runs before the first paint: hide every line so the finished icon never flashes on screen
   useLayoutEffect(() => {
-    if (reduced) return
+    if (reduced || hasDrawn.current) return // hasDrawn: never re-hide an icon that already drew (hot reload safe)
     getShapes().forEach((el) => {
       el.setAttribute('pathLength', '1')
       el.style.strokeDasharray = DASH
