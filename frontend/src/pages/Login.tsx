@@ -29,7 +29,7 @@ export default function Login() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  if (token) return <Navigate to="/" replace />
+  if (token) return <Navigate to="/dashboard" replace />>
 
   const switchTo = (toSignUp: boolean) => {
     setError('')
@@ -42,7 +42,7 @@ export default function Login() {
     try {
       const res = await action()
       setAuth(res.access_token, res.user)
-      navigate('/')
+      navigate('/dashboard')
     } catch (err) {
       setError(errorMessage(err))
     } finally {

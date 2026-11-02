@@ -5,7 +5,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 
 const links = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
+  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: false },
   { to: '/transactions', label: 'Transactions', icon: ReceiptText, end: false },
   { to: '/budgets', label: 'Budgets', icon: PiggyBank, end: false },
 ]
