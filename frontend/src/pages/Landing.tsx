@@ -117,113 +117,197 @@ export default function Landing() {
   return (
     <>
       {/* ============ HERO ============ */}
-      <section className="relative overflow-hidden bg-linear-to-br from-brand-900 via-brand-900 to-brand-700 text-white">
-        {/* big faint rings in the background */}
-        <div className="pointer-events-none absolute -left-40 -top-48 size-[520px] rounded-full border-[70px] border-white/[0.04]" />
-        <div className="pointer-events-none absolute -bottom-56 right-[18%] size-[560px] rounded-full border-[70px] border-white/[0.05]" />
-        <div className="pointer-events-none absolute right-[-120px] top-10 size-[320px] rounded-full border-[50px] border-brand-500/10" />
+      <div className="relative">
+        <section className="relative overflow-hidden bg-linear-to-br from-brand-900 via-brand-900 to-brand-700 text-white">
+          {/* big faint rings in the background */}
+          <div className="pointer-events-none absolute -left-40 -top-48 size-[520px] rounded-full border-[70px] border-white/[0.04]" />
+          <div className="pointer-events-none absolute -bottom-56 right-[18%] size-[560px] rounded-full border-[70px] border-white/[0.05]" />
+          <div className="pointer-events-none absolute right-[-120px] top-10 size-[320px] rounded-full border-[50px] border-brand-500/10" />
 
-        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 md:pl-28 py-20 md:py-28 lg:grid-cols-[1fr_320px]">
-          <div>
-            <div className="min-h-[300px] sm:min-h-[280px]">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={slide}
-                  initial={{ opacity: 0, x: 40 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -40 }}
-                  transition={{ duration: 0.35, ease: 'easeOut' }}
-                >
-                  <h1 className="max-w-2xl text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
-                    {current.title}
-                  </h1>
-                  <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/85">{current.body}</p>
-                </motion.div>
-              </AnimatePresence>
+          <div className="relative mx-auto max-w-6xl px-6 pb-32 pt-8 md:pl-28 md:pb-36">
+            {/* brand mark, top left */}
+            <div className="flex items-center gap-3">
+              <img src="/CashWell_Logo.png" alt="" className="size-9 object-contain" />
+              <span className="text-lg font-extrabold tracking-tight">CashWell</span>
             </div>
 
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              {startBtn}
-              <button type="button" onClick={tryDemo} disabled={busy} className={outlineBtn}>
-                {busy ? 'Opening…' : 'Try the demo'}
-              </button>
-            </div>
-            {demoError && <p className="mt-3 text-sm font-medium text-red-300">{demoError}</p>}
+            <div className="mt-10 grid items-center gap-12 lg:mt-6 lg:grid-cols-[1fr_380px]">
+              {/* text side */}
+              <div>
+                <div className="min-h-[300px] sm:min-h-[280px]">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={slide}
+                      initial={{ opacity: 0, x: 40 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -40 }}
+                      transition={{ duration: 0.35, ease: 'easeOut' }}
+                    >
+                      <h1 className="max-w-2xl text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
+                        {current.title}
+                      </h1>
+                      <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/85">{current.body}</p>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
 
-            {/* slide controls */}
-            <div className="mt-10 flex items-center gap-4">
-              <button type="button" aria-label="Previous slide" onClick={() => go(-1)} className="grid size-10 cursor-pointer place-items-center border border-white/30 transition hover:bg-white/10">
-                <ChevronLeft className="size-5" />
-              </button>
-              <div className="flex gap-2">
-                {slides.map((_, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    aria-label={`Go to slide ${i + 1}`}
-                    onClick={() => setSlide(i)}
-                    className={`h-1.5 cursor-pointer transition-all duration-300 ${i === slide ? 'w-10 bg-white' : 'w-5 bg-white/30 hover:bg-white/50'}`}
-                  />
-                ))}
+                <div className="mt-8 flex flex-wrap items-center gap-3">
+                  {startBtn}
+                  <button type="button" onClick={tryDemo} disabled={busy} className={outlineBtn}>
+                    {busy ? 'Opening…' : 'Try the demo'}
+                  </button>
+                </div>
+                {demoError && <p className="mt-3 text-sm font-medium text-red-300">{demoError}</p>}
+
+                {/* slide controls: arrows + (on phones) horizontal dots */}
+                <div className="mt-10 flex items-center gap-4">
+                  <button type="button" aria-label="Previous slide" onClick={() => go(-1)} className="grid size-10 cursor-pointer place-items-center rounded-full border border-white/30 transition hover:bg-white/10">
+                    <ChevronLeft className="size-5" />
+                  </button>
+                  <div className="flex gap-2 lg:hidden">
+                    {slides.map((_, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        aria-label={`Go to slide ${i + 1}`}
+                        onClick={() => setSlide(i)}
+                        className={`h-1.5 cursor-pointer rounded-full transition-all duration-300 ${i === slide ? 'w-10 bg-white' : 'w-5 bg-white/30 hover:bg-white/50'}`}
+                      />
+                    ))}
+                  </div>
+                  <span className="hidden text-sm font-bold tabular-nums tracking-widest text-white/70 lg:block">
+                    0{slide + 1} / 0{slides.length}
+                  </span>
+                  <button type="button" aria-label="Next slide" onClick={() => go(1)} className="grid size-10 cursor-pointer place-items-center rounded-full border border-white/30 transition hover:bg-white/10">
+                    <ChevronRight className="size-5" />
+                  </button>
+                </div>
               </div>
-              <button type="button" aria-label="Next slide" onClick={() => go(1)} className="grid size-10 cursor-pointer place-items-center border border-white/30 transition hover:bg-white/10">
-                <ChevronRight className="size-5" />
-              </button>
+
+              {/* image side: the logo in a tall, round-topped panel */}
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+                className="relative mx-auto grid h-[340px] w-full max-w-[300px] place-items-center rounded-t-[150px] bg-linear-to-b from-brand-500/30 to-brand-400/5 ring-1 ring-white/10 lg:h-[440px] lg:max-w-[380px] lg:rounded-t-[190px]"
+              >
+                <motion.img
+                  src="/CashWell_Logo.png"
+                  alt="CashWell logo"
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+                  className="w-[78%] max-w-[300px] object-contain drop-shadow-2xl"
+                />
+              </motion.div>
             </div>
           </div>
 
-          {/* promo card */}
-          <motion.aside
-            initial={{ opacity: 0, y: 40 }}
+          {/* vertical slide dots on the right edge (desktop) */}
+          <div className="absolute right-6 top-1/2 hidden -translate-y-1/2 flex-col gap-3 lg:flex">
+            {slides.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                aria-label={`Go to slide ${i + 1}`}
+                onClick={() => setSlide(i)}
+                className={`w-1.5 cursor-pointer rounded-full transition-all duration-300 ${i === slide ? 'h-10 bg-white' : 'h-5 bg-white/30 hover:bg-white/50'}`}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* floating pill bar straddling the bottom edge of the hero (the old "NEW here?" card) */}
+        <div className="absolute inset-x-0 bottom-0 z-10 translate-y-1/2 px-6 md:pl-28">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="mx-auto w-full max-w-[320px] bg-brand-600 p-8 text-center shadow-2xl"
+            transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="mx-auto flex max-w-4xl flex-col items-stretch gap-3 rounded-[2rem] bg-brand-100 p-3 shadow-2xl md:flex-row md:items-center md:rounded-full"
           >
-            <p className="text-sm font-extrabold uppercase tracking-[0.2em] text-white/70">Free for everyone</p>
-            <div className="my-4 h-1 bg-white/30" />
-            <p className="text-6xl font-black leading-none">NEW</p>
-            <p className="mt-2 text-2xl font-extrabold uppercase tracking-wide">here?</p>
-            <div className="my-4 h-1 bg-white/30" />
+            <div className="flex flex-1 items-center justify-between gap-4 rounded-full bg-white px-6 py-3.5 text-brand-900">
+              <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-slate-400">Free for everyone</p>
+              <p className="text-lg font-black uppercase tracking-wide">
+                New <span className="text-brand-600">here?</span>
+              </p>
+            </div>
             <Link
               to={token ? '/dashboard' : '/login'}
-              className="mt-2 block bg-white px-4 py-3.5 text-lg font-black uppercase italic tracking-wide text-brand-700 transition hover:bg-brand-50"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-600 px-8 py-4 text-sm font-black uppercase italic tracking-wider text-white transition hover:bg-brand-700 active:scale-95"
             >
-              {token ? 'Open app' : 'Join now'}
+              {token ? 'Open app' : 'Join now'} <ArrowRight className="size-4" />
             </Link>
-          </motion.aside>
+          </motion.div>
         </div>
-      </section>
+      </div>
 
       {/* ============ INTRO ============ */}
-      <section className="mx-auto max-w-6xl px-6 md:pl-28 py-16 md:py-20">
+      <section className="mx-auto grid max-w-6xl items-center gap-12 px-6 pb-16 pt-32 md:pl-28 md:pb-20 lg:grid-cols-2">
+        {/* image card with round badges */}
         <Reveal>
+          <div className="relative mx-auto max-w-md">
+            <div className="rotate-[-2deg] rounded-[1.75rem] bg-white p-3 shadow-xl ring-1 ring-slate-200">
+              <div className="grid aspect-[4/3] place-items-center rounded-[1.25rem] bg-linear-to-br from-brand-900 via-brand-900 to-brand-700">
+                <img src="/CashWell_Logo.png" alt="CashWell logo" className="w-1/2 object-contain" />
+              </div>
+            </div>
+            <span className="absolute -left-5 -top-5 grid size-20 place-items-center rounded-full bg-brand-600 text-center text-[11px] font-extrabold uppercase leading-tight text-white shadow-lg ring-4 ring-white">
+              Made<br />simple
+            </span>
+            <span className="absolute -bottom-4 -right-4 grid size-14 place-items-center rounded-full bg-white text-brand-600 shadow-lg ring-4 ring-brand-100">
+              <PiggyBank className="size-6" />
+            </span>
+          </div>
+        </Reveal>
+
+        <Reveal delay={0.1}>
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400">Home</p>
-          <h2 className="mt-3 max-w-3xl text-3xl font-extrabold leading-tight text-brand-600 md:text-4xl">
+          <h2 className="mt-3 max-w-xl text-3xl font-extrabold leading-tight text-brand-600 md:text-4xl">
             CashWell: personal finance tracking, made simple
           </h2>
-          <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
+          <p className="mt-5 max-w-xl text-lg leading-8 text-slate-600">
             CashWell helps you keep an honest eye on your money. Record what you earn and spend, set budgets for the
             categories that matter, and let the charts do the maths. It is built to be quick to use, so you actually keep using it.
           </p>
+          <div className="mt-8 flex flex-wrap items-center gap-5">
+            <Link
+              to={token ? '/dashboard' : '/login'}
+              className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-brand-700 active:scale-95"
+            >
+              {token ? 'Open dashboard' : 'Get started'} <ArrowRight className="size-4" />
+            </Link>
+            <Link to="/about" className="text-sm font-bold uppercase tracking-wider text-brand-600 underline-offset-4 hover:underline">
+              About us
+            </Link>
+          </div>
         </Reveal>
       </section>
 
       {/* ============ FEATURES ============ */}
-      <section className="border-y border-slate-200 bg-white">
-        <div className="mx-auto max-w-6xl px-6 md:pl-28 py-16 md:py-20">
-          <Reveal>
+      <section className="bg-brand-50">
+        <div className="mx-auto max-w-6xl px-6 py-16 md:pl-28 md:py-20">
+          <Reveal className="text-center">
             <h2 className="text-3xl font-extrabold text-ink">Everything you need, nothing you don't</h2>
-            <p className="mt-3 max-w-2xl text-slate-600">Four things CashWell does well.</p>
+            <p className="mx-auto mt-3 max-w-2xl text-slate-600">Four things CashWell does well.</p>
           </Reveal>
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {features.map(({ icon: Icon, title, text }, i) => (
               <Reveal key={title} delay={i * 0.08}>
-                <div className="group h-full border border-slate-200 bg-[#f6f8f7] p-6 transition duration-300 hover:-translate-y-1 hover:border-brand-500 hover:shadow-lg">
-                  <span className="grid size-12 place-items-center rounded-full bg-brand-600 text-white transition group-hover:scale-110">
-                    <Icon className="size-5" />
-                  </span>
-                  <h3 className="mt-5 text-lg font-extrabold text-ink">{title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
+                <div className="group flex h-full flex-col overflow-hidden rounded-[1.75rem] bg-white shadow-md ring-1 ring-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+                  <div className="grid h-36 place-items-center bg-linear-to-br from-brand-900 to-brand-600">
+                    <span className="grid size-16 place-items-center rounded-full bg-white/15 text-white ring-1 ring-white/30 transition group-hover:scale-110">
+                      <Icon className="size-7" />
+                    </span>
+                  </div>
+                  <div className="flex flex-1 flex-col p-6">
+                    <h3 className="text-lg font-extrabold text-ink">{title}</h3>
+                    <p className="mt-2 flex-1 text-sm leading-6 text-slate-600">{text}</p>
+                    <Link
+                      to={token ? '/dashboard' : '/login'}
+                      className="mt-5 inline-flex w-fit items-center gap-1.5 rounded-full bg-brand-600 px-5 py-2 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-brand-700 active:scale-95"
+                    >
+                      Try it <ArrowRight className="size-3.5" />
+                    </Link>
+                  </div>
                 </div>
               </Reveal>
             ))}
