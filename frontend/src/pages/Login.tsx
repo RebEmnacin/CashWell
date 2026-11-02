@@ -161,7 +161,7 @@ export default function Login() {
         >
           {/* the overlay is 2x wide; we only ever see one half of it */}
           <div
-            className={`relative -left-full h-full w-[200%] bg-linear-to-r from-brand-900 via-brand-700 to-brand-500 text-white ${SLIDE} ${
+            className={`relative -left-full h-full w-[200%] bg-brand-600 text-white ${SLIDE} ${
               signUp ? 'translate-x-1/2' : 'translate-x-0'
             }`}
           >
