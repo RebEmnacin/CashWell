@@ -5,7 +5,7 @@ import { authApi } from '../api/endpoints'
 import { useAuthStore } from '../store/authStore'
 
 const field =
-  'my-2.5 block w-full border-0 border-b-2 border-transparent bg-slate-100 px-5 py-4 text-base text-ink outline-none transition-colors placeholder:text-slate-400 focus:border-brand-600 focus:bg-white'
+  'my-2.5 block w-full border-0 border-b-2 border-transparent bg-white px-5 py-4 text-base text-ink outline-none transition-colors placeholder:text-slate-400 focus:border-brand-600 focus:bg-white'
 
 const solidBtn =
   'mt-4 cursor-pointer border border-brand-600 bg-brand-600 px-14 py-4 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-brand-700 active:scale-95 disabled:cursor-default disabled:opacity-60'
@@ -66,13 +66,13 @@ export default function Login() {
     </p>
   )
 
-  const formBox = 'flex h-full flex-col items-center justify-center bg-white px-16 text-center max-[640px]:px-6'
+  const formBox = 'flex h-full flex-col items-center justify-center bg-brand-50 px-16 text-center max-[640px]:px-6'
   const mobileSwitch = 'mt-5 hidden text-sm text-slate-600 max-[640px]:block'
   const linkBtn = 'cursor-pointer font-bold text-brand-600 hover:underline'
 
   return (
     <div className="grid min-h-screen grid-cols-[minmax(0,1fr)] place-items-center bg-[#f6f8f7] p-4 md:pl-56 md:pr-8">
-      <div className="relative min-h-[620px] w-[1040px] max-w-full overflow-hidden bg-white shadow-2xl max-[640px]:min-h-[560px]">
+      <div className="relative min-h-[620px] w-[1040px] max-w-full overflow-hidden bg-brand-50 shadow-2xl max-[640px]:min-h-[560px]">
         {/* ================= Sign up form (waits behind, slides to the right half) ================= */}
         <div
           inert={!signUp}
