@@ -186,3 +186,53 @@ Things to study when you review the code line by line:
 - Pytest tests for the API, and a Playwright end-to-end test
 - Docker Compose (API + Postgres) and a GitHub Actions CI workflow
 - Dark mode, multiple currencies, receipt image upload
+
+## 12. Tech stack
+
+| Layer | Tech | Why it's here |
+|---|---|---|
+| Frontend | React + TypeScript + Vite | Fast dev server, and TypeScript catches mistakes in money and date handling |
+| Styling | Tailwind CSS v4 | Quick, consistent styling for cards, tables and forms |
+| State | Zustand | Tiny store, used for the persisted login session |
+| Routing | React Router | Public pages and protected app pages in one router |
+| HTTP | Axios | An interceptor adds the token and signs the user out on a 401 |
+| Charts | Recharts | Simple chart components that plug straight into React |
+| Animation | React Spring + Motion | Physics-based counters, modal and progress bars, plus layout and scroll animation |
+| Backend | FastAPI | Python, automatic validation with Pydantic, and free API docs at `/docs` |
+| Database | SQLAlchemy + PostgreSQL | Dashboard numbers are `GROUP BY` / `SUM` queries, which Postgres handles well |
+| Local dev | SQLite fallback | Run the whole project with zero database setup |
+
+## 13. Project structure
+
+```
+CashWell/
+├── backend/app/
+│   ├── main.py          # app, CORS, routers
+│   ├── database.py      # engine and session (SQLite or Postgres)
+│   ├── models.py        # users, categories, transactions, budgets
+│   ├── schemas.py       # request/response validation
+│   ├── security.py      # bcrypt, JWT, get_current_user
+│   ├── seed.py          # default categories and demo data
+│   └── routers/         # auth, categories, transactions, budgets, analytics
+└── frontend/src/
+    ├── api/             # axios client and endpoint functions
+    ├── store/           # zustand auth store
+    ├── pages/           # Landing, Login, About, Dashboard, Transactions, Budgets, Account
+    ├── components/      # Layout, PublicLayout, TransactionModal, AnimatedNumber, LineIcon...
+    ├── hooks/           # useCategories
+    └── lib/             # currency and date formatting
+```
+
+## 14. Run it locally
+
+Short version: start the backend (`uvicorn app.main:app --reload`) and the frontend (`npm run dev`), then open http://localhost:5173.
+
+The full step-by-step guide, environment variables, deployment notes and troubleshooting are in **[SETUP.md](SETUP.md)**.
+
+## 15. Roadmap
+
+- [ ] Custom category management screen
+- [ ] Recurring transactions (rent, subscriptions)
+- [ ] Automated tests (Pytest for the API, Playwright end to end)
+- [ ] Docker Compose (API + Postgres) and a CI workflow
+- [ ] Dark mode, multiple currencies, receipt uploads
