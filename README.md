@@ -1,133 +1,148 @@
-# CashWell — Personal Finance Tracker
+<div align="center">
 
-Log income and expenses, set monthly budgets, and see where your money goes on a live dashboard.
+<img src="frontend/public/CashWell_Logo.png" alt="CashWell logo" width="96" />
 
-**Stack:** React + TypeScript · Vite · Tailwind CSS v4 · Zustand · React Router · Axios · Recharts · React Spring · FastAPI · SQLAlchemy · PostgreSQL (SQLite for local dev)
+# CashWell
+
+**A personal finance tracker that shows you where your money goes.**
+
+Log income and expenses, set monthly budgets, and watch a live dashboard update as you go.
+
+![React](https://img.shields.io/badge/React_19-20232a?logo=react&logoColor=61dafb)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646cff?logo=vite&logoColor=white)
+![Tailwind](https://img.shields.io/badge/Tailwind_v4-06b6d4?logo=tailwindcss&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169e1?logo=postgresql&logoColor=white)
+
+[Live demo](#) · [Features](#features) · [Run it locally](SETUP.md) · [API](#api-overview)
+
+</div>
+
+---
+
+## Screenshots
+
+> Add your screenshots to `docs/screenshots/` and uncomment the lines below.
+
+<!--
+| Dashboard | Budgets |
+|---|---|
+| ![Dashboard](docs/screenshots/dashboard.png) | ![Budgets](docs/screenshots/budgets.png) |
+
+| Transactions | Landing page |
+|---|---|
+| ![Transactions](docs/screenshots/transactions.png) | ![Landing](docs/screenshots/landing.png) |
+-->
+
+## Try it in one click
+
+No sign-up needed. Open the app and press **Try the demo account** to explore a dashboard filled with six months of sample data.
 
 ## Features
 
-- Sign up / log in (JWT auth, bcrypt-hashed passwords) and a one-click **demo account** with 6 months of sample data
-- Add, edit, delete transactions with categories
-- Search, filter (type, category, date range) and paginate
-- **Export to CSV** (respects your current filters)
-- Monthly **budgets** with progress bars (green → amber → red)
-- **Dashboard**: net balance, income, expenses, savings rate, change vs last month, income-vs-expense chart, spending-by-category donut, recent activity
-- Animated number counters, smooth modal and progress bars (React Spring), responsive layout with mobile tab bar
+**Money tracking**
+- Add, edit and delete transactions, each with a category, date and note
+- Search by note, filter by type, category and date range, and paginate the results
+- Export your transactions to CSV (the export respects your current filters)
 
-## Why this stack
+**Budgets**
+- Set a monthly limit for each expense category
+- Progress bars change from green to amber to red as you approach the limit
+- See how much is left, or how far over you are
 
-| Tech | Why |
-|---|---|
-| React + TypeScript + Vite | Fast dev server; TypeScript catches mistakes in money and date handling |
-| Zustand | Tiny store, used here for the login session (persisted to localStorage) |
-| Tailwind v4 | Quick, consistent styling for cards, tables and forms |
-| Recharts | Simple chart components that plug straight into React |
-| React Spring | Physics-based animation for counters, modal and progress bars |
-| FastAPI | Python, automatic validation (Pydantic) and free API docs at `/docs` |
-| SQLAlchemy + Postgres | Dashboard numbers are `GROUP BY` / `SUM` queries; Postgres excels at that |
-| SQLite fallback | Run the project with zero database setup |
+**Dashboard**
+- Net balance, income, expenses and savings rate for any month
+- Change versus last month on income and expenses
+- Income vs. expenses chart for the last 6 months
+- Spending-by-category donut chart and recent activity
 
-## Run it locally
+**Experience**
+- Animated number counters, springy modal and progress bars
+- Custom animated sidebar and floating navigation
+- Fully responsive, with a bottom tab bar on mobile
 
-You need **Python 3.10+** and **Node 18+**.
+**Accounts and security**
+- Sign up and log in with JWT sessions and bcrypt-hashed passwords
+- Every query is scoped to the logged-in user, so nobody can see anyone else's data
 
-### 1. Backend (terminal 1)
+## Tech stack
 
-```bash
-cd backend
-python -m venv venv
+| Layer | Tech | Why it's here |
+|---|---|---|
+| Frontend | React + TypeScript + Vite | Fast dev server, and TypeScript catches mistakes in money and date handling |
+| Styling | Tailwind CSS v4 | Quick, consistent styling for cards, tables and forms |
+| State | Zustand | Tiny store, used for the persisted login session |
+| Routing | React Router | Public pages and protected app pages in one router |
+| HTTP | Axios | An interceptor adds the token and signs the user out on a 401 |
+| Charts | Recharts | Simple chart components that plug straight into React |
+| Animation | React Spring + Motion | Physics-based counters, modal and progress bars, plus layout and scroll animation |
+| Backend | FastAPI | Python, automatic validation with Pydantic, and free API docs at `/docs` |
+| Database | SQLAlchemy + PostgreSQL | Dashboard numbers are `GROUP BY` / `SUM` queries, which Postgres handles well |
+| Local dev | SQLite fallback | Run the whole project with zero database setup |
 
-Required:
-# Windows: venv\Scripts\activate     Mac/Linux: source venv/bin/activate
-
-pip install -r requirements.txt
-cp .env.example .env        # Windows: copy .env.example .env
-uvicorn app.main:app --reload
-```
-
-API runs at http://localhost:8000 — interactive docs at http://localhost:8000/docs.
-Tables are created automatically on first start (a `finance.db` file appears).
-
-### 2. Frontend (terminal 2)
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Open http://localhost:5173 and click **Try the demo account**.
-
-### Use Postgres (e.g. NeonDB) instead of SQLite
-
-In `backend/.env`, set:
+## How it works
 
 ```
-DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
+React app (Vite)  ──Axios + JWT──▶  FastAPI  ──SQLAlchemy──▶  PostgreSQL (SQLite locally)
 ```
 
-Restart the backend. No code changes needed.
+Frontend routes: `/` (landing), `/login`, `/about`, and the protected `/dashboard`, `/transactions`, `/budgets`, `/account`.
 
-## Deploy
+### Engineering decisions worth knowing about
 
-- **Backend:** Render / Railway / Fly.io. Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`. Set `DATABASE_URL`, `SECRET_KEY` and `CORS_ORIGINS` (your frontend URL).
-- **Frontend:** Vercel / Netlify. Build command `npm run build`, output `dist`. Set `VITE_API_URL=https://<your-backend>/api`. Add a rewrite of all paths to `/index.html` (React Router).
+1. **Data isolation.** Every query filters by `user_id`, and category ownership is re-checked on every write, so one user can't attach a transaction to another user's category.
+2. **The server decides the type.** A transaction's `income` or `expense` type is copied from its category on the server and never trusted from the client.
+3. **Aggregation in SQL.** Totals, per-category sums and the 6-month chart use `GROUP BY` + `SUM` in the database. Empty months are filled with zeros so the chart has no gaps.
+4. **Date-range correctness.** Month queries use `date >= first_of_month AND date < first_of_next_month` (end exclusive), so no day is missed or counted twice.
+5. **Debounced search.** The search box waits 350 ms after typing stops, so the API isn't called on every keystroke.
+
+## API overview
+
+Interactive docs are served at `/docs` when the backend is running.
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| POST | `/api/auth/register` · `/login` · `/demo` | Create an account, log in, or open the demo account |
+| GET | `/api/auth/me` | Current user |
+| GET / POST / DELETE | `/api/categories` | Manage categories |
+| GET / POST / PUT / DELETE | `/api/transactions` | CRUD with filters and pagination |
+| GET | `/api/transactions/export` | CSV download |
+| GET | `/api/budgets?month=YYYY-MM` | Budgets with the amount spent |
+| PUT / DELETE | `/api/budgets/{category_id}` | Set (upsert) or remove a budget |
+| GET | `/api/analytics/summary` · `/by-category` · `/monthly` | Dashboard data |
 
 ## Project structure
 
 ```
-backend/app/
-  main.py          app + CORS + routers
-  database.py      engine/session (SQLite or Postgres)
-  models.py        tables: users, categories, transactions, budgets
-  schemas.py       request/response validation
-  security.py      bcrypt, JWT, get_current_user
-  seed.py          default categories + demo data
-  routers/         auth, categories, transactions, budgets, analytics
-frontend/src/
-  api/             axios client + endpoint functions
-  store/           zustand auth store
-  pages/           Login, Dashboard, Transactions, Budgets
-  components/      Layout, TransactionModal, AnimatedNumber, PageHeader
+CashWell/
+├── backend/app/
+│   ├── main.py          # app, CORS, routers
+│   ├── database.py      # engine and session (SQLite or Postgres)
+│   ├── models.py        # users, categories, transactions, budgets
+│   ├── schemas.py       # request/response validation
+│   ├── security.py      # bcrypt, JWT, get_current_user
+│   ├── seed.py          # default categories and demo data
+│   └── routers/         # auth, categories, transactions, budgets, analytics
+└── frontend/src/
+    ├── api/             # axios client and endpoint functions
+    ├── store/           # zustand auth store
+    ├── pages/           # Landing, Login, About, Dashboard, Transactions, Budgets, Account
+    ├── components/      # Layout, PublicLayout, TransactionModal, AnimatedNumber, LineIcon...
+    ├── hooks/           # useCategories
+    └── lib/             # currency and date formatting
 ```
 
-## API overview
+## Run it locally
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| POST | `/api/auth/register` `/login` `/demo` | Create account, log in, demo account |
-| GET | `/api/auth/me` | Current user |
-| GET/POST/DELETE | `/api/categories` | Manage categories |
-| GET/POST/PUT/DELETE | `/api/transactions` | CRUD + filters + pagination |
-| GET | `/api/transactions/export` | CSV download |
-| GET | `/api/budgets?month=YYYY-MM` | Budgets with amount spent |
-| PUT/DELETE | `/api/budgets/{category_id}` | Set (upsert) or remove a budget |
-| GET | `/api/analytics/summary` `/by-category` `/monthly` | Dashboard data |
+Short version: start the backend (`uvicorn app.main:app --reload`) and the frontend (`npm run dev`), then open http://localhost:5173.
 
-## Hard problems worth writing about
+The full step-by-step guide, environment variables, deployment notes and troubleshooting are in **[SETUP.md](SETUP.md)**.
 
-1. **Data isolation.** Every query filters by `user_id`, and category ownership is re-checked on every write so one user can't attach a transaction to another user's category.
-2. **Server decides the type.** A transaction's `income`/`expense` type is copied from its category on the server, never trusted from the client.
-3. **Aggregation in SQL.** Totals, per-category sums and the 6-month chart use `GROUP BY` + `SUM` in the database, not loops in Python. Empty months are filled with zeros so the chart has no gaps.
-4. **Date-range bugs.** Month queries use `date >= first_of_month AND date < first_of_next_month` (end exclusive) so no day is missed or double counted.
-5. **Debounced search.** The search box waits 350 ms after typing stops so the API isn't called on every keystroke.
+## Roadmap
 
-## Learn-later checklist
-
-Things to study when you review the code line by line:
-
-- [ ] How `Depends(get_db)` and `Depends(get_current_user)` work in FastAPI
-- [ ] How a JWT is created and verified (`security.py`)
-- [ ] SQLAlchemy `group_by`, `func.sum`, `joinedload` (`routers/analytics.py`, `transactions.py`)
-- [ ] How the Axios interceptor adds the token (`api/client.ts`)
-- [ ] Zustand `persist` middleware (`store/authStore.ts`)
-- [ ] `useEffect` + `useCallback` data loading pattern (`pages/Dashboard.tsx`)
-- [ ] `useSpring` / `useTransition` from React Spring
-
-## Ideas to extend it
-
-- Recurring transactions (rent, subscriptions)
-- Custom category management screen
-- Pytest tests for the API and a Playwright end-to-end test
-- Docker Compose (API + Postgres) and a GitHub Actions CI workflow
-- Dark mode, multiple currencies, receipt image upload
+- [ ] Custom category management screen
+- [ ] Recurring transactions (rent, subscriptions)
+- [ ] Automated tests (Pytest for the API, Playwright end to end)
+- [ ] Docker Compose (API + Postgres) and a CI workflow
+- [ ] Dark mode, multiple currencies, receipt uploads
