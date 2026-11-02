@@ -309,17 +309,22 @@ export default function Landing() {
       </section>
 
       {/* ============ HOW IT WORKS ============ */}
-      <section className="mx-auto max-w-6xl px-6 md:pl-28 py-16 md:py-20">
+      <section className="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-[1fr_2fr] lg:gap-16">
         <Reveal>
-          <h2 className="text-3xl font-extrabold text-ink">How it works</h2>
+          <h2 className="text-3xl font-extrabold text-ink md:text-4xl">How it works</h2>
         </Reveal>
-        <div className="mt-10 grid gap-8 md:grid-cols-3">
+        <div className="relative">
           {steps.map((s, i) => (
-            <Reveal key={s.n} delay={i * 0.12}>
-              <div className="border-t-4 border-brand-600 pt-5">
-                <p className="text-5xl font-black text-brand-100">{s.n}</p>
-                <h3 className="mt-3 text-xl font-extrabold text-ink">{s.title}</h3>
-                <p className="mt-2 leading-7 text-slate-600">{s.text}</p>
+            <Reveal key={s.n} delay={i * 0.12} className="group relative pb-12 last:pb-0">
+              <span className="absolute -bottom-6 left-6 top-6 w-0.5 -translate-x-1/2 bg-brand-100 group-last:hidden" aria-hidden />
+              <div className="relative flex gap-6">
+                <span className="relative grid size-12 shrink-0 place-items-center rounded-full bg-brand-600 text-base font-extrabold text-white ring-8 ring-[#f6f8f7]">
+                  {i + 1}
+                </span>
+                <div className="pt-1.5">
+                  <h3 className="text-xl font-extrabold text-ink">{s.title}</h3>
+                  <p className="mt-1.5 max-w-lg leading-7 text-slate-600">{s.text}</p>
+                </div>
               </div>
             </Reveal>
           ))}
