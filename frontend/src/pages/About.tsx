@@ -2,6 +2,7 @@ import { ArrowRight, Check, Eye, Feather, Lock, type LucideIcon } from 'lucide-r
 import { motion } from 'motion/react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import LineIcon from '../components/LineIcon'
 
 /* ---------------- content (edit the text here) ---------------- */
 
@@ -105,7 +106,7 @@ export default function About() {
                 <div className="group h-full rounded-none bg-white p-8 text-center shadow-md ring-1 ring-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
                   <span className="mx-auto grid size-32 place-items-center rounded-full bg-brand-50 ring-1 ring-brand-100 transition duration-300 group-hover:scale-105">
                     <span className="grid size-24 place-items-center rounded-full bg-brand-600 text-white shadow-lg">
-                      <Icon className="size-12" strokeWidth={1.75} />
+                      <LineIcon icon={Icon} className="size-12" strokeWidth={1.75} delay={0.25 + i * 0.1} />
                     </span>
                   </span>
                   <h3 className="mt-6 text-xl font-extrabold text-ink">{title}</h3>
@@ -128,7 +129,7 @@ export default function About() {
             <Reveal key={s.name} delay={(i % 2) * 0.08}>
               <div className="flex h-full gap-4 rounded-none bg-white p-5 shadow-sm ring-1 ring-slate-200/70">
                 <span className="grid size-9 shrink-0 place-items-center rounded-full bg-brand-600 text-white">
-                  <Check className="size-4" strokeWidth={3} />
+                  <LineIcon icon={Check} className="size-4" strokeWidth={3} delay={0.2 + (i % 2) * 0.08} replayOnHover={false} />
                 </span>
                 <div>
                   <h3 className="font-extrabold text-ink">{s.name}</h3>

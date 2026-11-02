@@ -13,6 +13,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { errorMessage } from '../api/client'
 import { authApi } from '../api/endpoints'
+import LineIcon from '../components/LineIcon'
 import { useAuthStore } from '../store/authStore'
 
 /* ---------------- content (edit the text here) ---------------- */
@@ -249,7 +250,7 @@ export default function Landing() {
               Made<br />simple
             </span>
             <span className="absolute -bottom-4 -right-4 grid size-14 place-items-center rounded-full bg-white text-brand-600 shadow-lg ring-4 ring-brand-100">
-              <PiggyBank className="size-6" />
+              <LineIcon icon={PiggyBank} className="size-6" delay={0.5} />
             </span>
           </div>
         </Reveal>
@@ -291,7 +292,7 @@ export default function Landing() {
                   {/* big graphic icon: solid disc with a soft ring around it */}
                   <span className="mx-auto grid size-32 place-items-center rounded-full bg-brand-50 ring-1 ring-brand-100 transition duration-300 group-hover:scale-105">
                     <span className="grid size-24 place-items-center rounded-full bg-brand-600 text-white shadow-lg">
-                      <Icon className="size-12" strokeWidth={1.75} />
+                      <LineIcon icon={Icon} className="size-12" strokeWidth={1.75} delay={0.25 + i * 0.08} />
                     </span>
                   </span>
                   <h3 className="mt-6 text-lg font-extrabold text-ink">{title}</h3>
