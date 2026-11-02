@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 from .database import get_db
 from .models import User
 
-SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-change-me")
+SECRET_KEY = os.environ["SECRET_KEY"]  # no fallback: the app refuses to start if this is missing
 ALGORITHM = "HS256"
 TOKEN_HOURS = 24 * 7
 
