@@ -32,12 +32,12 @@ Log income and expenses, set a monthly budget for each category, and watch a liv
 
 ## Features
 
-- 🧾 **Transactions.** Add, edit and delete them, then search, filter by type, category and date, and export to CSV.
-- 🎯 **Budgets.** A monthly limit per category, with progress bars that go from green to amber to red.
-- 📊 **Dashboard.** Balance, income, expenses and savings rate for any month, plus a six-month chart and a spending donut.
-- ✨ **Motion.** Animated counters, springy modals, and line-art icons that draw themselves.
-- 📱 **Responsive.** A bottom tab bar in the app and a hamburger menu on the public pages.
-- 🔐 **Private by design.** JWT sessions, bcrypt passwords, and every query scoped to the logged-in user.
+- **Transactions.** Add, edit and delete them, then search, filter by type, category and date, and export to CSV.
+- **Budgets.** A monthly limit per category, with progress bars that go from green to amber to red.
+- **Dashboard.** Balance, income, expenses and savings rate for any month, plus a six-month chart and a spending donut.
+- **Motion.** Animated counters, springy modals, and line-art icons that draw themselves.
+- **Responsive.** A bottom tab bar in the app and a hamburger menu on the public pages.
+- **Private by design.** JWT sessions, bcrypt passwords, and every query scoped to the logged-in user.
 
 ## Screenshots
 
@@ -84,15 +84,3 @@ The frontend and the API are separate apps, both deployed on Vercel, with Neon P
 3. **Aggregation in SQL.** Totals and the six-month chart use `GROUP BY` and `SUM`, with empty months filled in.
 4. **Date-range correctness.** Month queries use an exclusive end date, so no day is missed or counted twice.
 5. **Debounced search.** It waits 350 ms after typing stops instead of calling the API on every keystroke.
-
-## What's next
-
-A category management screen, recurring transactions, automated tests, and Docker Compose with CI.
-
-Found a bug or have an idea? [Open an issue](https://github.com/RebEmnacin/CashWell/issues).
-
-<div align="center">
-
-**Like the project? Give it a ⭐**
-
-</div>
