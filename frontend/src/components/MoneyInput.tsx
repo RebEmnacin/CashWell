@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState, type InputHTMLAttributes } from 'react'
+import type { InputHTMLAttributes } from 'react'
 import { amountTooLong, cleanAmount, DECIMAL, formatAmount, GROUP } from '../lib/format'
 
 interface Props extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'type'> {
@@ -7,50 +7,46 @@ interface Props extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'o
   onChange: (raw: string) => void
 }
 
-/** Text input that shows 1,231,233.50 as you type, while the parent keeps the plain number. */
+/** Write text into the field and put the cursor after `count` digits/decimal points, in one go. */
+function setText(el: HTMLInputElement, text: string, count: number) {
+  el.value = text
+  let seen = 0
+  let pos = 0
+  while (pos < text.length && seen < count) {
+    if (/\d/.test(text[pos]) || text[pos] === DECIMAL) seen++
+    pos++
+  }
+  el.setSelectionRange(pos, pos)
+}
+
+/**
+ * Text input that shows 1,231,233.50 as you type, while the parent keeps the plain number.
+ * The formatted text and the cursor are set inside the event handler, so React never has to
+ * rewrite the field afterwards (that rewrite is what makes the cursor jump or disappear).
+ */
 export default function MoneyInput({ value, onChange, ...rest }: Props) {
-  const ref = useRef<HTMLInputElement>(null)
-  const [, redraw] = useState(0) // forces a re-render so React puts the text and cursor back after an ignored key
-  const caret = useRef<number | null>(null) // how many digits/decimal points sit left of the cursor
-
-  // Re-place the cursor after React re-renders the formatted text
-  useLayoutEffect(() => {
-    const el = ref.current
-    if (!el || caret.current === null || document.activeElement !== el) return
-    const target = caret.current
-    const text = el.value
-    let seen = 0
-    let pos = 0
-    while (pos < text.length && seen < target) {
-      if (/\d/.test(text[pos]) || text[pos] === DECIMAL) seen++
-      pos++
-    }
-    el.setSelectionRange(pos, pos)
-    caret.current = null
-  })
-
   return (
     <input
       {...rest}
-      ref={ref}
       type="text"
       inputMode="decimal"
       autoComplete="off"
       value={formatAmount(value)}
       onChange={(e) => {
-        const el = e.target
+        const el = e.currentTarget
         const typed = el.value
         const pos = el.selectionStart ?? typed.length
+        const digitsBefore = cleanAmount(typed.slice(0, pos)).length
         const grew = typed.length - formatAmount(value).length
-        // One extra keystroke that doesn't fit: ignore it so existing digits are never pushed off the end
+
+        // One extra keystroke that doesn't fit: put the old text back so digits are never pushed off the end
         if (amountTooLong(typed) && grew <= 1) {
-          caret.current = Math.max(cleanAmount(typed.slice(0, pos)).length - 1, 0)
-          redraw((n) => n + 1)
+          setText(el, formatAmount(value), Math.max(digitsBefore - 1, 0))
           return
         }
-        caret.current = cleanAmount(typed.slice(0, pos)).length
-        onChange(cleanAmount(typed)) // pasted text that is too long is trimmed instead
-        redraw((n) => n + 1) // make sure the cursor is put back even if the number didn't change
+        const raw = cleanAmount(typed) // a pasted text that is too long is trimmed instead
+        setText(el, formatAmount(raw), digitsBefore)
+        onChange(raw)
       }}
       onKeyDown={(e) => {
         const el = e.currentTarget
