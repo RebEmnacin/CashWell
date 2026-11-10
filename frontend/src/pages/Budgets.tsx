@@ -3,6 +3,7 @@ import { Check, Pencil, Plus, Trash2, X } from 'lucide-react'
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { errorMessage } from '../api/client'
 import { budgetApi } from '../api/endpoints'
+import MoneyInput from '../components/MoneyInput'
 import PageHeader from '../components/PageHeader'
 import { useCategories } from '../hooks/useCategories'
 import { currentMonth, money, prettyMonth } from '../lib/format'
@@ -113,8 +114,8 @@ export default function Budgets() {
           <option value="">{available.length ? 'Choose a category…' : 'All categories have a budget'}</option>
           {available.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
-        <input className="input" type="number" min="0" step="0.01" placeholder="Monthly limit" aria-label="Monthly limit"
-          value={newAmount} onChange={(e) => setNewAmount(e.target.value)} />
+        <MoneyInput className="input" placeholder="Monthly limit" aria-label="Monthly limit"
+          value={newAmount} onChange={setNewAmount} />
         <button className="btn-primary" disabled={!available.length}><Plus className="size-4" /> Add budget</button>
       </form>
 
@@ -151,8 +152,8 @@ export default function Budgets() {
                   </span>
                   {editingId === b.category_id ? (
                     <span className="flex items-center gap-1">
-                      <input className="input !w-28 !py-1.5" type="number" min="0" step="0.01" value={editAmount} autoFocus
-                        aria-label="New limit" onChange={(e) => setEditAmount(e.target.value)}
+                      <MoneyInput className="input !w-32 !py-1.5" value={editAmount} autoFocus
+                        aria-label="New limit" onChange={setEditAmount}
                         onKeyDown={(e) => e.key === 'Enter' && saveEdit(b.category_id)} />
                       <button aria-label="Save" onClick={() => saveEdit(b.category_id)}
                         className="cursor-pointer rounded-lg bg-brand-600 p-2 text-white hover:bg-brand-700"><Check className="size-4" /></button>
