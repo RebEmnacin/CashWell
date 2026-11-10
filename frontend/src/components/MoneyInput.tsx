@@ -43,9 +43,9 @@ export default function MoneyInput({ value, onChange, ...rest }: Props) {
         onChange(cleanAmount(typed))
       }}
       onBlur={(e) => {
-        // On leave: pad to two decimals ("1500.5" -> "1,500.50")
-        if (value.includes('.')) {
-          const [i, d] = value.split('.')
+        // On leave: always show two decimals ("1500" -> "1,500.00", "1500.5" -> "1,500.50")
+        if (value) {
+          const [i, d = ''] = value.split('.')
           onChange(`${i || '0'}.${d.padEnd(2, '0')}`)
         }
         rest.onBlur?.(e)

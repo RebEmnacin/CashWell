@@ -31,7 +31,7 @@ export default function TransactionModal({ open, editing, categories, onClose, o
     if (editing) {
       setType(editing.type)
       setCategoryId(editing.category_id)
-      setAmount(String(editing.amount))
+      setAmount(Number(editing.amount).toFixed(2))
       setDescription(editing.description)
       setDate(editing.date)
     } else {

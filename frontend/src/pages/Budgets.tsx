@@ -136,7 +136,7 @@ export default function Budgets() {
                   </div>
                   <div className="flex gap-1">
                     {editingId !== b.category_id && (
-                      <button aria-label="Edit limit" onClick={() => { setEditingId(b.category_id); setEditAmount(String(b.limit)) }}
+                      <button aria-label="Edit limit" onClick={() => { setEditingId(b.category_id); setEditAmount(Number(b.limit).toFixed(2)) }}
                         className="cursor-pointer rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"><Pencil className="size-4" /></button>
                     )}
                     <button aria-label="Remove budget" onClick={() => remove(b)}
