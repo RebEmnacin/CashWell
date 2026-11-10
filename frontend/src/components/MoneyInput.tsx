@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState, type InputHTMLAttributes } from 'react'
-import { amountTooLong, cleanAmount, DECIMAL, formatAmount } from '../lib/format'
+import { amountTooLong, cleanAmount, DECIMAL, formatAmount, GROUP } from '../lib/format'
 
 interface Props extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'type'> {
   /** Plain number string, e.g. "1231233.5" (no commas). */
@@ -50,6 +50,17 @@ export default function MoneyInput({ value, onChange, ...rest }: Props) {
         }
         caret.current = cleanAmount(typed.slice(0, pos)).length
         onChange(cleanAmount(typed)) // pasted text that is too long is trimmed instead
+        redraw((n) => n + 1) // make sure the cursor is put back even if the number didn't change
+      }}
+      onKeyDown={(e) => {
+        const el = e.currentTarget
+        const { selectionStart: a, selectionEnd: b } = el
+        if (a !== null && a === b) {
+          // Backspace/Delete right next to a comma: step over it so a real digit gets deleted
+          if (e.key === 'Backspace' && a > 0 && el.value[a - 1] === GROUP) el.setSelectionRange(a - 1, a - 1)
+          if (e.key === 'Delete' && el.value[a] === GROUP) el.setSelectionRange(a + 1, a + 1)
+        }
+        rest.onKeyDown?.(e)
       }}
       onBlur={(e) => {
         // On leave: always show two decimals ("1500" -> "1,500.00", "1500.5" -> "1,500.50")

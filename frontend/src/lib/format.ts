@@ -31,7 +31,7 @@ export const pctChange = (current: number, previous: number): number | null =>
 
 // ---- Amount inputs: live thousands separators (1231233 -> 1,231,233) ----
 const numParts = new Intl.NumberFormat(LOCALE).formatToParts(1234567.1)
-const GROUP = numParts.find((p) => p.type === 'group')?.value ?? ','
+export const GROUP = numParts.find((p) => p.type === 'group')?.value ?? ','
 export const DECIMAL = numParts.find((p) => p.type === 'decimal')?.value ?? '.'
 
 export const MAX_INT_DIGITS = 12
