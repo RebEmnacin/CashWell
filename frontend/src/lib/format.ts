@@ -34,18 +34,32 @@ const numParts = new Intl.NumberFormat(LOCALE).formatToParts(1234567.1)
 const GROUP = numParts.find((p) => p.type === 'group')?.value ?? ','
 export const DECIMAL = numParts.find((p) => p.type === 'decimal')?.value ?? '.'
 
-/** Anything the user typed or pasted -> a plain number string like "1234.5" (max 2 decimals). */
-export const cleanAmount = (typed: string): string => {
+export const MAX_INT_DIGITS = 12
+
+/** Anything the user typed or pasted -> a plain number string like "1234.5" (no limits applied). */
+const stripAmount = (typed: string): string => {
   let s = ''
   let seenDot = false
   for (const ch of typed) {
     if (ch >= '0' && ch <= '9') s += ch
     else if ((ch === DECIMAL || ch === '.') && !seenDot) { s += '.'; seenDot = true }
   }
-  let [int, dec] = s.split('.')
-  int = int.replace(/^0+(?=\d)/, '').slice(0, 12)
-  if (!seenDot) return int
-  return `${int || '0'}.${(dec ?? '').slice(0, 2)}`
+  const [int, dec] = s.split('.')
+  const cleanInt = int.replace(/^0+(?=\d)/, '')
+  return seenDot ? `${cleanInt || '0'}.${dec ?? ''}` : cleanInt
+}
+
+/** True when the cleaned amount has too many whole digits or more than 2 decimals. */
+export const amountTooLong = (typed: string): boolean => {
+  const [int, dec = ''] = stripAmount(typed).split('.')
+  return int.length > MAX_INT_DIGITS || dec.length > 2
+}
+
+/** Typed text -> plain number string, cut down to the limits (used for pastes). */
+export const cleanAmount = (typed: string): string => {
+  const [int, dec] = stripAmount(typed).split('.')
+  const whole = int.slice(0, MAX_INT_DIGITS)
+  return stripAmount(typed).includes('.') ? `${whole}.${(dec ?? '').slice(0, 2)}` : whole
 }
 
 /** Plain number string -> display string with separators. Keeps a trailing "." or "0" while typing. */
