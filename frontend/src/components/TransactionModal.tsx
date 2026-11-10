@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { errorMessage } from '../api/client'
 import { transactionApi } from '../api/endpoints'
 import { today } from '../lib/format'
+import MoneyInput from './MoneyInput'
 import type { Category, Transaction, TxType } from '../types'
 
 interface Props {
@@ -124,8 +125,7 @@ export default function TransactionModal({ open, editing, categories, onClose, o
           <div className="space-y-4">
             <div>
               <label className="label" htmlFor="tx-amount">Amount</label>
-              <input id="tx-amount" className="input" type="number" min="0" step="0.01" inputMode="decimal"
-                placeholder="0.00" value={amount} onChange={(e) => setAmount(e.target.value)} autoFocus />
+              <MoneyInput id="tx-amount" className="input" placeholder="0.00" value={amount} onChange={setAmount} autoFocus />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
