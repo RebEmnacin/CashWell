@@ -7,16 +7,19 @@ interface Props extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'o
   onChange: (raw: string) => void
 }
 
-/** Write text into the field and put the cursor after `count` digits/decimal points, in one go. */
+/**
+ * Put the formatted text and the cursor into the field, but only touch what is actually different.
+ * Typing a digit at the end needs no change at all, so the browser keeps handling the cursor itself.
+ */
 function setText(el: HTMLInputElement, text: string, count: number) {
-  el.value = text
+  if (el.value !== text) el.value = text
   let seen = 0
   let pos = 0
   while (pos < text.length && seen < count) {
     if (/\d/.test(text[pos]) || text[pos] === DECIMAL) seen++
     pos++
   }
-  el.setSelectionRange(pos, pos)
+  if (el.selectionStart !== pos || el.selectionEnd !== pos) el.setSelectionRange(pos, pos)
 }
 
 /**
