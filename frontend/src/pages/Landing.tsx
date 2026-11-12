@@ -218,12 +218,13 @@ export default function Landing() {
         </section>
 
         {/* floating pill bar straddling the bottom edge of the hero (the old "NEW here?" card) */}
-        <div className="absolute inset-x-0 bottom-0 z-10 translate-y-1/2 px-6 md:pl-28">
+        <div className="absolute inset-x-0 bottom-0 z-10 translate-y-1/2">
+         <div className="mx-auto max-w-6xl px-6 md:pl-28">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="mx-auto flex max-w-4xl flex-col items-stretch gap-3 rounded-[2rem] bg-brand-100 p-3 shadow-2xl ring-[10px] ring-[#f6f8f7] md:flex-row md:items-center md:rounded-full"
+            className="flex w-full flex-col items-stretch gap-3 rounded-[2rem] bg-brand-100 p-3 shadow-2xl ring-[10px] ring-[#f6f8f7] md:flex-row md:items-center md:rounded-full"
           >
             <div className="flex flex-1 items-center justify-between gap-4 rounded-full bg-white px-6 py-3.5 text-brand-900">
               <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-slate-400">Free for everyone</p>
@@ -238,6 +239,7 @@ export default function Landing() {
               {token ? 'Open app' : 'Join now'} <ArrowRight className="size-4" />
             </Link>
           </motion.div>
+         </div>
         </div>
       </div>
 
