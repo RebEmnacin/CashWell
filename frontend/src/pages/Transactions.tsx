@@ -57,6 +57,18 @@ export default function Transactions() {
 
   const changeFilter = <T,>(setter: (v: T) => void) => (v: T) => { setter(v); setPage(1) }
 
+  // "From" is the starting date, so "To" can never be earlier than it (dates are YYYY-MM-DD, so plain string compare works).
+  // Moving From past To drags To along; typing a To that is too early snaps it back to From.
+  const changeStart = (v: string) => {
+    setStart(v)
+    if (v && end && end < v) setEnd(v)
+    setPage(1)
+  }
+  const changeEnd = (v: string) => {
+    setEnd(v && start && v < start ? start : v)
+    setPage(1)
+  }
+
   const remove = async (t: Transaction) => {
     if (!window.confirm(`Delete "${t.description || t.category.name}"?`)) return
     try {
@@ -90,26 +102,40 @@ export default function Transactions() {
       {/* Filters */}
       <div className="card mb-5 animate-rise">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
-          <div className="relative lg:col-span-2">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
-            <input className="input pl-9" placeholder="Search notes…" aria-label="Search" value={search}
-              onChange={(e) => setSearch(e.target.value)} />
+          <div className="lg:col-span-2">
+            <label htmlFor="f-search" className="label">Search</label>
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
+              <input id="f-search" className="input pl-9" placeholder="Search notes…" value={search}
+                onChange={(e) => setSearch(e.target.value)} />
+            </div>
           </div>
-          <select className="input" aria-label="Type" value={type}
-            onChange={(e) => changeFilter(setType)(e.target.value as TransactionFilters['type'])}>
-            <option value="">All types</option>
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
-          </select>
-          <select className="input" aria-label="Category" value={categoryId}
-            onChange={(e) => changeFilter(setCategoryId)(e.target.value ? Number(e.target.value) : '')}>
-            <option value="">All categories</option>
-            {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-          </select>
-          <input type="date" className="input" aria-label="From date" value={start}
-            onChange={(e) => changeFilter(setStart)(e.target.value)} />
-          <input type="date" className="input" aria-label="To date" value={end}
-            onChange={(e) => changeFilter(setEnd)(e.target.value)} />
+          <div>
+            <label htmlFor="f-type" className="label">Type</label>
+            <select id="f-type" className="input" value={type}
+              onChange={(e) => changeFilter(setType)(e.target.value as TransactionFilters['type'])}>
+              <option value="">All types</option>
+              <option value="income">Income</option>
+              <option value="expense">Expense</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="f-category" className="label">Category</label>
+            <select id="f-category" className="input" value={categoryId}
+              onChange={(e) => changeFilter(setCategoryId)(e.target.value ? Number(e.target.value) : '')}>
+              <option value="">All categories</option>
+              {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="f-from" className="label">From</label>
+            <input id="f-from" type="date" className="input" value={start} onChange={(e) => changeStart(e.target.value)} />
+          </div>
+          <div>
+            <label htmlFor="f-to" className="label">To</label>
+            <input id="f-to" type="date" className="input" value={end} min={start || undefined}
+              onChange={(e) => changeEnd(e.target.value)} />
+          </div>
         </div>
         {hasFilters && (
           <button onClick={clearFilters} className="mt-3 cursor-pointer text-xs font-semibold text-brand-600 hover:underline">
