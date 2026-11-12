@@ -1,4 +1,4 @@
-import { motion } from 'motion/react'
+
 import { useState, type FormEvent } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { errorMessage } from '../api/client'
@@ -190,8 +190,6 @@ export default function Login() {
               signUp ? 'translate-x-1/2' : 'translate-x-0'
             }`}
           >
-import { motion } from 'motion/react'
-
             {/* left panel: visible while Sign up is open */}
             <div
               className={`absolute top-0 flex h-full w-1/2 flex-col items-center justify-center px-14 text-center ${SLIDE} ${
