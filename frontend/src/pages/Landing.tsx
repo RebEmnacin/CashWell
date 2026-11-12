@@ -9,6 +9,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
+import heroPhoto from '../assets/Jar.jpeg'
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { errorMessage } from '../api/client'
@@ -119,11 +120,15 @@ export default function Landing() {
     <>
       {/* ============ HERO ============ */}
       <div className="relative">
-        <section className="relative overflow-hidden bg-linear-to-br from-brand-900 via-brand-900 to-brand-700 text-white">
-          {/* big faint rings in the background */}
-          <div className="pointer-events-none absolute -left-40 -top-48 size-[520px] rounded-full border-[70px] border-white/[0.04]" />
-          <div className="pointer-events-none absolute -bottom-56 right-[18%] size-[560px] rounded-full border-[70px] border-white/[0.05]" />
-          <div className="pointer-events-none absolute right-[-120px] top-10 size-[320px] rounded-full border-[50px] border-brand-500/10" />
+        <section className="relative overflow-hidden bg-brand-900 text-white">
+          {/* background photo (bg-brand-900 above shows while it loads) */}
+          <img
+            src={heroPhoto}
+            alt=""
+            className="pointer-events-none absolute inset-0 size-full object-cover" // object-cover | object-contain | object-center | object-top
+          />
+          {/* dark green tint so the white text stays readable on any photo */}
+          <div className="pointer-events-none absolute inset-0 bg-linear-to-r from-brand-900/90 via-brand-900/70 to-brand-900/40" />
 
           <div className="relative mx-auto max-w-6xl px-6 pb-32 pt-8 md:pl-28 md:pb-36">
             {/* brand mark, top left */}
