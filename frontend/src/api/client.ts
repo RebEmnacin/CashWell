@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { useAuthStore } from '../store/authStore'
-import signInBg from '../assets/sign_in_up.png'
+
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',

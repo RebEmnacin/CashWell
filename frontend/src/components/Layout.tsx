@@ -3,7 +3,7 @@ import { MotionConfig, motion } from 'motion/react'
 import type { ReactNode } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
-import signInBg from '../assets/sign_in_up.png'
+
 
 const links = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: false },

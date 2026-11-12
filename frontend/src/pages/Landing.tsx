@@ -16,7 +16,7 @@ import { errorMessage } from '../api/client'
 import { authApi } from '../api/endpoints'
 import AnimatedIcon from '../components/AnimatedIcon'
 import { useAuthStore } from '../store/authStore'
-import signInBg from '../assets/sign_in_up.png'
+
 
 /* ---------------- content (edit the text here) ---------------- */
 

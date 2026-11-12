@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import PageHeader from '../components/PageHeader'
 import { CURRENCY } from '../lib/format'
 import { useAuthStore } from '../store/authStore'
-import signInBg from '../assets/sign_in_up.png'
+
 
 export default function Account() {
   const user = useAuthStore((s) => s.user)
