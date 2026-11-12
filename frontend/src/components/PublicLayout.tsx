@@ -13,7 +13,7 @@ const tabs: { to: string; label: string; icon: LucideIcon; end: boolean }[] = [
 /**
  * One floating tab, drawn on a layer ABOVE the page.
  *  - not pressed: a white circle with a green icon (readable on both dark and light sections)
- *  - pressed: the circle turns green, gets a white outline, and a pill with the label slides out from behind it
+ *  - pressed: the circle turns green, gets a white outline, and a plain white pill with the label slides out from behind it
  */
 function Tab({ to, end, label, icon: Icon }: (typeof tabs)[number]) {
   return (
@@ -29,7 +29,7 @@ function Tab({ to, end, label, icon: Icon }: (typeof tabs)[number]) {
                   initial={{ x: '-100%' }}
                   animate={{ x: 0 }}
                   transition={{ duration: 0.3, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-                  className="flex h-16 items-center whitespace-nowrap rounded-r-full border-4 border-l-0 border-white bg-brand-600 pl-9 pr-7 text-[15px] font-semibold text-white"
+                  className="flex h-16 items-center whitespace-nowrap rounded-r-full bg-white pl-9 pr-7 text-[15px] font-semibold text-brand-700"
                 >
                   {label}
                 </motion.span>
