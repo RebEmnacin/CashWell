@@ -92,12 +92,12 @@ export default function Login() {
   const hint = (f: string) =>
     invalid[f] ? <span className="-mt-1.5 mb-1 block w-full text-left text-xs font-semibold text-red-600">{invalid[f]}</span> : null
 
-  const formBox = 'flex h-full flex-col items-center justify-center bg-brand-50 px-16 text-center max-[640px]:px-6'
+  const formBox = 'flex h-full flex-col items-center justify-center bg-white/70 px-16 text-center max-[640px]:px-6'
   const mobileSwitch = 'mt-5 hidden text-sm text-slate-600 max-[640px]:block'
   const linkBtn = 'cursor-pointer font-bold text-brand-600 hover:underline'
 
   return (
-    <div className="relative grid min-h-screen grid-cols-[minmax(0,1fr)] place-items-center overflow-hidden bg-brand-900 p-4 md:pl-56 md:pr-8">
+    <div className="relative grid min-h-screen grid-cols-[minmax(0,1fr)] place-items-center overflow-hidden bg-brand-900 p-4 md:max-[1499px]:pl-56 md:max-[1499px]:pr-8 min-[1500px]:pl-11">
       {/* backdrop: your photo (sign_in_up.png) */}
       <img
         src={signInBg}
@@ -107,7 +107,7 @@ export default function Login() {
       />
       {/* green tint, same as the landing hero */}
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-linear-to-r from-brand-900/90 via-brand-900/70 to-brand-900/40" />
-      <div className="relative min-h-[620px] w-[1040px] max-w-full overflow-hidden bg-brand-50 shadow-2xl animate-rise max-[640px]:min-h-[560px]">
+      <div className="relative min-h-[620px] w-[1040px] max-w-full overflow-hidden border border-white/30 bg-white/10 shadow-2xl backdrop-blur-xl animate-rise max-[640px]:min-h-[560px]">
         {/* ================= Sign up form (waits behind, slides to the right half) ================= */}
         <div
           inert={!signUp}
@@ -184,7 +184,7 @@ export default function Login() {
         >
           {/* the overlay is 2x wide; we only ever see one half of it */}
           <div
-            className={`relative -left-full h-full w-[200%] bg-brand-600 text-white ${SLIDE} ${
+            className={`relative -left-full h-full w-[200%] bg-brand-700/75 text-white ${SLIDE} ${
               signUp ? 'translate-x-1/2' : 'translate-x-0'
             }`}
           >
