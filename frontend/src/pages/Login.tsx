@@ -145,8 +145,10 @@ export default function Login() {
         <div
           inert={signUp}
           className={`absolute left-0 top-0 z-[2] h-full w-1/2 max-[640px]:w-full ${SLIDE} ${
-            signUp ? 'translate-x-full max-[640px]:hidden max-[640px]:translate-x-0' : ''
+            signUp ? 'translate-x-full opacity-0 max-[640px]:hidden max-[640px]:translate-x-0' : 'opacity-100'
           }`}
+          // fade at the half-way point so it never shows through the other (glass) form
+          style={{ transitionProperty: 'transform, opacity', transitionDuration: '0.6s, 0s', transitionDelay: '0s, 0.3s' }}
         >
           <form noValidate onSubmit={onSignIn} className={formBox}>
             <h1 className="text-4xl font-extrabold text-brand-900">Sign in</h1>
@@ -184,22 +186,11 @@ export default function Login() {
         >
           {/* the overlay is 2x wide; we only ever see one half of it */}
           <div
-            className={`relative -left-full h-full w-[200%] bg-brand-700/75 text-white ${SLIDE} ${
+            className={`relative -left-full h-full w-[200%] bg-brand-900/35 text-white backdrop-blur-2xl ${SLIDE} ${
               signUp ? 'translate-x-1/2' : 'translate-x-0'
             }`}
           >
-            {/* soft pulsing rings, same motif as the hero */}
-            {[0, 1].map((i) => (
-              <motion.span
-                key={i}
-                aria-hidden
-                animate={{ scale: [1, 1.08, 1], opacity: [0.05, 0.1, 0.05] }}
-                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: i * 2 }}
-                className={`pointer-events-none absolute size-[420px] rounded-full border-[56px] border-white ${
-                  i === 0 ? '-top-40 left-[8%]' : '-bottom-48 right-[8%]'
-                }`}
-              />
-            ))}
+import { motion } from 'motion/react'
 
             {/* left panel: visible while Sign up is open */}
             <div
