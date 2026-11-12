@@ -96,23 +96,14 @@ export default function Login() {
   const linkBtn = 'cursor-pointer font-bold text-brand-600 hover:underline'
 
   return (
-    <div className="relative grid min-h-screen grid-cols-[minmax(0,1fr)] place-items-center overflow-hidden bg-linear-to-br from-brand-900 via-brand-900 to-brand-700 p-4 md:pl-56 md:pr-8">
-      {/* backdrop: the same big rings as the hero, plus slow glowing orbs */}
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-40 -top-48 size-[520px] rounded-full border-[70px] border-white/[0.04]" />
-        <div className="absolute -bottom-56 right-[12%] size-[560px] rounded-full border-[70px] border-white/[0.05]" />
-        <div className="absolute -right-24 top-10 size-[320px] rounded-full border-[50px] border-brand-500/10" />
-        <motion.div
-          animate={{ x: [0, 50, 0], y: [0, 30, 0] }}
-          transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute left-[22%] top-[10%] size-80 rounded-full bg-brand-500/40 blur-3xl"
-        />
-        <motion.div
-          animate={{ x: [0, -40, 0], y: [0, -40, 0] }}
-          transition={{ duration: 17, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute bottom-[8%] right-[18%] size-96 rounded-full bg-brand-400/30 blur-3xl"
-        />
-      </div>
+    <div className="relative grid min-h-screen grid-cols-[minmax(0,1fr)] place-items-center overflow-hidden bg-brand-900 p-4 md:pl-56 md:pr-8">
+      {/* backdrop: your photo (sign_in_up.png) */}
+      <img
+        src={signInBg}
+        alt=""
+        aria-hidden
+        className="pointer-events-none absolute inset-0 size-full object-cover"
+      />
       <div className="relative min-h-[620px] w-[1040px] max-w-full overflow-hidden bg-brand-50 shadow-2xl animate-rise max-[640px]:min-h-[560px]">
         {/* ================= Sign up form (waits behind, slides to the right half) ================= */}
         <div
