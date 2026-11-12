@@ -17,8 +17,8 @@ const ghostBtn =
 // Everything moves with transform only (GPU-friendly). The forms slide across with the green panel, but they are
 // faded out while the glass passes over them (leave early, arrive late), so no text shows through or overlaps.
 const SLIDE =
-  'transition-transform duration-[700ms] ease-[cubic-bezier(0.65,0,0.35,1)] will-change-transform motion-reduce:transition-none'
-const FADE = 'transition-opacity ease-out motion-reduce:transition-none'
+  'transition-transform duration-[700ms] ease-[cubic-bezier(0.65,0,0.35,1)] will-change-transform'
+const FADE = 'transition-opacity ease-out'
 const textOut = 'pointer-events-none opacity-0 duration-150'
 const textIn = 'opacity-100 duration-[250ms] delay-[450ms] max-[640px]:delay-100'
 const formOut = 'pointer-events-none opacity-0 duration-200'
