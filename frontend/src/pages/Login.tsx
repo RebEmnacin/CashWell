@@ -14,14 +14,16 @@ const solidBtn =
 const ghostBtn =
   'cursor-pointer rounded-full border border-white bg-transparent px-14 py-4 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-white/15 active:scale-95'
 
-// The green panel slides with transform only (GPU-friendly). Everything else just fades, so no text ever moves
-// on its own: the old form fades out fast, the new one fades in after the panel has passed.
+// Everything moves with transform only (GPU-friendly). The forms slide across with the green panel, but they are
+// faded out while the glass passes over them (leave early, arrive late), so no text shows through or overlaps.
 const SLIDE =
   'transition-transform duration-[700ms] ease-[cubic-bezier(0.65,0,0.35,1)] will-change-transform motion-reduce:transition-none'
 const FADE = 'transition-opacity ease-out motion-reduce:transition-none'
 const textOut = 'pointer-events-none opacity-0 duration-150'
 const textIn = 'opacity-100 duration-[250ms] delay-[450ms] max-[640px]:delay-100'
-const panelOut = 'opacity-0 duration-[350ms]'
+const formOut = 'pointer-events-none opacity-0 duration-200'
+const formIn = 'opacity-100 duration-200 delay-[500ms] max-[640px]:delay-100'
+const panelOut = 'opacity-0 duration-[300ms]'
 const panelIn = 'opacity-100 duration-[450ms] delay-150 max-[640px]:delay-0'
 
 export default function Login() {
@@ -118,10 +120,10 @@ export default function Login() {
             moving panel gets redone every frame, and a blur inside an animated parent can't see the photo behind it. */}
         <div aria-hidden className="absolute inset-0 bg-white/10 shadow-2xl backdrop-blur-xl animate-rise" />
         <div className="relative min-h-[620px] overflow-hidden border border-white/30 animate-rise max-[640px]:min-h-[560px]">
-        {/* ================= Sign in form (left half) ================= */}
-        <div inert={signUp} className="absolute left-0 top-0 z-[2] h-full w-1/2 max-[640px]:w-full">
+        {/* ================= Sign in form (left half, slides right when Sign up opens) ================= */}
+        <div inert={signUp} className={`absolute left-0 top-0 z-[2] h-full w-1/2 max-[640px]:w-full ${SLIDE} ${signUp ? 'translate-x-full max-[640px]:translate-x-0' : ''}`}>
           <div aria-hidden className={`absolute inset-0 bg-white/70 ${FADE} ${signUp ? panelOut : panelIn}`} />
-          <form noValidate onSubmit={onSignIn} className={`${formBox} ${FADE} ${signUp ? textOut : textIn}`}>
+          <form noValidate onSubmit={onSignIn} className={`${formBox} ${FADE} ${signUp ? formOut : formIn}`}>
             <h1 className="text-4xl font-extrabold text-brand-900">Sign in</h1>
             <p className="mb-4 mt-2 text-sm text-slate-500">Use your CashWell account</p>
             <input className={fieldClass('email')} aria-invalid={!!invalid.email} type="email" placeholder="Email" autoComplete="email" value={email} onChange={(e) => { setEmail(e.target.value); clear('email') }} />
@@ -149,10 +151,10 @@ export default function Login() {
           </form>
         </div>
 
-        {/* ================= Sign up form (right half) ================= */}
-        <div inert={!signUp} className="absolute left-1/2 top-0 z-[2] h-full w-1/2 max-[640px]:left-0 max-[640px]:w-full">
+        {/* ================= Sign up form (waits under the panel, slides into the right half) ================= */}
+        <div inert={!signUp} className={`absolute left-0 top-0 z-[2] h-full w-1/2 max-[640px]:w-full ${SLIDE} ${signUp ? 'translate-x-full max-[640px]:translate-x-0' : ''}`}>
           <div aria-hidden className={`absolute inset-0 bg-white/70 ${FADE} ${signUp ? panelIn : panelOut}`} />
-          <form noValidate onSubmit={onSignUp} className={`${formBox} ${FADE} ${signUp ? textIn : textOut}`}>
+          <form noValidate onSubmit={onSignUp} className={`${formBox} ${FADE} ${signUp ? formIn : formOut}`}>
             <h1 className="text-4xl font-extrabold text-brand-900">Create Account</h1>
             <p className="mb-4 mt-2 text-sm text-slate-500">Use your email to start tracking</p>
             <input className={fieldClass('name')} aria-invalid={!!invalid.name} type="text" placeholder="Name" autoComplete="name" value={name} onChange={(e) => { setName(e.target.value); clear('name') }} />
