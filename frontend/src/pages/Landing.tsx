@@ -223,7 +223,7 @@ export default function Landing() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="mx-auto flex max-w-4xl flex-col items-stretch gap-3 rounded-[2rem] bg-brand-100 p-3 shadow-2xl md:flex-row md:items-center md:rounded-full"
+            className="mx-auto flex max-w-4xl flex-col items-stretch gap-3 rounded-[2rem] bg-brand-100 p-3 shadow-2xl ring-[10px] ring-[#f6f8f7] md:flex-row md:items-center md:rounded-full"
           >
             <div className="flex flex-1 items-center justify-between gap-4 rounded-full bg-white px-6 py-3.5 text-brand-900">
               <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-slate-400">Free for everyone</p>
