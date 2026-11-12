@@ -4,6 +4,7 @@ import { Navigate, useNavigate } from 'react-router-dom'
 import { errorMessage } from '../api/client'
 import { authApi } from '../api/endpoints'
 import { useAuthStore } from '../store/authStore'
+import signInBg from '../assets/sign_in_up.png'
 
 const field =
   'my-2.5 block w-full border-0 border-b-2 border-transparent bg-white px-5 py-4 text-base text-ink outline-none transition-colors placeholder:text-slate-400 focus:border-brand-600 focus:bg-white'
