@@ -120,7 +120,7 @@ export default function Landing() {
     <>
       {/* ============ HERO ============ */}
       <div className="relative">
-        <section className="relative overflow-hidden rounded-b-[50%/60px] bg-brand-900 text-white md:rounded-b-[50%/120px]">
+        <section className="relative overflow-hidden rounded-b-[50%_60px] bg-brand-900 text-white md:rounded-b-[50%_120px]">
           {/* background photo (bg-brand-900 above shows while it loads) */}
           <img
             src={heroPhoto}
