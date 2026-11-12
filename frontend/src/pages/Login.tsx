@@ -3,10 +3,10 @@ import { Navigate, useNavigate } from 'react-router-dom'
 import { errorMessage } from '../api/client'
 import { authApi } from '../api/endpoints'
 import { useAuthStore } from '../store/authStore'
-import signInBg from '../assets/sign_in_up.png'
+import CoffeeCup from '../components/CoffeeCup'
 
 const field =
-  'my-2.5 block w-full border-0 border-b-2 border-transparent bg-white px-5 py-4 text-base text-ink outline-none transition-colors placeholder:text-slate-400 focus:border-brand-600 focus:bg-white'
+  'my-2.5 block w-full border-0 border-b-2 border-transparent bg-slate-100 px-5 py-4 text-base text-ink outline-none transition-colors placeholder:text-slate-400 focus:border-brand-600 focus:bg-brand-50'
 
 const solidBtn =
   'mt-4 cursor-pointer rounded-full border border-brand-600 bg-brand-600 px-14 py-4 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-brand-700 active:scale-95 disabled:cursor-default disabled:opacity-60'
@@ -14,8 +14,8 @@ const solidBtn =
 const ghostBtn =
   'cursor-pointer rounded-full border border-white bg-transparent px-14 py-4 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-white/15 active:scale-95'
 
-// Everything moves with transform only (GPU-friendly). The forms slide across with the green panel, but they are
-// faded out while the glass passes over them (leave early, arrive late), so no text shows through or overlaps.
+// Everything moves with transform only (GPU-friendly). The forms slide across with the green panel and are covered
+// by it as it passes; the text fades so the swap is clean (old text leaves early, new text arrives late).
 const SLIDE =
   'transition-transform duration-[700ms] ease-[cubic-bezier(0.65,0,0.35,1)] will-change-transform'
 const FADE = 'transition-opacity ease-out'
@@ -23,8 +23,6 @@ const textOut = 'pointer-events-none opacity-0 duration-150'
 const textIn = 'opacity-100 duration-[250ms] delay-[450ms] max-[640px]:delay-100'
 const formOut = 'pointer-events-none opacity-0 duration-200'
 const formIn = 'opacity-100 duration-200 delay-[500ms] max-[640px]:delay-100'
-const panelOut = 'opacity-0 duration-[300ms]'
-const panelIn = 'opacity-100 duration-[450ms] delay-150 max-[640px]:delay-0'
 
 export default function Login() {
   const token = useAuthStore((s) => s.token)
@@ -106,23 +104,9 @@ export default function Login() {
 
   return (
     <div className="relative grid min-h-screen grid-cols-[minmax(0,1fr)] place-items-center overflow-hidden bg-brand-900 p-4 md:max-[1499px]:pl-56 md:max-[1499px]:pr-8 min-[1500px]:pl-11">
-      {/* backdrop: your photo (sign_in_up.png) */}
-      <img
-        src={signInBg}
-        alt=""
-        aria-hidden
-        className="pointer-events-none absolute inset-0 size-full object-cover"
-      />
-      {/* green tint, same as the landing hero */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 bg-linear-to-r from-brand-900/90 via-brand-900/70 to-brand-900/40" />
-      <div className="relative w-[1040px] max-w-full">
-        {/* The glass is its own still layer, next to the content and not inside it: a blur on the element that holds the
-            moving panel gets redone every frame, and a blur inside an animated parent can't see the photo behind it. */}
-        <div aria-hidden className="absolute inset-0 bg-white/10 shadow-2xl backdrop-blur-xl animate-rise" />
-        <div className="relative min-h-[620px] overflow-hidden border border-white/30 animate-rise max-[640px]:min-h-[560px]">
+      <div className="relative min-h-[620px] w-[1040px] max-w-full overflow-hidden bg-white shadow-2xl animate-rise max-[640px]:min-h-[560px]">
         {/* ================= Sign in form (left half, slides right when Sign up opens) ================= */}
         <div inert={signUp} className={`absolute left-0 top-0 z-[2] h-full w-1/2 max-[640px]:w-full ${SLIDE} ${signUp ? 'translate-x-full max-[640px]:translate-x-0' : ''}`}>
-          <div aria-hidden className={`absolute inset-0 bg-white/70 ${FADE} ${signUp ? panelOut : panelIn}`} />
           <form noValidate onSubmit={onSignIn} className={`${formBox} ${FADE} ${signUp ? formOut : formIn}`}>
             <h1 className="text-4xl font-extrabold text-brand-900">Sign in</h1>
             <p className="mb-4 mt-2 text-sm text-slate-500">Use your CashWell account</p>
@@ -153,7 +137,6 @@ export default function Login() {
 
         {/* ================= Sign up form (waits under the panel, slides into the right half) ================= */}
         <div inert={!signUp} className={`absolute left-0 top-0 z-[2] h-full w-1/2 max-[640px]:w-full ${SLIDE} ${signUp ? 'translate-x-full max-[640px]:translate-x-0' : ''}`}>
-          <div aria-hidden className={`absolute inset-0 bg-white/70 ${FADE} ${signUp ? panelIn : panelOut}`} />
           <form noValidate onSubmit={onSignUp} className={`${formBox} ${FADE} ${signUp ? formIn : formOut}`}>
             <h1 className="text-4xl font-extrabold text-brand-900">Create Account</h1>
             <p className="mb-4 mt-2 text-sm text-slate-500">Use your email to start tracking</p>
@@ -180,12 +163,13 @@ export default function Login() {
             One rigid piece: it slides left/right and its logo never moves inside it.
             Only the two text blocks fade, so nothing drifts or clips while it slides. */}
         <div
-          className={`absolute left-1/2 top-0 z-[100] h-full w-1/2 bg-brand-900/35 text-white max-[640px]:hidden ${SLIDE} ${
+          className={`absolute left-1/2 top-0 z-[100] h-full w-1/2 bg-brand-600 text-white max-[640px]:hidden ${SLIDE} ${
             signUp ? '-translate-x-full' : ''
           }`}
         >
-          <div className="flex h-full flex-col items-center justify-center px-14 text-center">
-            <Logo />
+          <div className="relative flex h-full flex-col items-center justify-center px-14 text-center">
+            <Logo className="absolute left-1/2 top-8 size-11 -translate-x-1/2" />
+            <CoffeeCup className="mb-5 w-48 shrink-0" />
             <div className="grid">
               {/* shown while Sign in is open */}
               <div inert={signUp} className={`col-start-1 row-start-1 flex flex-col items-center ${FADE} ${signUp ? textOut : textIn}`}>
@@ -210,19 +194,18 @@ export default function Login() {
             </div>
           </div>
         </div>
-        </div>
       </div>
     </div>
   )
 }
 
-/** Logo that sits above the overlay headline (hides itself if the file is missing). */
-function Logo() {
+/** Brand mark at the top of the green panel (hides itself if the file is missing). */
+function Logo({ className = '' }: { className?: string }) {
   return (
     <img
       src="/CashWell_Logo.png"
       alt="CashWell"
-      className="mb-6 size-20 object-contain drop-shadow-xl"
+      className={`object-contain ${className}`}
       onError={(e) => (e.currentTarget.style.display = 'none')}
     />
   )
