@@ -1,4 +1,3 @@
-
 import { useState, type FormEvent } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { errorMessage } from '../api/client'
@@ -15,8 +14,15 @@ const solidBtn =
 const ghostBtn =
   'cursor-pointer rounded-full border border-white bg-transparent px-14 py-4 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-white/15 active:scale-95'
 
-// How the panels slide (0.6s, same as the reference)
-const SLIDE = 'transition-transform duration-[600ms] ease-in-out'
+// The green panel slides with transform only (GPU-friendly). Everything else just fades, so no text ever moves
+// on its own: the old form fades out fast, the new one fades in after the panel has passed.
+const SLIDE =
+  'transition-transform duration-[700ms] ease-[cubic-bezier(0.65,0,0.35,1)] will-change-transform motion-reduce:transition-none'
+const FADE = 'transition-opacity ease-out motion-reduce:transition-none'
+const textOut = 'pointer-events-none opacity-0 duration-150'
+const textIn = 'opacity-100 duration-[250ms] delay-[450ms] max-[640px]:delay-100'
+const panelOut = 'opacity-0 duration-[350ms]'
+const panelIn = 'opacity-100 duration-[450ms] delay-150 max-[640px]:delay-0'
 
 export default function Login() {
   const token = useAuthStore((s) => s.token)
@@ -92,7 +98,7 @@ export default function Login() {
   const hint = (f: string) =>
     invalid[f] ? <span className="-mt-1.5 mb-1 block w-full text-left text-xs font-semibold text-red-600">{invalid[f]}</span> : null
 
-  const formBox = 'flex h-full flex-col items-center justify-center bg-white/70 px-16 text-center max-[640px]:px-6'
+  const formBox = 'relative flex h-full flex-col items-center justify-center px-16 text-center max-[640px]:px-6'
   const mobileSwitch = 'mt-5 hidden text-sm text-slate-600 max-[640px]:block'
   const linkBtn = 'cursor-pointer font-bold text-brand-600 hover:underline'
 
@@ -107,50 +113,15 @@ export default function Login() {
       />
       {/* green tint, same as the landing hero */}
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-linear-to-r from-brand-900/90 via-brand-900/70 to-brand-900/40" />
-      <div className="relative min-h-[620px] w-[1040px] max-w-full overflow-hidden border border-white/30 bg-white/10 shadow-2xl backdrop-blur-xl animate-rise max-[640px]:min-h-[560px]">
-        {/* ================= Sign up form (waits behind, slides to the right half) ================= */}
-        <div
-          inert={!signUp}
-          className={`absolute left-0 top-0 h-full w-1/2 max-[640px]:w-full ${SLIDE} ${
-            signUp
-              ? 'z-[5] translate-x-full opacity-100 max-[640px]:translate-x-0'
-              : 'z-[1] opacity-0 max-[640px]:hidden'
-          }`}
-          // opacity + z-index jump at the half-way point so the form appears while the overlay covers it
-          style={{ transitionProperty: 'transform, opacity, z-index', transitionDuration: '0.6s, 0s, 0s', transitionDelay: '0s, 0.3s, 0.3s' }}
-        >
-          <form noValidate onSubmit={onSignUp} className={formBox}>
-            <h1 className="text-4xl font-extrabold text-brand-900">Create Account</h1>
-            <p className="mb-4 mt-2 text-sm text-slate-500">Use your email to start tracking</p>
-            <input className={fieldClass('name')} aria-invalid={!!invalid.name} type="text" placeholder="Name" autoComplete="name" value={name} onChange={(e) => { setName(e.target.value); clear('name') }} />
-            {hint('name')}
-            <input className={fieldClass('email')} aria-invalid={!!invalid.email} type="email" placeholder="Email" autoComplete="email" value={email} onChange={(e) => { setEmail(e.target.value); clear('email') }} />
-            {hint('email')}
-            <input className={fieldClass('password')} aria-invalid={!!invalid.password} type="password" placeholder="Password (min. 6)" autoComplete="new-password" value={password} onChange={(e) => { setPassword(e.target.value); clear('password') }} />
-            {hint('password')}
-            {signUp && errorBox}
-            <button type="submit" disabled={loading} className={solidBtn}>
-              {loading && signUp ? 'Creating…' : 'Sign Up'}
-            </button>
-            <p className={mobileSwitch}>
-              Already have an account?{' '}
-              <button type="button" className={linkBtn} onClick={() => switchTo(false)}>
-                Sign in
-              </button>
-            </p>
-          </form>
-        </div>
-
-        {/* ================= Sign in form (left half, slides right when Sign up is active) ================= */}
-        <div
-          inert={signUp}
-          className={`absolute left-0 top-0 z-[2] h-full w-1/2 max-[640px]:w-full ${SLIDE} ${
-            signUp ? 'translate-x-full opacity-0 max-[640px]:hidden max-[640px]:translate-x-0' : 'opacity-100'
-          }`}
-          // fade at the half-way point so it never shows through the other (glass) form
-          style={{ transitionProperty: 'transform, opacity', transitionDuration: '0.6s, 0s', transitionDelay: '0s, 0.3s' }}
-        >
-          <form noValidate onSubmit={onSignIn} className={formBox}>
+      <div className="relative w-[1040px] max-w-full">
+        {/* The glass is its own still layer, next to the content and not inside it: a blur on the element that holds the
+            moving panel gets redone every frame, and a blur inside an animated parent can't see the photo behind it. */}
+        <div aria-hidden className="absolute inset-0 bg-white/10 shadow-2xl backdrop-blur-xl animate-rise" />
+        <div className="relative min-h-[620px] overflow-hidden border border-white/30 animate-rise max-[640px]:min-h-[560px]">
+        {/* ================= Sign in form (left half) ================= */}
+        <div inert={signUp} className="absolute left-0 top-0 z-[2] h-full w-1/2 max-[640px]:w-full">
+          <div aria-hidden className={`absolute inset-0 bg-white/70 ${FADE} ${signUp ? panelOut : panelIn}`} />
+          <form noValidate onSubmit={onSignIn} className={`${formBox} ${FADE} ${signUp ? textOut : textIn}`}>
             <h1 className="text-4xl font-extrabold text-brand-900">Sign in</h1>
             <p className="mb-4 mt-2 text-sm text-slate-500">Use your CashWell account</p>
             <input className={fieldClass('email')} aria-invalid={!!invalid.email} type="email" placeholder="Email" autoComplete="email" value={email} onChange={(e) => { setEmail(e.target.value); clear('email') }} />
@@ -178,50 +149,65 @@ export default function Login() {
           </form>
         </div>
 
-        {/* ================= Sliding green overlay (desktop only) ================= */}
+        {/* ================= Sign up form (right half) ================= */}
+        <div inert={!signUp} className="absolute left-1/2 top-0 z-[2] h-full w-1/2 max-[640px]:left-0 max-[640px]:w-full">
+          <div aria-hidden className={`absolute inset-0 bg-white/70 ${FADE} ${signUp ? panelIn : panelOut}`} />
+          <form noValidate onSubmit={onSignUp} className={`${formBox} ${FADE} ${signUp ? textIn : textOut}`}>
+            <h1 className="text-4xl font-extrabold text-brand-900">Create Account</h1>
+            <p className="mb-4 mt-2 text-sm text-slate-500">Use your email to start tracking</p>
+            <input className={fieldClass('name')} aria-invalid={!!invalid.name} type="text" placeholder="Name" autoComplete="name" value={name} onChange={(e) => { setName(e.target.value); clear('name') }} />
+            {hint('name')}
+            <input className={fieldClass('email')} aria-invalid={!!invalid.email} type="email" placeholder="Email" autoComplete="email" value={email} onChange={(e) => { setEmail(e.target.value); clear('email') }} />
+            {hint('email')}
+            <input className={fieldClass('password')} aria-invalid={!!invalid.password} type="password" placeholder="Password (min. 6)" autoComplete="new-password" value={password} onChange={(e) => { setPassword(e.target.value); clear('password') }} />
+            {hint('password')}
+            {signUp && errorBox}
+            <button type="submit" disabled={loading} className={solidBtn}>
+              {loading && signUp ? 'Creating…' : 'Sign Up'}
+            </button>
+            <p className={mobileSwitch}>
+              Already have an account?{' '}
+              <button type="button" className={linkBtn} onClick={() => switchTo(false)}>
+                Sign in
+              </button>
+            </p>
+          </form>
+        </div>
+
+        {/* ================= Sliding green panel (desktop only) =================
+            One rigid piece: it slides left/right and its logo never moves inside it.
+            Only the two text blocks fade, so nothing drifts or clips while it slides. */}
         <div
-          className={`absolute left-1/2 top-0 z-[100] h-full w-1/2 overflow-hidden max-[640px]:hidden ${SLIDE} ${
+          className={`absolute left-1/2 top-0 z-[100] h-full w-1/2 bg-brand-900/35 text-white max-[640px]:hidden ${SLIDE} ${
             signUp ? '-translate-x-full' : ''
           }`}
         >
-          {/* the overlay is 2x wide; we only ever see one half of it */}
-          <div
-            className={`relative -left-full h-full w-[200%] bg-brand-900/35 text-white backdrop-blur-2xl ${SLIDE} ${
-              signUp ? 'translate-x-1/2' : 'translate-x-0'
-            }`}
-          >
-            {/* left panel: visible while Sign up is open */}
-            <div
-              className={`absolute top-0 flex h-full w-1/2 flex-col items-center justify-center px-14 text-center ${SLIDE} ${
-                signUp ? 'translate-x-0' : '-translate-x-1/5'
-              }`}
-            >
-              <Logo />
-              <h1 className="text-4xl font-extrabold">Welcome Back!</h1>
-              <p className="mb-8 mt-5 text-base leading-6 tracking-wide text-white/85">
-                Already tracking with us? Sign in to pick up right where you left off.
-              </p>
-              <button type="button" className={ghostBtn} onClick={() => switchTo(false)}>
-                Sign In
-              </button>
-            </div>
-
-            {/* right panel: visible while Sign in is open */}
-            <div
-              className={`absolute right-0 top-0 flex h-full w-1/2 flex-col items-center justify-center px-14 text-center ${SLIDE} ${
-                signUp ? 'translate-x-1/5' : 'translate-x-0'
-              }`}
-            >
-              <Logo />
-              <h1 className="text-4xl font-extrabold">Hello, Friend!</h1>
-              <p className="mb-8 mt-5 text-base leading-6 tracking-wide text-white/85">
-                New to CashWell? Create a free account and take control of your money.
-              </p>
-              <button type="button" className={ghostBtn} onClick={() => switchTo(true)}>
-                Sign Up
-              </button>
+          <div className="flex h-full flex-col items-center justify-center px-14 text-center">
+            <Logo />
+            <div className="grid">
+              {/* shown while Sign in is open */}
+              <div inert={signUp} className={`col-start-1 row-start-1 flex flex-col items-center ${FADE} ${signUp ? textOut : textIn}`}>
+                <h1 className="text-4xl font-extrabold">Hello, Friend!</h1>
+                <p className="mb-8 mt-5 text-base leading-6 tracking-wide text-white/85">
+                  New to CashWell? Create a free account and take control of your money.
+                </p>
+                <button type="button" className={ghostBtn} onClick={() => switchTo(true)}>
+                  Sign Up
+                </button>
+              </div>
+              {/* shown while Sign up is open */}
+              <div inert={!signUp} className={`col-start-1 row-start-1 flex flex-col items-center ${FADE} ${signUp ? textIn : textOut}`}>
+                <h1 className="text-4xl font-extrabold">Welcome Back!</h1>
+                <p className="mb-8 mt-5 text-base leading-6 tracking-wide text-white/85">
+                  Already tracking with us? Sign in to pick up right where you left off.
+                </p>
+                <button type="button" className={ghostBtn} onClick={() => switchTo(false)}>
+                  Sign In
+                </button>
+              </div>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>
