@@ -105,6 +105,8 @@ export default function Login() {
         aria-hidden
         className="pointer-events-none absolute inset-0 size-full object-cover"
       />
+      {/* green tint, same as the landing hero */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-linear-to-r from-brand-900/90 via-brand-900/70 to-brand-900/40" />
       <div className="relative min-h-[620px] w-[1040px] max-w-full overflow-hidden bg-brand-50 shadow-2xl animate-rise max-[640px]:min-h-[560px]">
         {/* ================= Sign up form (waits behind, slides to the right half) ================= */}
         <div
