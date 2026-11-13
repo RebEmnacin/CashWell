@@ -40,9 +40,7 @@ export default function About() {
   return (
     <>
       {/* header band */}
-      <section className="relative overflow-hidden bg-linear-to-br from-brand-900 via-brand-900 to-brand-700 text-white">
-        <div className="pointer-events-none absolute -right-32 -top-40 size-[460px] rounded-full border-[64px] border-white/[0.05]" />
-        <div className="pointer-events-none absolute -bottom-56 left-[30%] size-[520px] rounded-full border-[64px] border-white/[0.04]" />
+      <section className="relative overflow-hidden bg-brand-900 text-white">
         <div className="relative mx-auto max-w-6xl px-6 pb-16 pt-8 md:pl-28 md:pb-24">
           {/* brand mark, top left (same as the home page) */}
           <div className="flex items-center gap-3">
@@ -50,7 +48,7 @@ export default function About() {
             <span className="text-lg font-extrabold tracking-tight">CashWell</span>
           </div>
 
-          <div className="mt-12 grid items-center gap-10 lg:grid-cols-[1fr_300px]">
+          <div className="mt-12 grid items-center gap-10 lg:grid-cols-[1fr_420px]">
             <div>
               <motion.p
                 initial={{ opacity: 0, y: 16 }}
@@ -69,7 +67,7 @@ export default function About() {
                 Money tracking that stays out of your way
               </motion.h1>
             </div>
-            <ReceiptPrinter className="mx-auto hidden w-64 lg:block" />
+            <ReceiptPrinter className="mx-auto hidden w-full max-w-[400px] lg:block" />
           </div>
         </div>
       </section>
