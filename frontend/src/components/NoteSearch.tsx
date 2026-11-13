@@ -35,24 +35,6 @@ const uniqueNotes = (items: { description?: string | null }[]) => {
   return notes
 }
 
-/** Cuts what was typed into pieces and flags the words the spelling help would change. */
-function typoPieces(typed: string, corrected: string) {
-  const fixedWords = corrected.split(' ')
-  const words = /[\p{L}\p{N}]+/gu // the same word rule the spelling help uses, so the nth word lines up with the nth fix
-  const pieces: { text: string; wrong: boolean }[] = []
-  let last = 0
-  let n = 0
-  let m: RegExpExecArray | null
-  while ((m = words.exec(typed))) {
-    if (m.index > last) pieces.push({ text: typed.slice(last, m.index), wrong: false })
-    pieces.push({ text: m[0], wrong: fixedWords[n] !== undefined && fixedWords[n] !== m[0].toLowerCase() })
-    last = m.index + m[0].length
-    n++
-  }
-  if (last < typed.length) pieces.push({ text: typed.slice(last), wrong: false })
-  return pieces
-}
-
 /** Shows `text` with the part that matches `query` in bold. */
 function Highlight({ text, query }: { text: string; query: string }) {
   const i = text.toLowerCase().indexOf(query.toLowerCase())
@@ -144,6 +126,13 @@ export default function NoteSearch({ id, label, value, onChange, onSubmit, scope
   // the spelling fix only counts while it still belongs to what is typed right now
   const activeFix = fix && fix.for === query ? fix.to : null
   const options: Option[] = suggestions.map((value) => ({ value }))
+
+  // Inline completion, like the address bar: what is typed stays, the rest of the best match shows selected after it.
+  // A misspelled word has nothing to continue, so the corrected text is shown selected after it instead.
+  const best = activeFix ?? suggestions[0] ?? null
+  const completes = !!best && !!value && best.toLowerCase().startsWith(value.toLowerCase()) && best.length > value.length
+  const ghost = !best || !value ? '' : completes ? best.slice(value.length) : activeFix ? ` ${activeFix}` : ''
+  const accept = ghost ? (completes ? best! : activeFix!) : null
   const showList = open && options.length > 0
 
   const choose = (note: string) => {
@@ -164,11 +153,16 @@ export default function NoteSearch({ id, label, value, onChange, onSubmit, scope
     } else if (e.key === 'Enter') {
       e.preventDefault()
       if (showList && active >= 0) choose(options[active].value)
-      else if (activeFix) choose(activeFix) // autocorrect: nothing matched what was typed, so search the corrected spelling
+      else if (accept) choose(accept) // take the completion / spelling fix that is shown in the box
       else {
         onSubmit(value)
         setOpen(false)
       }
+    } else if ((e.key === 'Tab' || e.key === 'ArrowRight') && accept && e.currentTarget.selectionStart === value.length && !e.shiftKey) {
+      if (e.key === 'ArrowRight') e.preventDefault()
+      else if (!showList) e.preventDefault() // Tab fills in the completion instead of leaving the box
+      else return
+      onChange(accept)
     } else if (e.key === 'Escape') {
       setOpen(false)
       setActive(-1)
@@ -179,20 +173,11 @@ export default function NoteSearch({ id, label, value, onChange, onSubmit, scope
     <div ref={box}>
       <label htmlFor={id} className="label">{label}</label>
       <div className="relative">
-        {/* A copy of the typed text sits BEHIND the (see-through) input. Its letters are invisible; only the highlight
-            on a misspelled word and the fix after it show. Same box, font and padding as the input, so they line up. */}
+        {/* A copy of the typed text sits BEHIND the (see-through) input. Its letters are invisible; only the selected-looking
+            completion after it shows. Same box, font and padding as the input, so the two line up. */}
         <div aria-hidden className="input pointer-events-none absolute inset-0 overflow-hidden whitespace-pre pl-9 pr-9 text-transparent">
-          {activeFix &&
-            typoPieces(value, activeFix).map((p, i) =>
-              p.wrong ? (
-                <mark key={i} className="rounded-sm bg-accent-100 text-transparent underline decoration-red-500 decoration-wavy decoration-1 underline-offset-4">
-                  {p.text}
-                </mark>
-              ) : (
-                <span key={i}>{p.text}</span>
-              ),
-            )}
-          {activeFix && <span className="font-semibold text-accent-700">{`  → ${activeFix}`}</span>}
+          {value}
+          {ghost && <span className="bg-blue-200 text-slate-900">{ghost}</span>}
         </div>
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
         <input
