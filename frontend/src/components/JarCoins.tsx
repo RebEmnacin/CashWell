@@ -1,105 +1,130 @@
 /**
- * A glass jar that tips over and pours coins, drawn as one inline SVG (no image file). Same style as CoffeeCup.
- * One 7-second loop:
- *  - 0-10%   the jar stands upright, the coins settle at the bottom
- *  - 10-40%  the jar tips over (rotates about 100 degrees) and the coins inside slide toward the mouth
- *  - 38-84%  coins keep tumbling out, arc through the air and land on a little pile
- *  - 84-100% the jar stands back up and the pile fades away, then it starts again
- * The whole jar also floats gently up and down, and the shadow on the ground breathes with it.
+ * A glass jar that tips over, empties its coins one by one and builds a tall stack beside it.
+ * Drawn as one inline SVG (no image file), same style as CoffeeCup. One 10-second loop:
+ *  - 0-22%    the jar stands full, then tips over (about 100 degrees) and the coins slide toward the mouth
+ *  - 23-75%   coins leave the jar ONE AT A TIME: each one disappears from inside the jar (so it gets emptier),
+ *             flies out of the mouth in an arc, and lands on top of the stack (so the stack grows taller)
+ *  - 75-85%   the jar lies empty next to the finished stack
+ *  - 85-100%  the jar stands back up, the stack fades away and the jar refills, then it starts again
+ * The coins are separate layers: every coin has its own "inside the jar", "in the air" and "in the stack" copy,
+ * and the keyframes for each are generated from the numbers below.
  */
-export default function JarCoins({ className = '' }: { className?: string }) {
-  // the coins that fall out: dx = how far right they travel, dy = how far down they drop,
-  // dur = seconds per fall, delay = negative so the coins never fall in sync
-  const coins = [
-    { dx: 40, dy: 54, dur: 1.9, delay: 0 },
-    { dx: 58, dy: 52, dur: 2.2, delay: -0.5 },
-    { dx: 72, dy: 55, dur: 2.0, delay: -1.0 },
-    { dx: 50, dy: 53, dur: 2.4, delay: -1.5 },
-    { dx: 84, dy: 56, dur: 2.1, delay: -0.25 },
-    { dx: 66, dy: 54, dur: 2.3, delay: -1.2 },
-    { dx: 46, dy: 55, dur: 2.0, delay: -0.8 },
-    { dx: 78, dy: 53, dur: 2.2, delay: -1.8 },
-  ]
 
-  /** One coin facing the camera: a white disc with a green ring. */
-  const Coin = ({ r = 9 }: { r?: number }) => (
+const LOOP = 10 // seconds for one full loop
+const FIRST = 2.3 // seconds until the first coin leaves
+const GAP = 0.55 // seconds between coins leaving
+const FALL = 0.85 // seconds a coin spends in the air
+const MOUTH = { x: 145, y: 151 } // where coins come out of the tipped jar
+const STACK = { x: 218, floor: 207, step: 4.5 } // x of the stack, y of the ground, height of one coin in the stack
+
+// coins inside the jar (x, y in the upright jar). The top row sits nearest the mouth, so it leaves first.
+const inside = [
+  [-24, 29],
+  [-8, 29],
+  [8, 29],
+  [24, 29],
+  [-32, 46],
+  [-16, 46],
+  [0, 46],
+  [16, 46],
+  [32, 46],
+]
+
+const pct = (seconds: number) => +((seconds / LOOP) * 100).toFixed(2)
+
+/** One coin facing the camera: a white disc with a green ring. */
+function Coin({ r = 8.5 }: { r?: number }) {
+  return (
     <g>
       <circle r={r} fill="#fff" />
       <circle r={r * 0.62} fill="none" stroke="#0b5d1e" strokeOpacity="0.4" strokeWidth="2" />
     </g>
   )
+}
+
+export default function JarCoins({ className = '' }: { className?: string }) {
+  const coins = inside.map(([x, y], i) => {
+    const leaves = FIRST + i * GAP // seconds when this coin leaves the jar
+    const lands = leaves + FALL // seconds when it lands on the stack
+    const stackY = STACK.floor - i * STACK.step // y of this coin once it sits in the stack
+    return { x, y, i, a: pct(leaves), b: pct(lands), dx: STACK.x - MOUTH.x, dy: stackY - MOUTH.y, stackY }
+  })
+
+  // one set of keyframes per coin: inside the jar, flying (x and y separately, so it travels in an arc), in the stack
+  const coinCss = coins
+    .map(
+      (c) => `
+        @keyframes jji${c.i} { 0%, ${c.a - 0.4}% { opacity: 1; } ${c.a}%, 96% { opacity: 0; } 99%, 100% { opacity: 1; } }
+        @keyframes jjx${c.i} {
+          0%, ${c.a}% { transform: translateX(0); opacity: 0; }
+          ${c.a + 0.2}% { opacity: 1; }
+          ${c.b}% { transform: translateX(${c.dx}px); opacity: 1; }
+          ${c.b + 0.2}%, 100% { transform: translateX(${c.dx}px); opacity: 0; }
+        }
+        @keyframes jjy${c.i} {
+          0%, ${c.a}% { transform: translateY(0); animation-timing-function: ease-out; }
+          ${+(c.a + (c.b - c.a) * 0.25).toFixed(2)}% { transform: translateY(-9px); animation-timing-function: cubic-bezier(.45, 0, .9, .7); }
+          ${c.b}%, 100% { transform: translateY(${c.dy}px); }
+        }
+        @keyframes jjs${c.i} { 0%, ${c.b}% { opacity: 0; } ${c.b + 0.2}%, 88% { opacity: 1; } 94%, 100% { opacity: 0; } }
+        .jji${c.i} { animation: jji${c.i} ${LOOP}s linear infinite; }
+        .jjx${c.i} { animation: jjx${c.i} ${LOOP}s linear infinite; }
+        .jjy${c.i} { animation: jjy${c.i} ${LOOP}s linear infinite; }
+        .jjs${c.i} { animation: jjs${c.i} ${LOOP}s linear infinite; }`,
+    )
+    .join('\n')
 
   return (
-    <svg viewBox="0 0 260 230" role="img" aria-label="A jar tipping over and pouring coins" className={className}>
+    <svg viewBox="0 0 260 230" role="img" aria-label="A jar tipping over, pouring its coins into a growing stack" className={className}>
       <style>{`
         .jj-float  { animation: jjFloat 4.5s ease-in-out infinite; }
         .jj-shadow { transform-box: fill-box; transform-origin: center; animation: jjShadow 4.5s ease-in-out infinite; }
-        .jj-tip    { transform-origin: 0 0; animation: jjTip 7s infinite; }
-        .jj-slide  { animation: jjSlide 7s ease-in-out infinite; }
-        .jj-gate   { animation: jjGate 7s linear infinite; }
-        .jj-x      { animation: jjX var(--dur) linear infinite; animation-delay: var(--delay); }
-        .jj-y      { animation: jjY var(--dur) infinite; animation-delay: var(--delay); }
-        .jj-flip   { transform-box: fill-box; transform-origin: center; animation: jjFlip .4s ease-in-out infinite alternate; animation-delay: var(--delay); }
-        @keyframes jjFloat  { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
-        @keyframes jjShadow { 0%, 100% { transform: scaleX(1); opacity: .28; } 50% { transform: scaleX(.9); opacity: .18; } }
+        .jj-tip    { transform-origin: 0 0; animation: jjTip ${LOOP}s infinite; }
+        .jj-slide  { animation: jjSlide ${LOOP}s ease-in-out infinite; }
+        .jj-flip   { transform-box: fill-box; transform-origin: center; animation: jjFlip .4s ease-in-out infinite alternate; }
+        @keyframes jjFloat  { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        @keyframes jjShadow { 0%, 100% { transform: scaleX(1); opacity: .28; } 50% { transform: scaleX(.92); opacity: .2; } }
         @keyframes jjTip {
-          0%, 10% { transform: rotate(0deg); animation-timing-function: cubic-bezier(.5, 0, .25, 1); }
-          34%     { transform: rotate(104deg); animation-timing-function: ease-in-out; }
-          40%, 84% { transform: rotate(98deg); animation-timing-function: cubic-bezier(.5, 0, .25, 1); }
-          100%    { transform: rotate(0deg); }
+          0%, 8%   { transform: rotate(0deg); animation-timing-function: cubic-bezier(.5, 0, .25, 1); }
+          22%      { transform: rotate(104deg); animation-timing-function: ease-in-out; }
+          26%, 85% { transform: rotate(98deg); animation-timing-function: cubic-bezier(.5, 0, .25, 1); }
+          94%, 100% { transform: rotate(0deg); }
         }
-        @keyframes jjSlide { 0%, 12% { transform: translateY(0); } 36%, 84% { transform: translateY(-20px); } 100% { transform: translateY(0); } }
-        @keyframes jjGate  { 0%, 32% { opacity: 0; } 38%, 84% { opacity: 1; } 92%, 100% { opacity: 0; } }
-        @keyframes jjX { 0% { transform: translateX(0); opacity: 0; } 8% { opacity: 1; } 88% { opacity: 1; } 100% { transform: translateX(var(--dx)); opacity: 0; } }
-        @keyframes jjY {
-          0%   { transform: translateY(0);   animation-timing-function: ease-out; }
-          22%  { transform: translateY(-9px); animation-timing-function: cubic-bezier(.45, 0, .9, .7); }
-          100% { transform: translateY(var(--dy)); }
-        }
-        @keyframes jjFlip { from { transform: scaleX(1); } to { transform: scaleX(.2); } }
+        @keyframes jjSlide { 0%, 10% { transform: translateY(0); } 24%, 85% { transform: translateY(-44px); } 94%, 100% { transform: translateY(0); } }
+        @keyframes jjFlip  { from { transform: scaleX(1); } to { transform: scaleX(.2); } }
+        ${coinCss}
       `}</style>
 
       {/* ground shadow (stays put, only breathes) */}
-      <ellipse className="jj-shadow" cx="135" cy="216" rx="92" ry="7" fill="#021a03" />
+      <ellipse className="jj-shadow" cx="135" cy="216" rx="96" ry="7" fill="#021a03" />
 
+      {/* the stack: one flat coin per coin that has landed, so it grows taller with every coin */}
+      {coins.map((c) => (
+        <ellipse
+          key={c.i}
+          className={`jjs${c.i}`}
+          cx={STACK.x}
+          cy={c.stackY}
+          rx="10.5"
+          ry="3.4"
+          fill="#fff"
+          stroke="#0b5d1e"
+          strokeOpacity="0.3"
+          strokeWidth="1.5"
+        />
+      ))}
+
+      {/* the jar: drawn upright around (0,0), then tipped by the .jj-tip rotation */}
       <g className="jj-float">
-        {/* the little pile the coins land on */}
-        <g className="jj-gate">
-          {[
-            { x: 192, y: 207, n: 1 },
-            { x: 208, y: 207, n: 3 },
-            { x: 226, y: 207, n: 2 },
-          ].map((s) =>
-            Array.from({ length: s.n }, (_, i) => (
-              <ellipse
-                key={`${s.x}-${i}`}
-                cx={s.x}
-                cy={s.y - i * 4.5}
-                rx="10"
-                ry="3.4"
-                fill="#fff"
-                stroke="#0b5d1e"
-                strokeOpacity="0.3"
-                strokeWidth="1.5"
-              />
-            )),
-          )}
-        </g>
-
-        {/* the jar: drawn upright around (0,0), then tipped by the .jj-tip rotation */}
         <g transform="translate(80 140)">
           <g className="jj-tip">
-            {/* coins inside, sliding toward the mouth as it tips */}
+            {/* coins inside: each one disappears the moment it leaves, so the jar gets emptier */}
             <g className="jj-slide">
-              {[
-                [-24, 44],
-                [0, 48],
-                [24, 44],
-                [-12, 28],
-                [12, 29],
-              ].map(([x, y], i) => (
-                <g key={i} transform={`translate(${x} ${y})`}>
-                  <Coin />
+              {coins.map((c) => (
+                <g key={c.i} className={`jji${c.i}`}>
+                  <g transform={`translate(${c.x} ${c.y})`}>
+                    <Coin />
+                  </g>
                 </g>
               ))}
             </g>
@@ -117,19 +142,19 @@ export default function JarCoins({ className = '' }: { className?: string }) {
             <path d="M-36 -4 V38" fill="none" stroke="#fff" strokeOpacity="0.55" strokeWidth="5" strokeLinecap="round" />
           </g>
         </g>
+      </g>
 
-        {/* coins pouring out of the mouth: x and y are animated separately so they fly in an arc */}
-        <g className="jj-gate" transform="translate(145 151)">
-          {coins.map((c, i) => (
-            <g key={i} className="jj-x" style={{ ['--dx' as string]: `${c.dx}px`, ['--dur' as string]: `${c.dur}s`, ['--delay' as string]: `${c.delay}s` }}>
-              <g className="jj-y" style={{ ['--dy' as string]: `${c.dy}px`, ['--dur' as string]: `${c.dur}s`, ['--delay' as string]: `${c.delay}s` }}>
-                <g className="jj-flip" style={{ ['--delay' as string]: `${c.delay}s` }}>
-                  <Coin r={9.5} />
-                </g>
+      {/* coins in the air: x and y are animated separately so each one flies in an arc */}
+      <g transform={`translate(${MOUTH.x} ${MOUTH.y})`}>
+        {coins.map((c) => (
+          <g key={c.i} className={`jjx${c.i}`}>
+            <g className={`jjy${c.i}`}>
+              <g className="jj-flip">
+                <Coin />
               </g>
             </g>
-          ))}
-        </g>
+          </g>
+        ))}
       </g>
     </svg>
   )
