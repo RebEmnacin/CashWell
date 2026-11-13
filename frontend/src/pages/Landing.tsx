@@ -9,12 +9,12 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import heroPhoto from '../assets/Jar.jpeg'
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { errorMessage } from '../api/client'
 import { authApi } from '../api/endpoints'
 import AnimatedIcon from '../components/AnimatedIcon'
+import JarCoins from '../components/JarCoins'
 import { useAuthStore } from '../store/authStore'
 
 
@@ -122,15 +122,6 @@ export default function Landing() {
       {/* ============ HERO ============ */}
       <div className="relative">
         <section className="relative overflow-hidden rounded-b-[50%_60px] bg-brand-900 text-white md:rounded-b-[50%_120px]">
-          {/* background photo (bg-brand-900 above shows while it loads) */}
-          <img
-            src={heroPhoto}
-            alt=""
-            className="pointer-events-none absolute inset-0 size-full object-cover" // object-cover | object-contain | object-center | object-top
-          />
-          {/* dark green tint so the white text stays readable on any photo */}
-          <div className="pointer-events-none absolute inset-0 bg-linear-to-r from-brand-900/90 via-brand-900/70 to-brand-900/40" />
-
           <div className="relative mx-auto max-w-6xl px-6 pb-32 pt-8 md:pl-28 md:pb-36">
             {/* brand mark, top left */}
             <div className="flex items-center gap-3">
@@ -167,18 +158,14 @@ export default function Landing() {
                 {demoError && <p className="mt-3 text-sm font-medium text-red-300">{demoError}</p>}
               </div>
 
-              {/* image side: the logo in a tall, round-topped panel */}
+              {/* image side: a jar tipping over and pouring coins (animated SVG) */}
               <motion.div
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
                 className="relative order-3 mx-auto grid w-full max-w-[300px] place-items-center lg:order-none lg:col-start-2 lg:row-start-1 lg:max-w-[380px]"
               >
-                <img
-                  src="/CashWell_Logo.png"
-                  alt="CashWell logo"
-                  className="w-[85%] max-w-[340px] object-contain drop-shadow-2xl"
-                />
+                <JarCoins className="w-full max-w-[380px]" />
               </motion.div>
               {/* slide controls: plain arrows only (plus horizontal dots on phones), no hover highlight.
                   Phones: right under the buttons. Desktop: under the text column. */}
