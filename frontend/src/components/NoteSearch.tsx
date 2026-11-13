@@ -1,6 +1,7 @@
-import { Search, X } from 'lucide-react'
+import { Search, Sparkles, X } from 'lucide-react'
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { transactionApi } from '../api/endpoints'
+import { autocorrect, buildVocabulary } from '../lib/autocorrect'
 import type { TransactionFilters } from '../types'
 
 interface Props {
@@ -14,6 +15,26 @@ interface Props {
 }
 
 const MAX_SUGGESTIONS = 6
+const POOL_PAGES = 5 // read up to 5 x 100 notes to learn the person's own words (for spelling help)
+
+interface Option {
+  kind: 'fix' | 'note' // 'fix' is the "Did you mean ...?" row
+  value: string
+}
+
+/** The distinct notes in a list of transactions (case-insensitive), in order. */
+const uniqueNotes = (items: { description?: string | null }[]) => {
+  const seen = new Set<string>()
+  const notes: string[] = []
+  for (const t of items) {
+    const note = (t.description || '').trim()
+    if (note && !seen.has(note.toLowerCase())) {
+      seen.add(note.toLowerCase())
+      notes.push(note)
+    }
+  }
+  return notes
+}
 
 /** Shows `text` with the part that matches `query` in bold. */
 function Highlight({ text, query }: { text: string; query: string }) {
@@ -35,6 +56,8 @@ function Highlight({ text, query }: { text: string; query: string }) {
  */
 export default function NoteSearch({ id, label, value, onChange, onSubmit, scope }: Props) {
   const [suggestions, setSuggestions] = useState<string[]>([])
+  const [fix, setFix] = useState<{ for: string; to: string } | null>(null) // spelling correction for what was typed
+  const pool = useRef<{ key: string; notes: string[] } | null>(null) // all the person's notes, loaded once per set of filters
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState(-1) // which suggestion the arrow keys are on (-1 = none)
   const box = useRef<HTMLDivElement>(null)
@@ -52,22 +75,37 @@ export default function NoteSearch({ id, label, value, onChange, onSubmit, scope
       try {
         const res = await transactionApi.list({ ...scope, search: query, page: 1, limit: 50 })
         if (cancelled) return
-        const seen = new Set<string>()
-        const notes: string[] = []
-        for (const t of res.items) {
-          const note = (t.description || '').trim()
-          if (note && !seen.has(note.toLowerCase())) {
-            seen.add(note.toLowerCase())
-            notes.push(note)
+        let notes = uniqueNotes(res.items)
+        let correction: string | null = null
+
+        if (!notes.length) {
+          // nothing contains what was typed: maybe it is misspelled. Learn the person's words and look for a close match.
+          const key = JSON.stringify(scope)
+          if (pool.current?.key !== key) {
+            const all: { description?: string | null }[] = []
+            for (let page = 1; page <= POOL_PAGES; page++) {
+              const r = await transactionApi.list({ ...scope, page, limit: 100 })
+              all.push(...r.items)
+              if (all.length >= r.total) break
+            }
+            pool.current = { key, notes: uniqueNotes(all) }
           }
+          if (cancelled) return
+          correction = autocorrect(query, buildVocabulary(pool.current.notes))
+          if (correction) notes = pool.current.notes.filter((n) => n.toLowerCase().includes(correction!.toLowerCase()))
         }
+
         // notes that START with what was typed come first, then the ones that only contain it
-        const q = query.toLowerCase()
+        const q = (correction ?? query).toLowerCase()
         notes.sort((a, b) => Number(b.toLowerCase().startsWith(q)) - Number(a.toLowerCase().startsWith(q)))
+        setFix(correction ? { for: query, to: correction } : null)
         setSuggestions(notes.filter((n) => n.toLowerCase() !== q).slice(0, MAX_SUGGESTIONS))
         setActive(-1)
       } catch {
-        if (!cancelled) setSuggestions([]) // suggestions are a bonus: if the lookup fails, just show none
+        if (!cancelled) {
+          setSuggestions([]) // suggestions are a bonus: if the lookup fails, just show none
+          setFix(null)
+        }
       }
     }, 200)
     return () => {
@@ -86,7 +124,13 @@ export default function NoteSearch({ id, label, value, onChange, onSubmit, scope
     return () => document.removeEventListener('mousedown', onDown)
   }, [])
 
-  const showList = open && suggestions.length > 0
+  // the spelling fix only counts while it still belongs to what is typed right now
+  const activeFix = fix && fix.for === query ? fix.to : null
+  const options: Option[] = [
+    ...(activeFix ? [{ kind: 'fix' as const, value: activeFix }] : []),
+    ...suggestions.map((value) => ({ kind: 'note' as const, value })),
+  ]
+  const showList = open && options.length > 0
 
   const choose = (note: string) => {
     onChange(note)
@@ -99,13 +143,14 @@ export default function NoteSearch({ id, label, value, onChange, onSubmit, scope
     if (e.key === 'ArrowDown') {
       e.preventDefault()
       setOpen(true)
-      if (suggestions.length) setActive((a) => (a + 1) % suggestions.length)
+      if (options.length) setActive((a) => (a + 1) % options.length)
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
-      if (suggestions.length) setActive((a) => (a <= 0 ? suggestions.length - 1 : a - 1))
+      if (options.length) setActive((a) => (a <= 0 ? options.length - 1 : a - 1))
     } else if (e.key === 'Enter') {
       e.preventDefault()
-      if (showList && active >= 0) choose(suggestions[active])
+      if (showList && active >= 0) choose(options[active].value)
+      else if (activeFix) choose(activeFix) // autocorrect: nothing matched what was typed, so search the corrected spelling
       else {
         onSubmit(value)
         setOpen(false)
@@ -160,22 +205,35 @@ export default function NoteSearch({ id, label, value, onChange, onSubmit, scope
             role="listbox"
             className="absolute left-0 right-0 top-full z-30 mt-1 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg"
           >
-            {suggestions.map((s, i) => (
+            {options.map((o, i) => (
               <li
-                key={s}
+                key={`${o.kind}-${o.value}`}
                 id={`${id}-opt-${i}`}
                 role="option"
                 aria-selected={i === active}
                 // mousedown (not click) so it runs before the input loses focus
                 onMouseDown={(e) => {
                   e.preventDefault()
-                  choose(s)
+                  choose(o.value)
                 }}
                 onMouseEnter={() => setActive(i)}
-                className={`flex cursor-pointer items-center gap-2 px-3 py-2 text-sm text-slate-700 ${i === active ? 'bg-brand-50' : ''}`}
+                className={`flex cursor-pointer items-center gap-2 px-3 py-2 text-sm text-slate-700 ${i === active ? 'bg-brand-50' : ''} ${
+                  o.kind === 'fix' ? 'border-b border-slate-100' : ''
+                }`}
               >
-                <Search className="size-3.5 shrink-0 text-slate-300" />
-                <span className="truncate"><Highlight text={s} query={query} /></span>
+                {o.kind === 'fix' ? (
+                  <>
+                    <Sparkles className="size-3.5 shrink-0 text-accent-500" />
+                    <span className="truncate">
+                      Did you mean <strong className="font-bold text-brand-700">{o.value}</strong>?
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Search className="size-3.5 shrink-0 text-slate-300" />
+                    <span className="truncate"><Highlight text={o.value} query={activeFix ?? query} /></span>
+                  </>
+                )}
               </li>
             ))}
           </ul>
