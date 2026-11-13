@@ -137,14 +137,18 @@ export default function Transactions() {
               {filterCategories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
-          <div>
-            <label htmlFor="f-from" className="label">From</label>
-            <input id="f-from" type="date" className="input" value={start} onChange={(e) => changeStart(e.target.value)} />
-          </div>
-          <div>
-            <label htmlFor="f-to" className="label">To</label>
-            <input id="f-to" type="date" className="input" value={end} min={start || undefined}
-              onChange={(e) => changeEnd(e.target.value)} />
+          {/* From and To share one cell so a dash can sit between the two date boxes */}
+          <div className="flex items-end gap-2 sm:col-span-2 lg:col-span-2">
+            <div className="min-w-0 flex-1">
+              <label htmlFor="f-from" className="label">From</label>
+              <input id="f-from" type="date" className="input" value={start} onChange={(e) => changeStart(e.target.value)} />
+            </div>
+            <span aria-hidden className="pb-3 text-slate-400">–</span>
+            <div className="min-w-0 flex-1">
+              <label htmlFor="f-to" className="label">To</label>
+              <input id="f-to" type="date" className="input" value={end} min={start || undefined}
+                onChange={(e) => changeEnd(e.target.value)} />
+            </div>
           </div>
         </div>
         {hasFilters && (
