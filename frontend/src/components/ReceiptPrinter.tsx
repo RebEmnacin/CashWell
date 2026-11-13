@@ -7,7 +7,7 @@
  *  - it rests for a moment so it can be read (CASHWELL, a few items, a total and a barcode)
  *  - then it is pulled up and away, and the next one starts printing
  * The paper is clipped at the slot, so it looks like it comes from inside the machine.
- * If the visitor prefers reduced motion, the finished receipt just sits there.
+ * The loop always plays, even if the computer has "reduce motion" turned on (same as the rest of the site).
  */
 
 const SLOT_Y = 173 // where the paper meets the front rim of the slot
@@ -61,9 +61,6 @@ export default function ReceiptPrinter({ className = '' }: { className?: string 
           82%     { transform: translateY(0); opacity: 1; animation-timing-function: cubic-bezier(.5, 0, .8, .4); }
           92%     { transform: translateY(-60px); opacity: 0; }
           100%    { transform: translateY(-60px); opacity: 0; }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .rp-paper { animation: none; transform: translateY(0); }
         }
       `}</style>
 
