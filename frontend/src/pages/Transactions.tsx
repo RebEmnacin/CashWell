@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Download, Pencil, Plus, Search, Trash2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Download, Pencil, Plus, Search, Trash2 } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { errorMessage } from '../api/client'
 import { transactionApi } from '../api/endpoints'
@@ -213,11 +213,17 @@ export default function Transactions() {
         <div className="mt-4 flex items-center justify-between text-sm">
           <span className="text-slate-500">Page {page} of {totalPages}</span>
           <div className="flex gap-2">
-            <button className="btn-ghost !px-3" disabled={page <= 1} onClick={() => setPage(page - 1)} aria-label="Previous page">
+            <button className="btn-ghost !px-3" disabled={page <= 1} onClick={() => setPage(1)} aria-label="First page" title="First page">
+              <ChevronsLeft className="size-4" />
+            </button>
+            <button className="btn-ghost !px-3" disabled={page <= 1} onClick={() => setPage(page - 1)} aria-label="Previous page" title="Previous page">
               <ChevronLeft className="size-4" />
             </button>
-            <button className="btn-ghost !px-3" disabled={page >= totalPages} onClick={() => setPage(page + 1)} aria-label="Next page">
+            <button className="btn-ghost !px-3" disabled={page >= totalPages} onClick={() => setPage(page + 1)} aria-label="Next page" title="Next page">
               <ChevronRight className="size-4" />
+            </button>
+            <button className="btn-ghost !px-3" disabled={page >= totalPages} onClick={() => setPage(totalPages)} aria-label="Last page" title="Last page">
+              <ChevronsRight className="size-4" />
             </button>
           </div>
         </div>
