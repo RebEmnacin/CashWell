@@ -1,229 +1,163 @@
-import { ChevronLeft, ChevronRight, Download, Pencil, Plus, Search, Trash2 } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { animated, useTransition } from '@react-spring/web'
+import { X } from 'lucide-react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { errorMessage } from '../api/client'
 import { transactionApi } from '../api/endpoints'
-import PageHeader from '../components/PageHeader'
-import TransactionModal from '../components/TransactionModal'
-import { useCategories } from '../hooks/useCategories'
-import { money, prettyDate } from '../lib/format'
-import type { Transaction, TransactionFilters } from '../types'
+import { today } from '../lib/format'
+import MoneyInput from './MoneyInput'
+import type { Category, Transaction, TxType } from '../types'
 
-const PAGE_SIZE = 10
+interface Props {
+  open: boolean
+  editing: Transaction | null // null = creating a new one
+  categories: Category[]
+  onClose: () => void
+  onSaved: () => void
+}
 
-export default function Transactions() {
-  const categories = useCategories()
-  const [items, setItems] = useState<Transaction[]>([])
-  const [total, setTotal] = useState(0)
-  const [page, setPage] = useState(1)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-
-  // Filters
-  const [search, setSearch] = useState('')
-  const [debouncedSearch, setDebouncedSearch] = useState('')
-  const [type, setType] = useState<TransactionFilters['type']>('')
+export default function TransactionModal({ open, editing, categories, onClose, onSaved }: Props) {
+  const [type, setType] = useState<TxType>('expense')
   const [categoryId, setCategoryId] = useState<number | ''>('')
-  const [start, setStart] = useState('')
-  const [end, setEnd] = useState('')
+  const [amount, setAmount] = useState('')
+  const [description, setDescription] = useState('')
+  const [date, setDate] = useState(today())
+  const [error, setError] = useState('')
+  const [saving, setSaving] = useState(false)
 
-  // Modal
-  const [modalOpen, setModalOpen] = useState(false)
-  const [editing, setEditing] = useState<Transaction | null>(null)
-
-  // Wait 350ms after typing stops before searching (so we don't call the API on every keystroke)
+  // Fill the form whenever the modal opens (either blank, or with the row being edited)
   useEffect(() => {
-    const id = setTimeout(() => { setDebouncedSearch(search); setPage(1) }, 350)
-    return () => clearTimeout(id)
-  }, [search])
-
-  const filters: TransactionFilters = { type, category_id: categoryId, start, end, search: debouncedSearch }
-
-  const load = useCallback(async () => {
-    setLoading(true)
+    if (!open) return
     setError('')
+    if (editing) {
+      setType(editing.type)
+      setCategoryId(editing.category_id)
+      setAmount(Number(editing.amount).toFixed(2))
+      setDescription(editing.description)
+      setDate(editing.date)
+    } else {
+      setType('expense')
+      setCategoryId('')
+      setAmount('')
+      setDescription('')
+      setDate(today())
+    }
+  }, [open, editing])
+
+  // Close on Escape key
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open, onClose])
+
+  const transitions = useTransition(open, {
+    from: { opacity: 0, y: 24, scale: 0.97 },
+    enter: { opacity: 1, y: 0, scale: 1 },
+    leave: { opacity: 0, y: 12, scale: 0.98 },
+    config: { tension: 300, friction: 26 },
+  })
+
+  const options = categories.filter((c) => c.type === type)
+
+  const switchType = (t: TxType) => {
+    setType(t)
+    setCategoryId('') // old category belongs to the other type
+  }
+
+  const submit = async (e: FormEvent) => {
+    e.preventDefault()
+    setError('')
+    const value = Number(amount)
+    if (!categoryId) return setError('Please pick a category.')
+    if (!value || value <= 0) return setError('Amount must be greater than 0.')
+
+    setSaving(true)
     try {
-      const res = await transactionApi.list({ ...filters, page, limit: PAGE_SIZE })
-      setItems(res.items)
-      setTotal(res.total)
+      const payload = { category_id: Number(categoryId), amount: value, description, date }
+      if (editing) await transactionApi.update(editing.id, payload)
+      else await transactionApi.create(payload)
+      onSaved()
+      onClose()
     } catch (err) {
       setError(errorMessage(err))
     } finally {
-      setLoading(false)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type, categoryId, start, end, debouncedSearch, page])
-
-  useEffect(() => { load() }, [load])
-
-  const changeFilter = <T,>(setter: (v: T) => void) => (v: T) => { setter(v); setPage(1) }
-
-  // The category list follows the type: Income shows only income categories, Expense only expense ones.
-  const categoryOptions = type ? categories.filter((c) => c.type === type) : categories
-  // Switching the type drops a chosen category that doesn't belong to the new type.
-  const changeType = (v: TransactionFilters['type']) => {
-    setType(v)
-    if (v && categoryId !== '' && categories.find((c) => c.id === categoryId)?.type !== v) setCategoryId('')
-    setPage(1)
-  }
-
-  // "From" is the starting date, so "To" can never be earlier than it (dates are YYYY-MM-DD, so plain string compare works).
-  // Moving From past To drags To along; typing a To that is too early snaps it back to From.
-  const changeStart = (v: string) => {
-    setStart(v)
-    if (v && end && end < v) setEnd(v)
-    setPage(1)
-  }
-  const changeEnd = (v: string) => {
-    setEnd(v && start && v < start ? start : v)
-    setPage(1)
-  }
-
-  const remove = async (t: Transaction) => {
-    if (!window.confirm(`Delete "${t.description || t.category.name}"?`)) return
-    try {
-      await transactionApi.remove(t.id)
-      // If we deleted the last item on this page, step back one page
-      if (items.length === 1 && page > 1) setPage(page - 1)
-      else load()
-    } catch (err) {
-      setError(errorMessage(err))
+      setSaving(false)
     }
   }
 
-  const openNew = () => { setEditing(null); setModalOpen(true) }
-  const openEdit = (t: Transaction) => { setEditing(t); setModalOpen(true) }
-
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
-  const clearFilters = () => {
-    setSearch(''); setDebouncedSearch(''); setType(''); setCategoryId(''); setStart(''); setEnd(''); setPage(1)
-  }
-  const hasFilters = search || type || categoryId || start || end
-
-  return (
-    <>
-      <PageHeader title="Transactions" subtitle={`${total} total`}>
-        <button className="btn-ghost" onClick={() => transactionApi.exportCsv(filters).catch((e) => setError(errorMessage(e)))}>
-          <Download className="size-4" /> Export CSV
-        </button>
-        <button className="btn-primary" onClick={openNew}><Plus className="size-4" /> Add</button>
-      </PageHeader>
-
-      {/* Filters */}
-      <div className="card mb-5 animate-rise">
-        <div className="grid grid-cols-[minmax(0,1fr)] gap-3 sm:grid-cols-2 lg:grid-cols-6">
-          <div className="lg:col-span-2">
-            <label htmlFor="f-search" className="label">Search</label>
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
-              <input id="f-search" className="input pl-9" placeholder="Search notes…" value={search}
-                onChange={(e) => setSearch(e.target.value)} />
-            </div>
-          </div>
-          <div>
-            <label htmlFor="f-type" className="label">Type</label>
-            <select id="f-type" className="input" value={type}
-              onChange={(e) => changeType(e.target.value as TransactionFilters['type'])}>
-              <option value="">All types</option>
-              <option value="income">Income</option>
-              <option value="expense">Expense</option>
-            </select>
-          </div>
-          <div>
-            <label htmlFor="f-category" className="label">Category</label>
-            <select id="f-category" className="input" value={categoryId}
-              onChange={(e) => changeFilter(setCategoryId)(e.target.value ? Number(e.target.value) : '')}>
-              <option value="">All categories</option>
-              {categoryOptions.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </select>
-          </div>
-          {/* From and To sit together with a dash between the two date boxes */}
-          <div className="flex items-end gap-2 sm:col-span-2 lg:col-span-2">
-            <div className="min-w-0 flex-1">
-              <label htmlFor="f-from" className="label">From</label>
-              <input id="f-from" type="date" className="input max-[640px]:px-3" value={start} onChange={(e) => changeStart(e.target.value)} />
-            </div>
-            <span aria-hidden className="pb-2.5 text-lg font-bold leading-none text-slate-400">-</span>
-            <div className="min-w-0 flex-1">
-              <label htmlFor="f-to" className="label">To</label>
-              <input id="f-to" type="date" className="input max-[640px]:px-3" value={end} min={start || undefined}
-                onChange={(e) => changeEnd(e.target.value)} />
-            </div>
-          </div>
-        </div>
-        {hasFilters && (
-          <button onClick={clearFilters} className="mt-3 cursor-pointer text-xs font-semibold text-brand-600 hover:underline">
-            Clear filters
-          </button>
-        )}
-      </div>
-
-      {error && <p role="alert" className="mb-4 rounded-xl bg-rose-50 px-4 py-3 text-sm font-medium text-rose-600">{error}</p>}
-
-      <div className="card animate-rise overflow-hidden p-0" style={{ animationDelay: '80ms' }}>
-        {loading && items.length === 0 ? (
-          <div className="space-y-px">{[0, 1, 2, 3, 4].map((i) => <div key={i} className="h-16 animate-pulse bg-slate-50" />)}</div>
-        ) : items.length === 0 ? (
-          <p className="py-16 text-center text-sm text-slate-400">
-            {hasFilters ? 'No transactions match your filters.' : 'No transactions yet. Add your first one!'}
-          </p>
-        ) : (
-          <table className="w-full text-left text-sm">
-            <thead className="hidden border-b border-slate-100 bg-slate-50/70 text-xs uppercase tracking-wide text-slate-500 md:table-header-group">
-              <tr>
-                <th className="px-5 py-3 font-semibold">Date</th>
-                <th className="px-5 py-3 font-semibold">Note</th>
-                <th className="px-5 py-3 font-semibold">Category</th>
-                <th className="px-5 py-3 text-right font-semibold">Amount</th>
-                <th className="w-24 px-5 py-3"><span className="sr-only">Actions</span></th>
-              </tr>
-            </thead>
-            <tbody className={`divide-y divide-slate-100 transition-opacity ${loading ? 'opacity-50' : ''}`}>
-              {items.map((t) => (
-                <tr key={t.id} className="group hover:bg-slate-50/60">
-                  <td className="hidden whitespace-nowrap px-5 py-3.5 text-slate-500 md:table-cell">{prettyDate(t.date)}</td>
-                  <td className="px-5 py-3.5">
-                    <p className="font-semibold">{t.description || '—'}</p>
-                    <p className="text-xs text-slate-400 md:hidden">{t.category.name} · {prettyDate(t.date)}</p>
-                  </td>
-                  <td className="hidden px-5 py-3.5 md:table-cell">
-                    <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold">
-                      <span className="size-2 rounded-full" style={{ background: t.category.color }} />{t.category.name}
-                    </span>
-                  </td>
-                  <td className={`whitespace-nowrap px-5 py-3.5 text-right font-extrabold ${t.type === 'income' ? 'text-emerald-600' : ''}`}>
-                    {t.type === 'income' ? '+' : '−'}{money(t.amount)}
-                  </td>
-                  <td className="px-3 py-3.5">
-                    <div className="flex justify-end gap-1">
-                      <button aria-label="Edit" onClick={() => openEdit(t)}
-                        className="cursor-pointer rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700"><Pencil className="size-4" /></button>
-                      <button aria-label="Delete" onClick={() => remove(t)}
-                        className="cursor-pointer rounded-lg p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-600"><Trash2 className="size-4" /></button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-
-      {total > PAGE_SIZE && (
-        <div className="mt-4 flex items-center justify-between text-sm">
-          <span className="text-slate-500">Page {page} of {totalPages}</span>
-          <div className="flex gap-2">
-            <button className="btn-ghost !px-3" disabled={page <= 1} onClick={() => setPage(page - 1)} aria-label="Previous page">
-              <ChevronLeft className="size-4" />
-            </button>
-            <button className="btn-ghost !px-3" disabled={page >= totalPages} onClick={() => setPage(page + 1)} aria-label="Next page">
-              <ChevronRight className="size-4" />
+  return transitions((style, show) =>
+    show ? (
+      <animated.div style={{ opacity: style.opacity }} className="fixed inset-0 z-50 grid place-items-center p-4">
+        <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={onClose} />
+        <animated.form
+          onSubmit={submit}
+          role="dialog"
+          aria-modal="true"
+          aria-label={editing ? 'Edit transaction' : 'Add transaction'}
+          style={{ y: style.y, scale: style.scale }}
+          className="relative w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl"
+        >
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="text-lg font-extrabold">{editing ? 'Edit transaction' : 'New transaction'}</h2>
+            <button type="button" onClick={onClose} aria-label="Close" className="cursor-pointer rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">
+              <X className="size-5" />
             </button>
           </div>
-        </div>
-      )}
 
-      <TransactionModal open={modalOpen} editing={editing} categories={categories}
-        onClose={() => setModalOpen(false)} onSaved={load} />
-    </>
+          <div className="mb-4 grid grid-cols-2 gap-1 rounded-xl bg-slate-100 p-1">
+            {(['expense', 'income'] as TxType[]).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => switchType(t)}
+                className={`cursor-pointer rounded-lg py-2 text-sm font-semibold capitalize transition ${
+                  type === t
+                    ? t === 'expense' ? 'bg-white text-rose-600 shadow-sm' : 'bg-white text-brand-600 shadow-sm'
+                    : 'text-slate-500'
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <label className="label" htmlFor="tx-amount">Amount</label>
+              <MoneyInput id="tx-amount" className="input" placeholder="0.00" value={amount} onChange={setAmount} autoFocus />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="label" htmlFor="tx-category">Category</label>
+                <select id="tx-category" className="input" value={categoryId}
+                  onChange={(e) => setCategoryId(e.target.value ? Number(e.target.value) : '')}>
+                  <option value="">Select…</option>
+                  {options.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="label" htmlFor="tx-date">Date</label>
+                <input id="tx-date" className="input" type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+              </div>
+            </div>
+            <div>
+              <label className="label" htmlFor="tx-desc">Note</label>
+              <input id="tx-desc" className="input" maxLength={200} placeholder="What was this for?"
+                value={description} onChange={(e) => setDescription(e.target.value)} />
+            </div>
+          </div>
+
+          {error && <p role="alert" className="mt-4 rounded-lg bg-rose-50 px-3 py-2 text-sm font-medium text-rose-600">{error}</p>}
+
+          <div className="mt-6 flex gap-2">
+            <button type="button" className="btn-ghost flex-1" onClick={onClose}>Cancel</button>
+            <button type="submit" className="btn-primary flex-1" disabled={saving}>
+              {saving ? 'Saving…' : editing ? 'Save changes' : 'Add transaction'}
+            </button>
+          </div>
+        </animated.form>
+      </animated.div>
+    ) : null,
   )
 }
