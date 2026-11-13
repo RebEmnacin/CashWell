@@ -97,12 +97,10 @@ export default function Transactions() {
 
   return (
     <>
-      <PageHeader title="Transactions" subtitle={`${total} total`}>
-        <button className="btn-ghost" onClick={() => transactionApi.exportCsv(filters).catch((e) => setError(errorMessage(e)))}>
-          <Download className="size-4" /> Export CSV
-        </button>
-        <button className="btn-primary" onClick={openNew}><Plus className="size-4" /> Add</button>
-      </PageHeader>
+      {/* the title on its own; -mb-3 pulls the filters panel up so there is only a small gap under it */}
+      <div className="-mb-3">
+        <PageHeader title="Transactions" />
+      </div>
 
       {/* Filters */}
       <div className="card relative z-20 mb-5 animate-rise">
@@ -157,26 +155,35 @@ export default function Transactions() {
 
       {error && <p role="alert" className="mb-4 rounded-xl bg-rose-50 px-4 py-3 text-sm font-medium text-rose-600">{error}</p>}
 
-      {/* Page controls sit above the table */}
-      {total > PAGE_SIZE && (
-        <div className="mb-3 flex items-center justify-between text-sm">
-          <span className="text-slate-500">Page {page} of {totalPages}</span>
-          <div className="flex gap-2">
-            <button className="btn-ghost !px-3" disabled={page <= 1} onClick={() => setPage(1)} aria-label="First page" title="First page">
-              <ChevronsLeft className="size-4" />
-            </button>
-            <button className="btn-ghost !px-3" disabled={page <= 1} onClick={() => setPage(page - 1)} aria-label="Previous page" title="Previous page">
-              <ChevronLeft className="size-4" />
-            </button>
-            <button className="btn-ghost !px-3" disabled={page >= totalPages} onClick={() => setPage(page + 1)} aria-label="Next page" title="Next page">
-              <ChevronRight className="size-4" />
-            </button>
-            <button className="btn-ghost !px-3" disabled={page >= totalPages} onClick={() => setPage(totalPages)} aria-label="Last page" title="Last page">
-              <ChevronsRight className="size-4" />
-            </button>
-          </div>
+      {/* Row above the table: the total on the left; Export, Add and the page buttons on the right */}
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3 text-sm">
+        <span className="text-slate-500">
+          {total} total{total > PAGE_SIZE && <> · Page {page} of {totalPages}</>}
+        </span>
+        <div className="flex flex-wrap items-center gap-2">
+          <button className="btn-ghost" onClick={() => transactionApi.exportCsv(filters).catch((e) => setError(errorMessage(e)))}>
+            <Download className="size-4" /> Export CSV
+          </button>
+          <button className="btn-primary" onClick={openNew}><Plus className="size-4" /> Add</button>
+          {total > PAGE_SIZE && (
+            <div className="flex items-center gap-2">
+              <span aria-hidden className="mx-1 hidden h-6 w-px bg-slate-200 sm:block" />
+              <button className="btn-ghost !px-3" disabled={page <= 1} onClick={() => setPage(1)} aria-label="First page" title="First page">
+                <ChevronsLeft className="size-4" />
+              </button>
+              <button className="btn-ghost !px-3" disabled={page <= 1} onClick={() => setPage(page - 1)} aria-label="Previous page" title="Previous page">
+                <ChevronLeft className="size-4" />
+              </button>
+              <button className="btn-ghost !px-3" disabled={page >= totalPages} onClick={() => setPage(page + 1)} aria-label="Next page" title="Next page">
+                <ChevronRight className="size-4" />
+              </button>
+              <button className="btn-ghost !px-3" disabled={page >= totalPages} onClick={() => setPage(totalPages)} aria-label="Last page" title="Last page">
+                <ChevronsRight className="size-4" />
+              </button>
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       <div className="card animate-rise overflow-hidden p-0" style={{ animationDelay: '80ms' }}>
         {loading && items.length === 0 ? (
