@@ -6,13 +6,13 @@ import { useAuthStore } from '../store/authStore'
 import CoffeeCup from '../components/CoffeeCup'
 
 const field =
-  'my-2.5 block w-full border-0 border-b-2 border-transparent bg-slate-100 px-5 py-4 text-base text-ink outline-none transition-colors placeholder:text-slate-400 focus:border-brand-600 focus:bg-brand-50'
+  'my-2.5 block w-full border-0 border-b-2 border-transparent bg-slate-100 px-5 py-4 text-base text-ink outline-none transition-colors placeholder:text-slate-400 focus:border-accent-500 focus:bg-accent-50'
 
 const solidBtn =
-  'mt-4 cursor-pointer rounded-full border border-brand-600 bg-brand-600 px-14 py-4 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-brand-700 active:scale-95 disabled:cursor-default disabled:opacity-60'
+  'mt-4 cursor-pointer rounded-full bg-accent-400 px-14 py-4 text-sm font-bold uppercase tracking-wider text-brand-900 shadow-[0_3px_0_0_var(--color-accent-600)] transition hover:bg-accent-500 active:translate-y-[3px] active:shadow-none disabled:cursor-default disabled:opacity-60'
 
 const ghostBtn =
-  'cursor-pointer rounded-full border border-white bg-transparent px-14 py-4 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-white/15 active:scale-95'
+  'cursor-pointer rounded-full border border-white bg-transparent px-14 py-4 text-sm font-bold uppercase tracking-wider text-white transition hover:border-accent-400 hover:bg-accent-400 hover:text-brand-900 active:scale-95'
 
 // Everything moves with transform only (GPU-friendly). The forms slide across with the green panel and are covered
 // by it as it passes; the text fades so the swap is clean (old text leaves early, new text arrives late).
@@ -100,7 +100,7 @@ export default function Login() {
 
   const formBox = 'relative flex h-full flex-col items-center justify-center px-16 text-center max-[640px]:px-6'
   const mobileSwitch = 'mt-5 hidden text-sm text-slate-600 max-[640px]:block'
-  const linkBtn = 'cursor-pointer font-bold text-brand-600 hover:underline'
+  const linkBtn = 'cursor-pointer font-bold text-accent-700 hover:underline'
 
   return (
     <div className="relative grid min-h-screen grid-cols-[minmax(0,1fr)] place-items-center overflow-hidden bg-brand-900 p-4 md:max-[1499px]:pl-56 md:max-[1499px]:pr-8 min-[1500px]:pl-11">
@@ -109,7 +109,8 @@ export default function Login() {
         <div inert={signUp} className={`absolute left-0 top-0 z-[2] h-full w-1/2 max-[640px]:w-full ${SLIDE} ${signUp ? 'translate-x-full max-[640px]:translate-x-0' : ''}`}>
           <form noValidate onSubmit={onSignIn} className={`${formBox} ${FADE} ${signUp ? formOut : formIn}`}>
             <h1 className="text-4xl font-extrabold text-brand-900">Sign in</h1>
-            <p className="mb-4 mt-2 text-sm text-slate-500">Use your CashWell account</p>
+            <span className="mt-3 block h-1 w-10 bg-accent-400" />
+            <p className="mb-4 mt-3 text-sm text-slate-500">Use your CashWell account</p>
             <input className={fieldClass('email')} aria-invalid={!!invalid.email} type="email" placeholder="Email" autoComplete="email" value={email} onChange={(e) => { setEmail(e.target.value); clear('email') }} />
             {hint('email')}
             <input className={fieldClass('password')} aria-invalid={!!invalid.password} type="password" placeholder="Password" autoComplete="current-password" value={password} onChange={(e) => { setPassword(e.target.value); clear('password') }} />
@@ -122,7 +123,7 @@ export default function Login() {
               type="button"
               disabled={loading}
               onClick={() => run(authApi.demo)}
-              className="mt-5 cursor-pointer text-sm font-semibold text-brand-600 hover:underline disabled:opacity-60"
+              className="mt-5 cursor-pointer text-sm font-semibold text-accent-700 hover:underline disabled:opacity-60"
             >
               Or try the demo account →
             </button>
@@ -139,7 +140,8 @@ export default function Login() {
         <div inert={!signUp} className={`absolute left-0 top-0 z-[2] h-full w-1/2 max-[640px]:w-full ${SLIDE} ${signUp ? 'translate-x-full max-[640px]:translate-x-0' : ''}`}>
           <form noValidate onSubmit={onSignUp} className={`${formBox} ${FADE} ${signUp ? formIn : formOut}`}>
             <h1 className="text-4xl font-extrabold text-brand-900">Create Account</h1>
-            <p className="mb-4 mt-2 text-sm text-slate-500">Use your email to start tracking</p>
+            <span className="mt-3 block h-1 w-10 bg-accent-400" />
+            <p className="mb-4 mt-3 text-sm text-slate-500">Use your email to start tracking</p>
             <input className={fieldClass('name')} aria-invalid={!!invalid.name} type="text" placeholder="Name" autoComplete="name" value={name} onChange={(e) => { setName(e.target.value); clear('name') }} />
             {hint('name')}
             <input className={fieldClass('email')} aria-invalid={!!invalid.email} type="email" placeholder="Email" autoComplete="email" value={email} onChange={(e) => { setEmail(e.target.value); clear('email') }} />
