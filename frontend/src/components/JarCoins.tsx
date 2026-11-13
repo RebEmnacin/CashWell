@@ -1,13 +1,15 @@
 /**
- * A glass jar that tips over, empties its coins one by one and builds a tall stack beside it.
+ * A glass jar that tips over, empties its coins one by one and builds a loose little heap beside it.
  * Drawn as one inline SVG (no image file), same style as CoffeeCup. One 10-second loop:
  *  - 0-22%    the jar stands full, then tips over (about 100 degrees) and the coins slide toward the mouth
  *  - 23-75%   coins leave the jar ONE AT A TIME: each one disappears from inside the jar (so it gets emptier),
- *             flies out of the mouth in an arc, and lands on top of the stack (so the stack grows taller)
- *  - 75-85%   the jar lies empty next to the finished stack
- *  - 85-100%  the jar stands back up, the stack fades away and the jar refills, then it starts again
+ *             spins out of the mouth in an arc (a 3D flip), and lands on the heap (so the heap grows)
+ *  - 75-85%   the jar lies empty next to the finished heap
+ *  - 85-100%  the jar stands back up, the heap fades away and the jar refills, then it starts again
  * The coins are separate layers: every coin has its own "inside the jar", "in the air" and "in the stack" copy,
  * and the keyframes for each are generated from the numbers below.
+ * The 3D flip is faked: the face is squashed sideways (scaleX 1 -> -1) while a thin "edge" bar stays behind it
+ * and a dark overlay fades in as the face turns away from the light.
  */
 
 const LOOP = 10 // seconds for one full loop
@@ -15,7 +17,18 @@ const FIRST = 2.3 // seconds until the first coin leaves
 const GAP = 0.55 // seconds between coins leaving
 const FALL = 0.85 // seconds a coin spends in the air
 const MOUTH = { x: 145, y: 151 } // where coins come out of the tipped jar
-const STACK = { x: 218, floor: 207, step: 4.5 } // x of the stack, y of the ground, height of one coin in the stack
+// where each coin comes to rest on the heap (x, y, tilt in degrees). Bottom row first, then the layers on top.
+const HEAP = [
+  { x: 172, y: 206, rot: -4 },
+  { x: 190, y: 207, rot: 3 },
+  { x: 208, y: 206, rot: -2 },
+  { x: 226, y: 207, rot: 5 },
+  { x: 181, y: 200, rot: 6 },
+  { x: 199, y: 200, rot: -5 },
+  { x: 217, y: 200, rot: 3 },
+  { x: 190, y: 194, rot: -3 },
+  { x: 208, y: 194, rot: 6 },
+]
 
 // coins inside the jar (x, y in the upright jar). The top row sits nearest the mouth, so it leaves first.
 const inside = [
@@ -32,12 +45,33 @@ const inside = [
 
 const pct = (seconds: number) => +((seconds / LOOP) * 100).toFixed(2)
 
-/** One coin facing the camera: a white disc with a green ring. */
+/** One coin facing the camera: rim, reeded edge, inner ring and a $ in the middle. */
 function Coin({ r = 8.5 }: { r?: number }) {
   return (
     <g>
       <circle r={r} fill="#fff" />
-      <circle r={r * 0.62} fill="none" stroke="#0b5d1e" strokeOpacity="0.4" strokeWidth="2" />
+      {/* reeded (ridged) edge */}
+      <circle r={r - 1.1} fill="none" stroke="#0b5d1e" strokeOpacity="0.4" strokeWidth="1.4" strokeDasharray="1.1 1.3" />
+      {/* inner ring */}
+      <circle r={r * 0.66} fill="none" stroke="#0b5d1e" strokeOpacity="0.5" strokeWidth="1.1" />
+      {/* the $ */}
+      <g fill="none" stroke="#0b5d1e" strokeOpacity="0.75" strokeWidth="1.3" strokeLinecap="round">
+        <path d={`M${-r * 0.2} ${-r * 0.22} C${-r * 0.2} ${-r * 0.5} ${r * 0.24} ${-r * 0.5} ${r * 0.24} ${-r * 0.2} S${-r * 0.24} ${r * 0.12} ${-r * 0.24} ${r * 0.3} C${-r * 0.24} ${r * 0.5} ${r * 0.2} ${r * 0.5} ${r * 0.2} ${r * 0.24}`} />
+        <path d={`M0 ${-r * 0.55} V${r * 0.55}`} />
+      </g>
+    </g>
+  )
+}
+
+/** A coin lying on the heap, seen from slightly above: a thin edge under an oval top face. */
+function HeapCoin({ x, y, rot }: { x: number; y: number; rot: number }) {
+  return (
+    <g transform={`translate(${x} ${y}) rotate(${rot})`}>
+      <ellipse cy="2.8" rx="11" ry="4.4" fill="#a9c9b1" />
+      <ellipse rx="11" ry="4.4" fill="#fff" />
+      <ellipse rx="9.9" ry="3.8" fill="none" stroke="#0b5d1e" strokeOpacity="0.4" strokeWidth="1" strokeDasharray="1.1 1.3" />
+      <ellipse rx="7" ry="2.7" fill="none" stroke="#0b5d1e" strokeOpacity="0.5" strokeWidth="0.9" />
+      <circle r="1.1" fill="#0b5d1e" fillOpacity="0.55" />
     </g>
   )
 }
@@ -46,11 +80,19 @@ export default function JarCoins({ className = '' }: { className?: string }) {
   const coins = inside.map(([x, y], i) => {
     const leaves = FIRST + i * GAP // seconds when this coin leaves the jar
     const lands = leaves + FALL // seconds when it lands on the stack
-    const stackY = STACK.floor - i * STACK.step // y of this coin once it sits in the stack
-    return { x, y, i, a: pct(leaves), b: pct(lands), dx: STACK.x - MOUTH.x, dy: stackY - MOUTH.y, stackY }
+    const h = HEAP[i] // where this coin ends up on the heap
+    return {
+      x, y, i, h,
+      a: pct(leaves),
+      b: pct(lands),
+      dx: h.x - MOUTH.x,
+      dy: h.y - MOUTH.y,
+      spin: +(0.55 + (i % 3) * 0.12).toFixed(2), // seconds per full flip, a little different for every coin
+      phase: +(-0.07 * i * 3).toFixed(2),
+    }
   })
 
-  // one set of keyframes per coin: inside the jar, flying (x and y separately, so it travels in an arc), in the stack
+  // one set of keyframes per coin: inside the jar, flying (x and y separately, so it travels in an arc), in the heap
   const coinCss = coins
     .map(
       (c) => `
@@ -81,7 +123,8 @@ export default function JarCoins({ className = '' }: { className?: string }) {
         .jj-shadow { transform-box: fill-box; transform-origin: center; animation: jjShadow 4.5s ease-in-out infinite; }
         .jj-tip    { transform-origin: 0 0; animation: jjTip ${LOOP}s infinite; }
         .jj-slide  { animation: jjSlide ${LOOP}s ease-in-out infinite; }
-        .jj-flip   { transform-box: fill-box; transform-origin: center; animation: jjFlip .4s ease-in-out infinite alternate; }
+        .jj-spin   { transform-box: fill-box; transform-origin: center; animation: jjSpin var(--spin) ease-in-out infinite; animation-delay: var(--phase); }
+        .jj-shade  { animation: jjShade var(--spin) ease-in-out infinite; animation-delay: var(--phase); }
         @keyframes jjFloat  { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
         @keyframes jjShadow { 0%, 100% { transform: scaleX(1); opacity: .28; } 50% { transform: scaleX(.92); opacity: .2; } }
         @keyframes jjTip {
@@ -91,27 +134,19 @@ export default function JarCoins({ className = '' }: { className?: string }) {
           94%, 100% { transform: rotate(0deg); }
         }
         @keyframes jjSlide { 0%, 10% { transform: translateY(0); } 24%, 85% { transform: translateY(-44px); } 94%, 100% { transform: translateY(0); } }
-        @keyframes jjFlip  { from { transform: scaleX(1); } to { transform: scaleX(.2); } }
+        @keyframes jjSpin  { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(-1); } }
+        @keyframes jjShade { 0%, 50%, 100% { opacity: 0; } 25%, 75% { opacity: .45; } }
         ${coinCss}
       `}</style>
 
       {/* ground shadow (stays put, only breathes) */}
       <ellipse className="jj-shadow" cx="135" cy="216" rx="96" ry="7" fill="#021a03" />
 
-      {/* the stack: one flat coin per coin that has landed, so it grows taller with every coin */}
+      {/* the heap: one coin per coin that has landed, so it grows with every coin */}
       {coins.map((c) => (
-        <ellipse
-          key={c.i}
-          className={`jjs${c.i}`}
-          cx={STACK.x}
-          cy={c.stackY}
-          rx="10.5"
-          ry="3.4"
-          fill="#fff"
-          stroke="#0b5d1e"
-          strokeOpacity="0.3"
-          strokeWidth="1.5"
-        />
+        <g key={c.i} className={`jjs${c.i}`}>
+          <HeapCoin x={c.h.x} y={c.h.y} rot={c.h.rot} />
+        </g>
       ))}
 
       {/* the jar: drawn upright around (0,0), then tipped by the .jj-tip rotation */}
@@ -144,13 +179,18 @@ export default function JarCoins({ className = '' }: { className?: string }) {
         </g>
       </g>
 
-      {/* coins in the air: x and y are animated separately so each one flies in an arc */}
+      {/* coins in the air: x and y are animated separately so each one flies in an arc, and each spins in 3D */}
       <g transform={`translate(${MOUTH.x} ${MOUTH.y})`}>
         {coins.map((c) => (
           <g key={c.i} className={`jjx${c.i}`}>
             <g className={`jjy${c.i}`}>
-              <g className="jj-flip">
-                <Coin />
+              <g style={{ ['--spin' as string]: `${c.spin}s`, ['--phase' as string]: `${c.phase}s` }}>
+                {/* the coin's edge: only shows when the face has turned sideways */}
+                <rect x="-2.4" y="-8.5" width="4.8" height="17" rx="2.4" fill="#a9c9b1" />
+                <g className="jj-spin">
+                  <Coin />
+                  <circle r="8.5" fill="#053b06" className="jj-shade" />
+                </g>
               </g>
             </g>
           </g>
