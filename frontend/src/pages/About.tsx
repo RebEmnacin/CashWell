@@ -3,6 +3,7 @@ import { motion } from 'motion/react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import AnimatedIcon from '../components/AnimatedIcon'
+import ReceiptPrinter from '../components/ReceiptPrinter'
 
 /* ---------------- content (edit the text here) ---------------- */
 
@@ -68,11 +69,7 @@ export default function About() {
                 Money tracking that stays out of your way
               </motion.h1>
             </div>
-            <img
-              src="/CashWell_Logo.png"
-              alt="CashWell logo"
-              className="mx-auto hidden w-60 object-contain drop-shadow-2xl lg:block"
-            />
+            <ReceiptPrinter className="mx-auto hidden w-64 lg:block" />
           </div>
         </div>
       </section>
