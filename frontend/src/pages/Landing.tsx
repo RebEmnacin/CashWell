@@ -14,6 +14,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { errorMessage } from '../api/client'
 import { authApi } from '../api/endpoints'
 import AnimatedIcon from '../components/AnimatedIcon'
+import HandCalculator from '../components/HandCalculator'
 import JarCoins from '../components/JarCoins'
 import { useAuthStore } from '../store/authStore'
 
@@ -238,7 +239,7 @@ export default function Landing() {
           <div className="relative mx-auto max-w-md">
             <div className="rotate-[-2deg] rounded-[1.75rem] bg-white p-3 shadow-xl ring-1 ring-slate-200">
               <div className="grid aspect-[4/3] place-items-center rounded-[1.25rem] bg-linear-to-br from-brand-900 via-brand-900 to-brand-700">
-                <img src="/CashWell_Logo.png" alt="CashWell logo" className="w-1/2 object-contain" />
+                <HandCalculator className="-mt-6 w-[80%]" />
               </div>
             </div>
             <span className="absolute -left-5 -top-5 grid size-20 place-items-center rounded-full bg-brand-600 text-center text-[11px] font-extrabold uppercase leading-tight text-white shadow-lg ring-4 ring-white">
