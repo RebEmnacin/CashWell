@@ -160,6 +160,27 @@ export default function Transactions() {
 
       {error && <p role="alert" className="mb-4 rounded-xl bg-rose-50 px-4 py-3 text-sm font-medium text-rose-600">{error}</p>}
 
+      {/* Page controls sit above the table */}
+      {total > PAGE_SIZE && (
+        <div className="mb-3 flex items-center justify-between text-sm">
+          <span className="text-slate-500">Page {page} of {totalPages}</span>
+          <div className="flex gap-2">
+            <button className="btn-ghost !px-3" disabled={page <= 1} onClick={() => setPage(1)} aria-label="First page" title="First page">
+              <ChevronsLeft className="size-4" />
+            </button>
+            <button className="btn-ghost !px-3" disabled={page <= 1} onClick={() => setPage(page - 1)} aria-label="Previous page" title="Previous page">
+              <ChevronLeft className="size-4" />
+            </button>
+            <button className="btn-ghost !px-3" disabled={page >= totalPages} onClick={() => setPage(page + 1)} aria-label="Next page" title="Next page">
+              <ChevronRight className="size-4" />
+            </button>
+            <button className="btn-ghost !px-3" disabled={page >= totalPages} onClick={() => setPage(totalPages)} aria-label="Last page" title="Last page">
+              <ChevronsRight className="size-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="card animate-rise overflow-hidden p-0" style={{ animationDelay: '80ms' }}>
         {loading && items.length === 0 ? (
           <div className="space-y-px">{[0, 1, 2, 3, 4].map((i) => <div key={i} className="h-16 animate-pulse bg-slate-50" />)}</div>
@@ -208,26 +229,6 @@ export default function Transactions() {
           </table>
         )}
       </div>
-
-      {total > PAGE_SIZE && (
-        <div className="mt-4 flex items-center justify-between text-sm">
-          <span className="text-slate-500">Page {page} of {totalPages}</span>
-          <div className="flex gap-2">
-            <button className="btn-ghost !px-3" disabled={page <= 1} onClick={() => setPage(1)} aria-label="First page" title="First page">
-              <ChevronsLeft className="size-4" />
-            </button>
-            <button className="btn-ghost !px-3" disabled={page <= 1} onClick={() => setPage(page - 1)} aria-label="Previous page" title="Previous page">
-              <ChevronLeft className="size-4" />
-            </button>
-            <button className="btn-ghost !px-3" disabled={page >= totalPages} onClick={() => setPage(page + 1)} aria-label="Next page" title="Next page">
-              <ChevronRight className="size-4" />
-            </button>
-            <button className="btn-ghost !px-3" disabled={page >= totalPages} onClick={() => setPage(totalPages)} aria-label="Last page" title="Last page">
-              <ChevronsRight className="size-4" />
-            </button>
-          </div>
-        </div>
-      )}
 
       <TransactionModal open={modalOpen} editing={editing} categories={categories}
         onClose={() => setModalOpen(false)} onSaved={load} />
