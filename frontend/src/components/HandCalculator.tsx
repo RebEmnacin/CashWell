@@ -120,7 +120,7 @@ export default function HandCalculator({ className = '' }: { className?: string 
         <g id="hc-glove-shapes">
           <rect x="-7.5" y="-2" width="15.5" height="58" rx="7.75" />
           <rect x="-7.5" y="34" width="48" height="54" rx="20" />
-          <rect x="-30" y="54" width="36" height="18" rx="9" transform="rotate(-32 -2 63)" />
+          <rect x="-27" y="66" width="38" height="16" rx="8" transform="rotate(35 1 74)" />
           <rect x="-9" y="82" width="54" height="25" rx="11" />
         </g>
       </defs>
@@ -173,13 +173,13 @@ export default function HandCalculator({ className = '' }: { className?: string 
             <g fill="none" stroke="#b9c8be" strokeWidth="1.7" strokeLinecap="round" strokeOpacity="0.9">
               <path d="M8.5 40 C14 44 15.5 52 13.5 59" />
               <path d="M24 42 C31 46 34 54 32 63" />
-              <path d="M-9 64 C-6 61 -3 60 0 60" />
+              <path d="M-2 68 C2 71 2 77 -2 81" transform="rotate(35 1 74)" />
               <path d="M-7 88 Q18 96 43 88" />
             </g>
             {/* highlights so it looks round and soft */}
             <g fill="#fff" fillOpacity="0.95">
               <ellipse cx="-2.2" cy="13" rx="2.3" ry="9" />
-              <ellipse cx="-15" cy="56" rx="7" ry="3.6" transform="rotate(-32 -15 56)" />
+              <ellipse cx="-16" cy="70.5" rx="6" ry="1.7" transform="rotate(35 1 74)" />
               <ellipse cx="6" cy="52" rx="4.6" ry="9" />
               <ellipse cx="17" cy="94" rx="15" ry="3" />
             </g>
