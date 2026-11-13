@@ -1,7 +1,8 @@
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Download, Pencil, Plus, Search, Trash2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Download, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { errorMessage } from '../api/client'
 import { transactionApi } from '../api/endpoints'
+import NoteSearch from '../components/NoteSearch'
 import PageHeader from '../components/PageHeader'
 import TransactionModal from '../components/TransactionModal'
 import { useCategories } from '../hooks/useCategories'
@@ -19,8 +20,8 @@ export default function Transactions() {
   const [error, setError] = useState('')
 
   // Filters
-  const [search, setSearch] = useState('')
-  const [debouncedSearch, setDebouncedSearch] = useState('')
+  const [searchInput, setSearchInput] = useState('') // what is typed in the search box (does not change the table)
+  const [search, setSearch] = useState('') // the search the table is actually filtered by (set on Enter / suggestion click)
   const [type, setType] = useState<TransactionFilters['type']>('')
   const [categoryId, setCategoryId] = useState<number | ''>('')
   const [start, setStart] = useState('')
@@ -30,13 +31,7 @@ export default function Transactions() {
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<Transaction | null>(null)
 
-  // Wait 350ms after typing stops before searching (so we don't call the API on every keystroke)
-  useEffect(() => {
-    const id = setTimeout(() => { setDebouncedSearch(search); setPage(1) }, 350)
-    return () => clearTimeout(id)
-  }, [search])
-
-  const filters: TransactionFilters = { type, category_id: categoryId, start, end, search: debouncedSearch }
+  const filters: TransactionFilters = { type, category_id: categoryId, start, end, search }
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -51,7 +46,7 @@ export default function Transactions() {
       setLoading(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type, categoryId, start, end, debouncedSearch, page])
+  }, [type, categoryId, start, end, search, page])
 
   useEffect(() => { load() }, [load])
 
@@ -96,7 +91,7 @@ export default function Transactions() {
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
   const clearFilters = () => {
-    setSearch(''); setDebouncedSearch(''); setType(''); setCategoryId(''); setStart(''); setEnd(''); setPage(1)
+    setSearchInput(''); setSearch(''); setType(''); setCategoryId(''); setStart(''); setEnd(''); setPage(1)
   }
   const hasFilters = search || type || categoryId || start || end
 
@@ -110,15 +105,17 @@ export default function Transactions() {
       </PageHeader>
 
       {/* Filters */}
-      <div className="card mb-5 animate-rise">
+      <div className="card relative z-20 mb-5 animate-rise">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
           <div className="lg:col-span-2">
-            <label htmlFor="f-search" className="label">Search</label>
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
-              <input id="f-search" className="input pl-9" placeholder="Search notes…" value={search}
-                onChange={(e) => setSearch(e.target.value)} />
-            </div>
+            <NoteSearch
+              id="f-search"
+              label="Search"
+              value={searchInput}
+              onChange={setSearchInput}
+              onSubmit={(v) => { setSearchInput(v); setSearch(v.trim()); setPage(1) }}
+              scope={{ type, category_id: categoryId, start, end }}
+            />
           </div>
           <div>
             <label htmlFor="f-type" className="label">Type</label>
