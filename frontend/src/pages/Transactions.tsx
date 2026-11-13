@@ -57,6 +57,16 @@ export default function Transactions() {
 
   const changeFilter = <T,>(setter: (v: T) => void) => (v: T) => { setter(v); setPage(1) }
 
+  // The Category filter only lists categories of the chosen Type (Income shows Salary, Freelance…; Expense shows Rent, Food…).
+  const filterCategories = type ? categories.filter((c) => c.type === type) : categories
+
+  // Changing the Type: if the category that is already picked belongs to the other type, clear it (otherwise nothing would match).
+  const changeType = (v: TransactionFilters['type']) => {
+    setType(v)
+    setPage(1)
+    if (v && categoryId !== '' && !categories.some((c) => c.id === categoryId && c.type === v)) setCategoryId('')
+  }
+
   // "From" is the starting date, so "To" can never be earlier than it (dates are YYYY-MM-DD, so plain string compare works).
   // Moving From past To drags To along; typing a To that is too early snaps it back to From.
   const changeStart = (v: string) => {
@@ -113,7 +123,7 @@ export default function Transactions() {
           <div>
             <label htmlFor="f-type" className="label">Type</label>
             <select id="f-type" className="input" value={type}
-              onChange={(e) => changeFilter(setType)(e.target.value as TransactionFilters['type'])}>
+              onChange={(e) => changeType(e.target.value as TransactionFilters['type'])}>
               <option value="">All types</option>
               <option value="income">Income</option>
               <option value="expense">Expense</option>
@@ -124,17 +134,21 @@ export default function Transactions() {
             <select id="f-category" className="input" value={categoryId}
               onChange={(e) => changeFilter(setCategoryId)(e.target.value ? Number(e.target.value) : '')}>
               <option value="">All categories</option>
-              {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+              {filterCategories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
-          <div>
-            <label htmlFor="f-from" className="label">From</label>
-            <input id="f-from" type="date" className="input" value={start} onChange={(e) => changeStart(e.target.value)} />
-          </div>
-          <div>
-            <label htmlFor="f-to" className="label">To</label>
-            <input id="f-to" type="date" className="input" value={end} min={start || undefined}
-              onChange={(e) => changeEnd(e.target.value)} />
+          {/* From and To share one cell so a dash can sit between the two date boxes */}
+          <div className="flex items-end gap-2 sm:col-span-2 lg:col-span-2">
+            <div className="min-w-0 flex-1">
+              <label htmlFor="f-from" className="label">From</label>
+              <input id="f-from" type="date" className="input" value={start} onChange={(e) => changeStart(e.target.value)} />
+            </div>
+            <span aria-hidden className="pb-3 text-slate-400">–</span>
+            <div className="min-w-0 flex-1">
+              <label htmlFor="f-to" className="label">To</label>
+              <input id="f-to" type="date" className="input" value={end} min={start || undefined}
+                onChange={(e) => changeEnd(e.target.value)} />
+            </div>
           </div>
         </div>
         {hasFilters && (
