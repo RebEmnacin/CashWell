@@ -113,7 +113,7 @@ export default function Dashboard() {
             <StatCard label="Expenses" value={summary.expense} format={money} icon={TrendingDown}
               tone="bg-rose-50 text-rose-600" change={pctChange(summary.expense, summary.prev_expense)} goodWhenUp={false} delay={120} />
             <StatCard label="Savings rate" value={summary.savings_rate} format={(n) => `${n.toFixed(1)}%`} icon={Percent}
-              tone="bg-violet-50 text-violet-600" change={null} goodWhenUp delay={180} />
+              tone="bg-accent-100 text-accent-700" change={null} goodWhenUp delay={180} />
           </div>
 
           <div className="mt-5 grid gap-5 lg:grid-cols-5">

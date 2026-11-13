@@ -70,7 +70,7 @@ function Reveal({ children, delay = 0, className = '' }: { children: ReactNode; 
 }
 
 const primaryBtn =
-  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-accent-400 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-brand-900 transition hover:bg-accent-500 active:scale-95 disabled:opacity-60'
+  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-accent-400 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-brand-900 shadow-[0_3px_0_0_var(--color-accent-600)] transition hover:bg-accent-500 active:translate-y-[3px] active:shadow-none disabled:opacity-60'
 const outlineBtn =
   'inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border border-white/70 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-white/10 active:scale-95 disabled:opacity-60'
 
@@ -181,7 +181,7 @@ export default function Landing() {
                       type="button"
                       aria-label={`Go to slide ${i + 1}`}
                       onClick={() => setSlide(i)}
-                      className={`h-1.5 cursor-pointer rounded-full transition-all duration-300 ${i === slide ? 'w-10 bg-white' : 'w-5 bg-white/30'}`}
+                      className={`h-1.5 cursor-pointer rounded-full transition-all duration-300 ${i === slide ? 'w-10 bg-accent-400' : 'w-5 bg-white/30'}`}
                     />
                   ))}
                 </div>
@@ -200,7 +200,7 @@ export default function Landing() {
                 type="button"
                 aria-label={`Go to slide ${i + 1}`}
                 onClick={() => setSlide(i)}
-                className={`w-1.5 cursor-pointer rounded-full transition-all duration-300 ${i === slide ? 'h-10 bg-white' : 'h-5 bg-white/30 hover:bg-white/50'}`}
+                className={`w-1.5 cursor-pointer rounded-full transition-all duration-300 ${i === slide ? 'h-10 bg-accent-400' : 'h-5 bg-white/30 hover:bg-white/50'}`}
               />
             ))}
           </div>
@@ -216,14 +216,14 @@ export default function Landing() {
             className="flex w-full flex-col items-stretch gap-3 rounded-[2rem] bg-brand-100 p-3 shadow-2xl ring-[10px] ring-[#f6f8f7] md:flex-row md:items-center md:rounded-full"
           >
             <div className="flex flex-1 items-center justify-between gap-4 rounded-full bg-white px-6 py-3.5 text-brand-900">
-              <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-slate-400">Free for everyone</p>
+              <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-accent-700">Free for everyone</p>
               <p className="text-lg font-black uppercase tracking-wide">
-                New <span className="text-brand-600">here?</span>
+                New <span className="text-accent-600">here?</span>
               </p>
             </div>
             <Link
               to={token ? '/dashboard' : '/login'}
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-600 px-8 py-4 text-sm font-black uppercase italic tracking-wider text-white transition hover:bg-brand-700 active:scale-95"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-accent-400 px-8 py-4 text-sm font-black uppercase italic tracking-wider text-brand-900 shadow-[0_3px_0_0_var(--color-accent-600)] transition hover:bg-accent-500 active:translate-y-[3px] active:shadow-none"
             >
               {token ? 'Open app' : 'Join now'} <ArrowRight className="size-4" />
             </Link>
@@ -242,7 +242,7 @@ export default function Landing() {
                 <HandCalculator className="-mt-6 w-[80%]" />
               </div>
             </div>
-            <span className="absolute -left-5 -top-5 grid size-20 place-items-center rounded-full bg-brand-600 text-center text-[11px] font-extrabold uppercase leading-tight text-white shadow-lg ring-4 ring-white">
+            <span className="absolute -left-5 -top-5 grid size-20 place-items-center rounded-full bg-accent-400 text-center text-[11px] font-extrabold uppercase leading-tight text-brand-900 shadow-lg ring-4 ring-white">
               Made<br />simple
             </span>
             <span className="absolute -bottom-4 -right-4 grid size-14 place-items-center rounded-full bg-white text-brand-600 shadow-lg ring-4 ring-brand-100">
@@ -252,7 +252,7 @@ export default function Landing() {
         </Reveal>
 
         <Reveal delay={0.1}>
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400">Home</p>
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-accent-700">Home</p>
           <h2 className="mt-3 max-w-xl text-3xl font-extrabold leading-tight text-brand-600 md:text-4xl">
             CashWell: personal finance tracking, made simple
           </h2>
@@ -263,7 +263,7 @@ export default function Landing() {
           <div className="mt-8 flex flex-wrap items-center gap-5">
             <Link
               to={token ? '/dashboard' : '/login'}
-              className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-brand-700 active:scale-95"
+              className={primaryBtn}
             >
               {token ? 'Open dashboard' : 'Get started'} <ArrowRight className="size-4" />
             </Link>
@@ -292,7 +292,8 @@ export default function Landing() {
                     </span>
                   </span>
                   <h3 className="mt-6 text-lg font-extrabold text-ink">{title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
+                  <span className="mx-auto mt-3 block h-1 w-8 bg-accent-400 transition-all duration-300 group-hover:w-14" />
+                  <p className="mt-3 text-sm leading-6 text-slate-600">{text}</p>
                 </div>
               </Reveal>
             ))}
@@ -310,7 +311,7 @@ export default function Landing() {
             <Reveal key={s.n} delay={i * 0.12} className="group relative pb-12 last:pb-0">
               <span className="absolute -bottom-6 left-6 top-6 w-0.5 -translate-x-1/2 bg-brand-100 group-last:hidden" aria-hidden />
               <div className="relative flex gap-6">
-                <span className="relative grid size-12 shrink-0 place-items-center rounded-full bg-brand-600 text-base font-extrabold text-white ring-8 ring-[#f6f8f7]">
+                <span className="relative grid size-12 shrink-0 place-items-center rounded-full bg-accent-400 text-base font-extrabold text-brand-900 ring-8 ring-[#f6f8f7]">
                   {i + 1}
                 </span>
                 <div className="pt-1.5">
@@ -360,7 +361,7 @@ export default function Landing() {
                       whileInView={{ height: `${h}%` }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.8, delay: 0.2 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                      className="w-full bg-brand-600"
+                      className={`w-full ${i === bars.length - 1 ? 'bg-accent-400' : 'bg-brand-600'}`}
                     />
                     <span className="text-[10px] font-semibold text-slate-400">{months[i]}</span>
                   </div>
@@ -379,7 +380,7 @@ export default function Landing() {
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
               to={token ? '/dashboard' : '/login'}
-              className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-brand-700 active:scale-95"
+              className={primaryBtn}
             >
               {token ? 'Open dashboard' : 'Get started'} <ArrowRight className="size-4" />
             </Link>

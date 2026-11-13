@@ -103,7 +103,7 @@ export default function Budgets() {
         <div className="card mb-5 animate-rise bg-brand-900 text-white">
           <p className="text-sm font-semibold text-emerald-100/70">Budgeted spending this month</p>
           <p className="mt-1 text-2xl font-extrabold">
-            {money(totalSpent)} <span className="text-base font-semibold text-emerald-100/60">of {money(totalLimit)}</span>
+            <span className="text-accent-400">{money(totalSpent)}</span> <span className="text-base font-semibold text-emerald-100/60">of {money(totalLimit)}</span>
           </p>
         </div>
       )}

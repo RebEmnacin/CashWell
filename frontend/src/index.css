@@ -20,9 +20,12 @@
   --color-brand-600: #0b5d1e;
   --color-brand-700: #053b06;
   --color-brand-900: #053b06;
+  --color-accent-50: #fff8e6;
+  --color-accent-100: #fdecc0;
   --color-accent-400: #f5b83d;
   --color-accent-500: #e8a317;
   --color-accent-600: #c98a10;
+  --color-accent-700: #9a6508; /* small text on white */
   --animate-rise: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   --animate-fade: fade 0.25s ease both;
   --animate-pop: pop 0.35s cubic-bezier(0.3, 1.6, 0.5, 1) both;

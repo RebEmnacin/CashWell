@@ -124,7 +124,7 @@ export default function Layout() {
               to="/account"
               label="Account"
               icon={
-                <span className="grid size-9 place-items-center rounded-full bg-brand-500 text-sm font-extrabold text-white">
+                <span className="grid size-9 place-items-center rounded-full bg-accent-400 text-sm font-extrabold text-brand-900">
                   {user?.name?.[0]?.toUpperCase()}
                 </span>
               }

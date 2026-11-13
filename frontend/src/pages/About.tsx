@@ -76,6 +76,7 @@ export default function About() {
       <section className="mx-auto grid max-w-6xl gap-10 px-6 md:pl-28 py-16 md:py-20 lg:grid-cols-[1fr_2fr]">
         <Reveal>
           <h2 className="text-3xl font-extrabold leading-tight text-brand-600">Why CashWell exists</h2>
+          <span className="mt-4 block h-1 w-12 bg-accent-400" />
         </Reveal>
         <Reveal delay={0.1} className="space-y-5 text-lg leading-8 text-slate-600">
           <p>
@@ -105,7 +106,8 @@ export default function About() {
                     </span>
                   </span>
                   <h3 className="mt-6 text-xl font-extrabold text-ink">{title}</h3>
-                  <p className="mt-2 leading-7 text-slate-600">{text}</p>
+                  <span className="mx-auto mt-3 block h-1 w-8 bg-accent-400 transition-all duration-300 group-hover:w-14" />
+                  <p className="mt-3 leading-7 text-slate-600">{text}</p>
                 </div>
               </Reveal>
             ))}
@@ -143,7 +145,7 @@ export default function About() {
           <p className="mx-auto mt-4 max-w-xl text-white/80">Create an account, or open the demo from the login page.</p>
           <Link
             to="/login"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-accent-400 px-8 py-4 text-sm font-bold uppercase tracking-wider text-brand-900 transition hover:bg-accent-500 active:scale-95"
+            className="mt-8 inline-flex items-center gap-2 rounded-full bg-accent-400 px-8 py-4 text-sm font-bold uppercase tracking-wider text-brand-900 shadow-[0_3px_0_0_var(--color-accent-600)] transition hover:bg-accent-500 active:translate-y-[3px] active:shadow-none"
           >
             Login / Sign up <ArrowRight className="size-4" />
           </Link>
