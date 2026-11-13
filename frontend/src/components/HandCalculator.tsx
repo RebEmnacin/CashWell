@@ -119,9 +119,9 @@ export default function HandCalculator({ className = '' }: { className?: string 
         {/* the solid shapes of the glove, used twice: once fat and grey for the outline, once in white on top */}
         <g id="hc-glove-shapes">
           <rect x="-7.5" y="-2" width="15.5" height="58" rx="7.75" />
-          <rect x="-19" y="34" width="47" height="54" rx="20" />
-          <rect x="-31" y="52" width="31" height="18" rx="9" transform="rotate(-28 -8 62)" />
-          <rect x="-21" y="82" width="53" height="25" rx="11" />
+          <rect x="-7.5" y="34" width="48" height="54" rx="20" />
+          <rect x="-30" y="54" width="36" height="18" rx="9" transform="rotate(-32 -2 63)" />
+          <rect x="-9" y="82" width="54" height="25" rx="11" />
         </g>
       </defs>
 
@@ -172,14 +172,16 @@ export default function HandCalculator({ className = '' }: { className?: string 
             {/* soft details: the groove between the finger and the fist, the thumb crease, the cuff fold */}
             <g fill="none" stroke="#b9c8be" strokeWidth="1.7" strokeLinecap="round" strokeOpacity="0.9">
               <path d="M8.5 40 C14 44 15.5 52 13.5 59" />
-              <path d="M-8 55 C-11 59 -12 64 -10 69" />
-              <path d="M-19 88 Q6 96 30 88" />
+              <path d="M24 42 C31 46 34 54 32 63" />
+              <path d="M-9 64 C-6 61 -3 60 0 60" />
+              <path d="M-7 88 Q18 96 43 88" />
             </g>
             {/* highlights so it looks round and soft */}
             <g fill="#fff" fillOpacity="0.95">
               <ellipse cx="-2.2" cy="13" rx="2.3" ry="9" />
-              <ellipse cx="-8" cy="52" rx="5" ry="9" transform="rotate(18 -8 52)" />
-              <ellipse cx="2" cy="94" rx="14" ry="3" />
+              <ellipse cx="-15" cy="56" rx="7" ry="3.6" transform="rotate(-32 -15 56)" />
+              <ellipse cx="6" cy="52" rx="4.6" ry="9" />
+              <ellipse cx="17" cy="94" rx="15" ry="3" />
             </g>
           </g>
         </g>
