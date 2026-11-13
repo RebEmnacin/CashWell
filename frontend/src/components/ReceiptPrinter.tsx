@@ -141,7 +141,7 @@ export default function ReceiptPrinter({ className = '' }: { className?: string 
             >
               TOTAL
             </text>
-            <rect x={PAPER_X + PAPER_W - 10 - 28} y="133" width="28" height="9" rx="3" fill="#0b5d1e" />
+            <rect x={PAPER_X + PAPER_W - 10 - 28} y="133" width="28" height="9" rx="3" fill="#f2ac22" />
 
             {/* barcode */}
             <g fill="#0b5d1e" fillOpacity="0.85">
@@ -158,7 +158,7 @@ export default function ReceiptPrinter({ className = '' }: { className?: string 
         {/* ----- little details on the front of the printer ----- */}
         {/* status light and the feed button */}
         <circle className="rp-led" cx="64" cy="208" r="4.5" fill="#1f9144" />
-        <circle cx="82" cy="208" r="4.5" fill="#c9f2d3" stroke="#5aa874" strokeWidth="1.5" />
+        <circle cx="82" cy="208" r="4.5" fill="#fde7a8" stroke="#e8a317" strokeWidth="1.5" />
         {/* the little grille where the printer would beep */}
         <g stroke="#b9c8be" strokeWidth="1.7" strokeLinecap="round">
           <path d="M150 203 H178" />

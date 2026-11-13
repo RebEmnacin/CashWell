@@ -70,7 +70,7 @@ function Reveal({ children, delay = 0, className = '' }: { children: ReactNode; 
 }
 
 const primaryBtn =
-  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-brand-900 transition hover:bg-brand-50 active:scale-95 disabled:opacity-60'
+  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-accent-400 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-brand-900 transition hover:bg-accent-500 active:scale-95 disabled:opacity-60'
 const outlineBtn =
   'inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border border-white/70 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-white/10 active:scale-95 disabled:opacity-60'
 

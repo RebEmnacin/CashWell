@@ -63,8 +63,8 @@ const pct = (seconds: number) => +((seconds / LOOP) * 100).toFixed(2)
 function Coin({ r = 8.5, thick = false }: { r?: number; thick?: boolean }) {
   return (
     <g>
-      {thick && <circle cx="1.6" cy="1.8" r={r} fill="#a9c9b1" />}
-      <circle r={r} fill="#fff" />
+      {thick && <circle cx="1.6" cy="1.8" r={r} fill="#c98a10" />}
+      <circle r={r} fill="#f5b83d" />
       {/* reeded (ridged) edge */}
       <circle r={r - 1.1} fill="none" stroke="#0b5d1e" strokeOpacity="0.4" strokeWidth="1.4" strokeDasharray="1.1 1.3" />
       {/* inner ring */}
@@ -82,8 +82,8 @@ function Coin({ r = 8.5, thick = false }: { r?: number; thick?: boolean }) {
 function HeapCoin({ x, y, rot }: { x: number; y: number; rot: number }) {
   return (
     <g transform={`translate(${x} ${y}) rotate(${rot})`}>
-      <ellipse cy="2.8" rx="11" ry="4.4" fill="#a9c9b1" />
-      <ellipse rx="11" ry="4.4" fill="#fff" />
+      <ellipse cy="2.8" rx="11" ry="4.4" fill="#c98a10" />
+      <ellipse rx="11" ry="4.4" fill="#f5b83d" />
       <ellipse rx="9.9" ry="3.8" fill="none" stroke="#0b5d1e" strokeOpacity="0.4" strokeWidth="1" strokeDasharray="1.1 1.3" />
       <ellipse rx="7" ry="2.7" fill="none" stroke="#0b5d1e" strokeOpacity="0.5" strokeWidth="0.9" />
       <circle r="1.1" fill="#0b5d1e" fillOpacity="0.55" />
@@ -247,7 +247,7 @@ export default function JarCoins({ className = '' }: { className?: string }) {
                 <g className={`jjy${c.i}`}>
                   <g style={{ ['--spin' as string]: `${c.spin}s`, ['--phase' as string]: `${c.phase}s` }}>
                     {/* the coin's edge: only shows when the face has turned sideways */}
-                    <rect x="-2.4" y="-8.5" width="4.8" height="17" rx="2.4" fill="#a9c9b1" />
+                    <rect x="-2.4" y="-8.5" width="4.8" height="17" rx="2.4" fill="#c98a10" />
                     <g className="jj-spin">
                       <Coin />
                       <circle r="8.5" fill="#053b06" className="jj-shade" />

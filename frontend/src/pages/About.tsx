@@ -54,7 +54,7 @@ export default function About() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className="text-sm font-bold uppercase tracking-[0.2em] text-brand-400"
+                className="text-sm font-bold uppercase tracking-[0.2em] text-accent-400"
               >
                 About us
               </motion.p>
@@ -143,7 +143,7 @@ export default function About() {
           <p className="mx-auto mt-4 max-w-xl text-white/80">Create an account, or open the demo from the login page.</p>
           <Link
             to="/login"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-bold uppercase tracking-wider text-brand-900 transition hover:bg-brand-50 active:scale-95"
+            className="mt-8 inline-flex items-center gap-2 rounded-full bg-accent-400 px-8 py-4 text-sm font-bold uppercase tracking-wider text-brand-900 transition hover:bg-accent-500 active:scale-95"
           >
             Login / Sign up <ArrowRight className="size-4" />
           </Link>
