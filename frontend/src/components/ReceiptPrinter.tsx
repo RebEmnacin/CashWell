@@ -3,14 +3,14 @@
  * Same style as CoffeeCup, JarCoins and HandCalculator: white shapes, a darker edge for thickness,
  * a shadow on the ground, floating gently.
  * One 9-second loop:
- *  - the receipt is printed out of the slot in small steps, like a real thermal printer (the tip comes out first)
+ *  - the receipt is printed out of the slot at a steady, linear speed (the tip comes out first)
  *  - it rests for a moment so it can be read (CASHWELL, a few items, a total and a barcode)
  *  - then it is pulled up and away, and the next one starts printing
  * The paper is clipped at the slot, so it looks like it comes from inside the machine.
  * If the visitor prefers reduced motion, the finished receipt just sits there.
  */
 
-const SLOT_Y = 171 // where the paper meets the slot
+const SLOT_Y = 173 // where the paper meets the front rim of the slot
 const PAPER_X = 68 // left edge of the paper
 const PAPER_W = 104 // width of the paper
 const PAPER_TOP = 11 // top (torn) edge of the paper when it is fully out
@@ -54,12 +54,13 @@ export default function ReceiptPrinter({ className = '' }: { className?: string 
         @keyframes rpFloat  { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
         @keyframes rpShadow { 0%, 100% { transform: scaleX(1); opacity: .28; } 50% { transform: scaleX(.94); opacity: .2; } }
         @keyframes rpLed    { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
-        /* hidden inside the machine -> printed in 20 small steps -> rests -> pulled up and away */
+        /* hidden inside the machine -> printed out in one smooth straight line -> rests -> pulled up and away */
         @keyframes rpPaper {
-          0%, 3%  { transform: translateY(165px); animation-timing-function: steps(20, end); }
-          44%     { transform: translateY(0); }
-          82%     { transform: translateY(0); animation-timing-function: cubic-bezier(.5, 0, .8, .4); }
-          92%, 100% { transform: translateY(-175px); }
+          0%, 3%  { transform: translateY(165px); opacity: 1; animation-timing-function: linear; }
+          44%     { transform: translateY(0); opacity: 1; }
+          82%     { transform: translateY(0); opacity: 1; animation-timing-function: cubic-bezier(.5, 0, .8, .4); }
+          92%     { transform: translateY(-60px); opacity: 0; }
+          100%    { transform: translateY(-60px); opacity: 0; }
         }
         @media (prefers-reduced-motion: reduce) {
           .rp-paper { animation: none; transform: translateY(0); }
@@ -78,9 +79,10 @@ export default function ReceiptPrinter({ className = '' }: { className?: string 
           <stop offset="0.7" stopColor="#f6f9f7" />
           <stop offset="1" stopColor="#e3ebe6" />
         </linearGradient>
-        {/* only what is above the slot is visible, so the paper seems to come out of the machine */}
+        {/* only what is above the slot is visible, so the paper seems to come out of the machine
+            (and it never draws outside the picture when it is pulled away) */}
         <clipPath id="rp-clip">
-          <rect x="0" y="-60" width="240" height={SLOT_Y + 60} />
+          <rect x="0" y="0" width="240" height={SLOT_Y} />
         </clipPath>
       </defs>
 
@@ -152,6 +154,9 @@ export default function ReceiptPrinter({ className = '' }: { className?: string 
             </g>
           </g>
         </g>
+
+        {/* the front rim of the slot, drawn over the paper so the paper comes out from behind it, from inside the machine */}
+        <rect x="60" y={SLOT_Y - 0.5} width="120" height="5" rx="2.5" fill="#ffffff" stroke="#aebdb3" strokeWidth="0.8" strokeOpacity="0.6" />
 
         {/* ----- little details on the front of the printer ----- */}
         {/* status light and the feed button */}
