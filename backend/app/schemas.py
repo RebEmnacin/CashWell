@@ -24,6 +24,21 @@ class UserOut(ORM):
     email: str
 
 
+class UpdateProfileIn(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=100)
+    email: EmailStr | None = None
+    current_password: str | None = Field(default=None, max_length=128)  # needed only when the email changes
+
+
+class ChangePasswordIn(BaseModel):
+    current_password: str = Field(max_length=128)
+    new_password: str = Field(min_length=6, max_length=128)
+
+
+class DeleteAccountIn(BaseModel):
+    password: str = Field(max_length=128)
+
+
 class TokenOut(BaseModel):
     access_token: str
     token_type: str = "bearer"

@@ -3,8 +3,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..models import User
-from ..schemas import RegisterIn, TokenOut, UserOut
+from ..models import Budget, Category, Transaction, User
+from ..schemas import ChangePasswordIn, DeleteAccountIn, RegisterIn, TokenOut, UpdateProfileIn, UserOut
 from ..security import create_access_token, get_current_user, hash_password, verify_password
 from ..seed import create_default_categories, seed_demo_data
 
@@ -58,3 +58,54 @@ def demo_login(db: Session = Depends(get_db)):
 @router.get("/me", response_model=UserOut)
 def me(user: User = Depends(get_current_user)):
     return user
+
+
+def _not_demo(user: User):
+    """The demo account is shared by every visitor, so it must stay as it is."""
+    if user.email == DEMO_EMAIL:
+        raise HTTPException(403, "The demo account can't be changed. Create your own account to edit it.")
+
+
+@router.patch("/me", response_model=UserOut)
+def update_me(data: UpdateProfileIn, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    _not_demo(user)
+    if data.name is not None:
+        name = data.name.strip()
+        if not name:
+            raise HTTPException(400, "Name can't be empty")
+        user.name = name
+    if data.email is not None and data.email.lower() != user.email:
+        # changing the email changes how you sign in, so the current password must be given
+        if not data.current_password:
+            raise HTTPException(400, "Enter your current password to change your email")
+        if not verify_password(data.current_password, user.password_hash):
+            raise HTTPException(400, "Current password is incorrect")
+        email = data.email.lower()
+        if db.query(User).filter(User.email == email, User.id != user.id).first():
+            raise HTTPException(400, "That email is already registered")
+        user.email = email
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+@router.post("/password", status_code=204)
+def change_password(data: ChangePasswordIn, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    _not_demo(user)
+    if not verify_password(data.current_password, user.password_hash):
+        raise HTTPException(400, "Current password is incorrect")
+    user.password_hash = hash_password(data.new_password)
+    db.commit()
+
+
+@router.delete("/me", status_code=204)
+def delete_me(data: DeleteAccountIn, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    _not_demo(user)
+    if not verify_password(data.password, user.password_hash):
+        raise HTTPException(400, "Password is incorrect")
+    # delete the children first (SQLite does not cascade on its own)
+    db.query(Budget).filter(Budget.user_id == user.id).delete()
+    db.query(Transaction).filter(Transaction.user_id == user.id).delete()
+    db.query(Category).filter(Category.user_id == user.id).delete()
+    db.delete(user)
+    db.commit()

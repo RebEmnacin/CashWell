@@ -1,7 +1,7 @@
 import api from './client'
 import type {
   AuthResponse, Budget, Category, CategoryTotal, MonthlyPoint, Summary,
-  Transaction, TransactionFilters, TransactionInput,
+  Transaction, TransactionFilters, TransactionInput, User,
 } from '../types'
 
 /** Remove empty filter values so they are not sent as ?search= etc. */
@@ -19,6 +19,11 @@ export const authApi = {
   register: (name: string, email: string, password: string) =>
     api.post<AuthResponse>('/auth/register', { name, email, password }).then((r) => r.data),
   demo: () => api.post<AuthResponse>('/auth/demo').then((r) => r.data),
+  updateMe: (data: { name?: string; email?: string; current_password?: string }) =>
+    api.patch<User>('/auth/me', data).then((r) => r.data),
+  changePassword: (current_password: string, new_password: string) =>
+    api.post('/auth/password', { current_password, new_password }),
+  deleteAccount: (password: string) => api.delete('/auth/me', { data: { password } }),
 }
 
 export const categoryApi = {
