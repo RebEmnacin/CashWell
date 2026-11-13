@@ -1,6 +1,6 @@
 /**
  * A hand using a calculator, drawn as one inline SVG (no image file). Same style as CoffeeCup and JarCoins:
- * white shapes with a thin darker edge for thickness, green details, a shadow on the ground, floating gently.
+ * soft shapes with a thin darker edge for thickness (the hand is a warm skin tone so it stands out from the white calculator), green details, a shadow on the ground, floating gently.
  * One 10-second loop:
  *  - the hand slides in from the right, lifts and hops from key to key, and taps 7, 4, 5, +, 1, 2, =
  *  - each key sinks when it is tapped, and the screen shows what was typed (745 + 12 = 757)
@@ -105,13 +105,13 @@ export default function HandCalculator({ className = '' }: { className?: string 
 
       <defs>
         {/* the arm fades out toward the edge instead of ending in a hard cut */}
-        <linearGradient id="hc-fade" gradientUnits="userSpaceOnUse" x1="0" y1="68" x2="0" y2="100">
+        <linearGradient id="hc-fade" gradientUnits="userSpaceOnUse" x1="0" y1="86" x2="0" y2="118">
           <stop offset="0" stopColor="#fff" stopOpacity="1" />
           <stop offset="1" stopColor="#fff" stopOpacity="0" />
         </linearGradient>
         <mask id="hc-arm" maskUnits="userSpaceOnUse" x="-60" y="-12" width="120" height="152">
-          <rect x="-60" y="-12" width="120" height="80" fill="#fff" />
-          <rect x="-60" y="68" width="120" height="72" fill="url(#hc-fade)" />
+          <rect x="-60" y="-12" width="120" height="98" fill="#fff" />
+          <rect x="-60" y="86" width="120" height="60" fill="url(#hc-fade)" />
         </mask>
         <linearGradient id="hc-gloss" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#fff" />
@@ -159,24 +159,37 @@ export default function HandCalculator({ className = '' }: { className?: string 
         {/* ----- the hand: the tip of the pointing finger is at (0,0), the arm runs down-right ----- */}
         <g className="hc-hand">
           <g transform="rotate(-24)" mask="url(#hc-arm)">
-            {/* soft shadow of the hand on the calculator */}
-            <ellipse cx="9" cy="14" rx="9" ry="14" fill="#021a03" fillOpacity="0.16" transform="translate(5 6)" />
-            {/* arm and sleeve cuff */}
-            <rect x="-17" y="62" width="32" height="76" rx="12" fill="#fff" />
-            <rect x="-21" y="64" width="40" height="18" rx="7" fill="#0b5d1e" />
-            <rect x="-21" y="64" width="40" height="5" rx="2.5" fill="#fff" fillOpacity="0.25" />
-            {/* curled fingers (knuckles) on the left of the pointing finger */}
-            <rect x="-26" y="26" width="19" height="19" rx="9.5" fill="#f1f7f3" stroke="#cfe3d4" strokeWidth="1" />
-            <rect x="-27" y="38" width="19" height="19" rx="9.5" fill="#f1f7f3" stroke="#cfe3d4" strokeWidth="1" />
-            <rect x="-25" y="50" width="18" height="17" rx="8.5" fill="#f1f7f3" stroke="#cfe3d4" strokeWidth="1" />
-            {/* the palm */}
-            <rect x="-16" y="24" width="34" height="48" rx="14" fill="#fff" stroke="#cfe3d4" strokeWidth="1" />
-            {/* thumb, tucked on the right */}
-            <rect x="12" y="34" width="13" height="30" rx="6.5" fill="#fff" stroke="#cfe3d4" strokeWidth="1" transform="rotate(14 18 49)" />
-            {/* the pointing finger, with a nail */}
-            <rect x="-6" y="-2" width="14" height="46" rx="7" fill="#fff" stroke="#cfe3d4" strokeWidth="1" />
-            <rect x="-3.2" y="1" width="8.4" height="7" rx="3.4" fill="#d6eadb" />
-            <path d="M-6 28 H8" stroke="#cfe3d4" strokeWidth="1" />
+            {/* forearm and sleeve (fades out toward the edge) */}
+            <rect x="-14" y="60" width="31" height="90" rx="12" fill="#f6d2b4" />
+            <rect x="-20" y="84" width="43" height="70" rx="10" fill="#0b5d1e" />
+            <rect x="-20" y="84" width="43" height="5" rx="2.5" fill="#fff" fillOpacity="0.28" />
+
+            {/* back of the hand */}
+            <rect x="-17" y="30" width="45" height="56" rx="18" fill="#e3a97f" transform="translate(0 2)" />
+            <rect x="-17" y="30" width="45" height="56" rx="18" fill="#f6d2b4" />
+
+            {/* the three curled fingers, lying across the top of the fist (each with a shaded underside) */}
+            {[34, 46, 58].map((y) => (
+              <g key={y}>
+                <rect x="4" y={y + 1.6} width="25" height="12" rx="6" fill="#e3a97f" />
+                <rect x="4" y={y} width="25" height="12" rx="6" fill="#f6d2b4" />
+                <path d={`M20 ${y + 2.5} V${y + 9.5}`} stroke="#e3a97f" strokeWidth="1.2" strokeLinecap="round" />
+              </g>
+            ))}
+
+            {/* the pointing finger */}
+            <rect x="-5" y="-1.4" width="14" height="52" rx="7" fill="#e3a97f" />
+            <rect x="-6.5" y="-3" width="14" height="52" rx="7" fill="#f6d2b4" />
+            <ellipse cx="0.5" cy="4.5" rx="3.6" ry="4.4" fill="#fbe4d2" />
+            <path d="M-3.6 20 Q0.5 21.8 4.6 20 M-3.6 32 Q0.5 33.8 4.6 32" fill="none" stroke="#c98d62" strokeWidth="1.2" strokeLinecap="round" />
+
+            {/* the thumb, folded across the front on the left */}
+            <g transform="rotate(-38 -10 62)">
+              <rect x="-26" y="52" width="30" height="13" rx="6.5" fill="#e3a97f" transform="translate(0 1.5)" />
+              <rect x="-26" y="52" width="30" height="13" rx="6.5" fill="#f6d2b4" />
+              <ellipse cx="-1.5" cy="58.5" rx="3.6" ry="3.2" fill="#fbe4d2" />
+              <path d="M-14 55 Q-12.4 58.5 -14 62" fill="none" stroke="#c98d62" strokeWidth="1.2" strokeLinecap="round" />
+            </g>
           </g>
         </g>
       </g>
