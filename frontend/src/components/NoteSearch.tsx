@@ -1,4 +1,4 @@
-import { Search, Sparkles, X } from 'lucide-react'
+import { Search, X } from 'lucide-react'
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { transactionApi } from '../api/endpoints'
 import { autocorrect, buildVocabulary } from '../lib/autocorrect'
@@ -18,7 +18,6 @@ const MAX_SUGGESTIONS = 6
 const POOL_PAGES = 5 // read up to 5 x 100 notes to learn the person's own words (for spelling help)
 
 interface Option {
-  kind: 'fix' | 'note' // 'fix' is the "Did you mean ...?" row
   value: string
 }
 
@@ -34,6 +33,24 @@ const uniqueNotes = (items: { description?: string | null }[]) => {
     }
   }
   return notes
+}
+
+/** Cuts what was typed into pieces and flags the words the spelling help would change. */
+function typoPieces(typed: string, corrected: string) {
+  const fixedWords = corrected.split(' ')
+  const words = /[\p{L}\p{N}]+/gu // the same word rule the spelling help uses, so the nth word lines up with the nth fix
+  const pieces: { text: string; wrong: boolean }[] = []
+  let last = 0
+  let n = 0
+  let m: RegExpExecArray | null
+  while ((m = words.exec(typed))) {
+    if (m.index > last) pieces.push({ text: typed.slice(last, m.index), wrong: false })
+    pieces.push({ text: m[0], wrong: fixedWords[n] !== undefined && fixedWords[n] !== m[0].toLowerCase() })
+    last = m.index + m[0].length
+    n++
+  }
+  if (last < typed.length) pieces.push({ text: typed.slice(last), wrong: false })
+  return pieces
 }
 
 /** Shows `text` with the part that matches `query` in bold. */
@@ -126,10 +143,7 @@ export default function NoteSearch({ id, label, value, onChange, onSubmit, scope
 
   // the spelling fix only counts while it still belongs to what is typed right now
   const activeFix = fix && fix.for === query ? fix.to : null
-  const options: Option[] = [
-    ...(activeFix ? [{ kind: 'fix' as const, value: activeFix }] : []),
-    ...suggestions.map((value) => ({ kind: 'note' as const, value })),
-  ]
+  const options: Option[] = suggestions.map((value) => ({ value }))
   const showList = open && options.length > 0
 
   const choose = (note: string) => {
@@ -165,10 +179,25 @@ export default function NoteSearch({ id, label, value, onChange, onSubmit, scope
     <div ref={box}>
       <label htmlFor={id} className="label">{label}</label>
       <div className="relative">
+        {/* A copy of the typed text sits BEHIND the (see-through) input. Its letters are invisible; only the highlight
+            on a misspelled word and the fix after it show. Same box, font and padding as the input, so they line up. */}
+        <div aria-hidden className="input pointer-events-none absolute inset-0 overflow-hidden whitespace-pre pl-9 pr-9 text-transparent">
+          {activeFix &&
+            typoPieces(value, activeFix).map((p, i) =>
+              p.wrong ? (
+                <mark key={i} className="rounded-sm bg-accent-100 text-transparent underline decoration-red-500 decoration-wavy decoration-1 underline-offset-4">
+                  {p.text}
+                </mark>
+              ) : (
+                <span key={i}>{p.text}</span>
+              ),
+            )}
+          {activeFix && <span className="font-semibold text-accent-700">{`  → ${activeFix}`}</span>}
+        </div>
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
         <input
           id={id}
-          className="input pl-9 pr-9"
+          className="input relative bg-transparent pl-9 pr-9"
           placeholder="Search notes…"
           autoComplete="off"
           role="combobox"
@@ -207,7 +236,7 @@ export default function NoteSearch({ id, label, value, onChange, onSubmit, scope
           >
             {options.map((o, i) => (
               <li
-                key={`${o.kind}-${o.value}`}
+                key={o.value}
                 id={`${id}-opt-${i}`}
                 role="option"
                 aria-selected={i === active}
@@ -217,23 +246,10 @@ export default function NoteSearch({ id, label, value, onChange, onSubmit, scope
                   choose(o.value)
                 }}
                 onMouseEnter={() => setActive(i)}
-                className={`flex cursor-pointer items-center gap-2 px-3 py-2 text-sm text-slate-700 ${i === active ? 'bg-brand-50' : ''} ${
-                  o.kind === 'fix' ? 'border-b border-slate-100' : ''
-                }`}
+                className={`flex cursor-pointer items-center gap-2 px-3 py-2 text-sm text-slate-700 ${i === active ? 'bg-brand-50' : ''}`}
               >
-                {o.kind === 'fix' ? (
-                  <>
-                    <Sparkles className="size-3.5 shrink-0 text-accent-500" />
-                    <span className="truncate">
-                      Did you mean <strong className="font-bold text-brand-700">{o.value}</strong>?
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <Search className="size-3.5 shrink-0 text-slate-300" />
-                    <span className="truncate"><Highlight text={o.value} query={activeFix ?? query} /></span>
-                  </>
-                )}
+                <Search className="size-3.5 shrink-0 text-slate-300" />
+                <span className="truncate"><Highlight text={o.value} query={activeFix ?? query} /></span>
               </li>
             ))}
           </ul>
