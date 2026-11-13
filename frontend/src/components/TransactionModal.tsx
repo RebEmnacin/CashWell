@@ -57,6 +57,15 @@ export default function Transactions() {
 
   const changeFilter = <T,>(setter: (v: T) => void) => (v: T) => { setter(v); setPage(1) }
 
+  // The category list follows the type: Income shows only income categories, Expense only expense ones.
+  const categoryOptions = type ? categories.filter((c) => c.type === type) : categories
+  // Switching the type drops a chosen category that doesn't belong to the new type.
+  const changeType = (v: TransactionFilters['type']) => {
+    setType(v)
+    if (v && categoryId !== '' && categories.find((c) => c.id === categoryId)?.type !== v) setCategoryId('')
+    setPage(1)
+  }
+
   // "From" is the starting date, so "To" can never be earlier than it (dates are YYYY-MM-DD, so plain string compare works).
   // Moving From past To drags To along; typing a To that is too early snaps it back to From.
   const changeStart = (v: string) => {
@@ -113,7 +122,7 @@ export default function Transactions() {
           <div>
             <label htmlFor="f-type" className="label">Type</label>
             <select id="f-type" className="input" value={type}
-              onChange={(e) => changeFilter(setType)(e.target.value as TransactionFilters['type'])}>
+              onChange={(e) => changeType(e.target.value as TransactionFilters['type'])}>
               <option value="">All types</option>
               <option value="income">Income</option>
               <option value="expense">Expense</option>
@@ -124,7 +133,7 @@ export default function Transactions() {
             <select id="f-category" className="input" value={categoryId}
               onChange={(e) => changeFilter(setCategoryId)(e.target.value ? Number(e.target.value) : '')}>
               <option value="">All categories</option>
-              {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+              {categoryOptions.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
           {/* From and To sit together with a dash between the two date boxes */}
