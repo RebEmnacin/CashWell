@@ -34,50 +34,54 @@ Log income and expenses, set a monthly budget for each category, and watch a liv
 <table>
   <tr>
     <td width="33%" valign="top">
-      <img src="docs/icons/transactions.svg" width="44" alt="" /><br/>
+      <img src="docs/icons/f-transactions.svg" width="44" alt="" /><br/>
       <b>Transactions</b><br/>
       Add, edit and delete them, with paging controls to jump to the first or last page.
     </td>
     <td width="33%" valign="top">
-      <img src="docs/icons/search.svg" width="44" alt="" /><br/>
+      <img src="docs/icons/f-search.svg" width="44" alt="" /><br/>
       <b>Smart note search</b><br/>
       Suggestions appear as you type, and a misspelled word gets a <i>"Did you mean…?"</i> fix. Nothing changes in the table until you press Enter.
     </td>
     <td width="33%" valign="top">
-      <img src="docs/icons/export.svg" width="44" alt="" /><br/>
+      <img src="docs/icons/f-export.svg" width="44" alt="" /><br/>
       <b>Filter and export</b><br/>
       Filter by type, category and date range, then download the result as CSV.
     </td>
   </tr>
   <tr>
     <td valign="top">
-      <img src="docs/icons/budgets.svg" width="44" alt="" /><br/>
+      <img src="docs/icons/f-budgets.svg" width="44" alt="" /><br/>
       <b>Budgets</b><br/>
       A monthly limit per category, with progress bars that go from green to amber to red.
     </td>
     <td valign="top">
-      <img src="docs/icons/dashboard.svg" width="44" alt="" /><br/>
+      <img src="docs/icons/f-dashboard.svg" width="44" alt="" /><br/>
       <b>Dashboard</b><br/>
       Balance, income, expenses and savings rate for any month, plus a six-month chart and a spending donut.
     </td>
     <td valign="top">
-      <img src="docs/icons/motion.svg" width="44" alt="" /><br/>
+      <img src="docs/icons/f-motion.svg" width="44" alt="" /><br/>
       <b>Motion</b><br/>
       Animated counters, springy modals, and hand-drawn SVG scenes: a tipping coin jar, a calculator-tapping glove and a steaming coffee cup.
     </td>
   </tr>
   <tr>
     <td valign="top">
-      <img src="docs/icons/responsive.svg" width="44" alt="" /><br/>
+      <img src="docs/icons/f-responsive.svg" width="44" alt="" /><br/>
       <b>Responsive</b><br/>
       A bottom tab bar in the app and a hamburger menu on the public pages.
     </td>
     <td valign="top">
-      <img src="docs/icons/private.svg" width="44" alt="" /><br/>
+      <img src="docs/icons/f-private.svg" width="44" alt="" /><br/>
       <b>Private by design</b><br/>
       JWT sessions, bcrypt passwords, and every query scoped to the logged-in user.
     </td>
-    <td></td>
+    <td valign="top">
+      <img src="docs/icons/f-demo.svg" width="44" alt="" /><br/>
+      <b>One-click demo</b><br/>
+      Press <i>Try the demo</i> and get a signed-in account with six months of sample data, no sign-up.
+    </td>
   </tr>
 </table>
 
@@ -216,7 +220,7 @@ CashWell/
 
 <br/>
 
-<img src="docs/icons/dashboard.svg" width="36" alt="" />
+<img src="docs/icons/f-dashboard.svg" width="36" alt="" />
 
 **Built by [RebEmnacin](https://github.com/RebEmnacin)**
 
