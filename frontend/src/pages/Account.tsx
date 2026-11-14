@@ -215,7 +215,7 @@ export default function Account() {
 
   return (
     <>
-      <PageHeader title="Account" subtitle="Your profile and session" />
+      <PageHeader title="Account"/>
 
       <div className="grid gap-5 lg:grid-cols-3">
         <section className="card animate-rise lg:col-span-2">
