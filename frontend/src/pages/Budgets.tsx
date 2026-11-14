@@ -92,7 +92,7 @@ export default function Budgets() {
 
   return (
     <>
-      <PageHeader title="Budgets">
+      <PageHeader title="Budgets" subtitle={`Monthly limits · ${prettyMonth(month)}`}>
         <input type="month" aria-label="Month" className="input w-auto" value={month} max={currentMonth()}
           onChange={(e) => e.target.value && setMonth(e.target.value)} />
       </PageHeader>
