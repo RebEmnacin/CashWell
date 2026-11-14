@@ -10,7 +10,7 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-139a43?style=for-the-badge&logo=fastapi&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-f5b83d?style=for-the-badge&logo=postgresql&logoColor=5c3b00)
 
-### [▶ Try the live demo](https://cashwell-finance.vercel.app) &nbsp;·&nbsp; [📘 Setup guide](SETUP.md) &nbsp;·&nbsp; [✨ Features](#-features) &nbsp;·&nbsp; [🚀 Quick start](#-quick-start)
+### <img src="docs/icons/h-play.svg" width="20" height="20" align="absmiddle" alt="" /> [Try the live demo](https://cashwell-finance.vercel.app) &nbsp;·&nbsp; <img src="docs/icons/h-book.svg" width="20" height="20" align="absmiddle" alt="" /> [Setup guide](SETUP.md) &nbsp;·&nbsp; <img src="docs/icons/h-features.svg" width="20" height="20" align="absmiddle" alt="" /> [Features](#-features) &nbsp;·&nbsp; <img src="docs/icons/h-quickstart.svg" width="20" height="20" align="absmiddle" alt="" /> [Quick start](#-quick-start)
 
 [![CashWell landing page](docs/screenshots/landing.png)](https://cashwell-finance.vercel.app)
 
@@ -29,7 +29,7 @@ Log income and expenses, set a monthly budget for each category, and watch a liv
 
 ---
 
-## ✨ Features
+<h2><img src="docs/icons/h-features.svg" width="26" height="26" align="absmiddle" alt="" /> Features</h2>
 
 <table>
   <tr>
@@ -81,7 +81,7 @@ Log income and expenses, set a monthly budget for each category, and watch a liv
   </tr>
 </table>
 
-## 📸 Screenshots
+<h2><img src="docs/icons/h-screenshots.svg" width="26" height="26" align="absmiddle" alt="" /> Screenshots</h2>
 
 <details open>
 <summary><b>Dashboard and Budgets</b></summary>
@@ -103,14 +103,14 @@ Log income and expenses, set a monthly budget for each category, and watch a liv
 
 </details>
 
-## 🚀 Quick start
+<h2><img src="docs/icons/h-quickstart.svg" width="26" height="26" align="absmiddle" alt="" /> Quick start</h2>
 
 ```bash
 git clone https://github.com/RebEmnacin/CashWell.git
 ```
 
 <details open>
-<summary><b>Terminal 1: backend</b> (Python 3.10+)</summary>
+<summary><img src="docs/icons/h-api.svg" width="20" height="20" align="absmiddle" alt="" /> <b>Terminal 1: backend</b> (Python 3.10+)</summary>
 
 ```bash
 cd CashWell/backend
@@ -124,7 +124,7 @@ uvicorn app.main:app --reload
 </details>
 
 <details open>
-<summary><b>Terminal 2: frontend</b> (Node 20.19+ or 22.12+)</summary>
+<summary><img src="docs/icons/h-layout.svg" width="20" height="20" align="absmiddle" alt="" /> <b>Terminal 2: frontend</b> (Node 20.19+ or 22.12+)</summary>
 
 ```bash
 cd CashWell/frontend
@@ -139,12 +139,12 @@ Open http://localhost:5173 and press **Try the demo**.
 > [!IMPORTANT]
 > The backend won't start without a `SECRET_KEY`. The example `.env` has a placeholder that is fine locally. Use a real one anywhere public. Everything else, including Postgres and deployment, is in the **[setup guide](SETUP.md)**.
 
-## 🧩 How it works
+<h2><img src="docs/icons/h-how.svg" width="26" height="26" align="absmiddle" alt="" /> How it works</h2>
 
 ```mermaid
 flowchart LR
-    A["⚛️ React app<br/>Vite + Tailwind"] -- "Axios + JWT" --> B["⚡ FastAPI"]
-    B -- SQLAlchemy --> C[("🐘 PostgreSQL<br/>SQLite locally")]
+    A["React app<br/>Vite + Tailwind"] -- "Axios + JWT" --> B["FastAPI"]
+    B -- SQLAlchemy --> C[("PostgreSQL<br/>SQLite locally")]
     style A fill:#ecf8f1,stroke:#0b5d1e,color:#053b06
     style B fill:#cfeedd,stroke:#0b5d1e,color:#053b06
     style C fill:#fdecc0,stroke:#c98a10,color:#5c3b00
@@ -153,7 +153,7 @@ flowchart LR
 The frontend and the API are separate apps, both deployed on Vercel, with Neon Postgres behind the API. Interactive API docs are served at `/docs` on a running backend.
 
 <details>
-<summary><b>🛠 Tech stack, and why</b></summary>
+<summary><img src="docs/icons/h-stack.svg" width="20" height="20" align="absmiddle" alt="" /> <b>Tech stack, and why</b></summary>
 <br/>
 
 | Layer | Choice | Why |
@@ -170,7 +170,7 @@ The frontend and the API are separate apps, both deployed on Vercel, with Neon P
 </details>
 
 <details>
-<summary><b>🔌 API at a glance</b></summary>
+<summary><img src="docs/icons/h-api.svg" width="20" height="20" align="absmiddle" alt="" /> <b>API at a glance</b></summary>
 <br/>
 
 | Area | Endpoints |
@@ -184,7 +184,7 @@ The frontend and the API are separate apps, both deployed on Vercel, with Neon P
 </details>
 
 <details>
-<summary><b>📁 Project layout</b></summary>
+<summary><img src="docs/icons/h-layout.svg" width="20" height="20" align="absmiddle" alt="" /> <b>Project layout</b></summary>
 
 ```
 CashWell/
@@ -203,7 +203,7 @@ CashWell/
 
 </details>
 
-## 🧠 Engineering decisions
+<h2><img src="docs/icons/h-decisions.svg" width="26" height="26" align="absmiddle" alt="" /> Engineering decisions</h2>
 
 1. **Data isolation.** Every query filters by `user_id`, and category ownership is re-checked on every write.
 2. **The server decides the type.** Income or expense comes from the category on the server, never from the client.
@@ -218,6 +218,6 @@ CashWell/
 
 <img src="docs/icons/dashboard.svg" width="36" alt="" />
 
-**Built by [RebEmnacin](https://github.com/RebEmnacin)** · If CashWell helped you, a ⭐ is appreciated
+**Built by [RebEmnacin](https://github.com/RebEmnacin)**
 
 </div>
