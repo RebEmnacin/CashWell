@@ -17,8 +17,8 @@ export interface ScrubFrom {
  * (A normal "reveal" plays once and is done. This one is tied to the scroll position.)
  *
  * offset = [when it starts, when it finishes], each written as "<element edge> <viewport edge>".
- *   'start end'     = the element's top touches the bottom of the screen (just entering)
- *   'center 0.7'    = the element's middle is 70% of the way down the screen (settled)
+ *   'start end'      = the element's top touches the bottom of the screen (just entering)
+ *   'center 0.7'     = the element's middle is 70% of the way down the screen (settled)
  */
 export default function Scrub({
   children,
