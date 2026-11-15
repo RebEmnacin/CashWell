@@ -24,7 +24,7 @@ const SHAPES = 'path, circle, rect, line, polyline, polygon, ellipse'
  */
 export default function AnimatedIcon({ icon: Icon, className, strokeWidth = 1.75, delay = 0 }: Props) {
   const box = useRef<HTMLSpanElement>(null)
-  const inView = useInView(box, { once: false, margin: '-60px' })
+  const inView = useInView(box, { once: true, margin: '-60px' })
   const running = useRef<ReturnType<typeof animate> | null>(null)
 
   const getShapes = () => Array.from(box.current?.querySelectorAll<SVGGeometryElement>(SHAPES) ?? [])
@@ -53,17 +53,9 @@ export default function AnimatedIcon({ icon: Icon, className, strokeWidth = 1.75
     })
   }, [])
 
-  // draws every time it scrolls into view (down OR back up), erased when it leaves
+  // first draw, when it scrolls into view
   useEffect(() => {
-    if (inView) {
-      draw(delay)
-    } else {
-      // it left the screen: erase it again so it draws itself the next time it comes back
-      running.current?.stop()
-      getShapes().forEach((s) => {
-        s.style.strokeDashoffset = '1'
-      })
-    }
+    if (inView) draw(delay)
   }, [inView]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // redraw on hover (the card around it, or the icon itself)
