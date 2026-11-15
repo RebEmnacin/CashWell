@@ -362,7 +362,7 @@ export default function Landing() {
                     <motion.div
                       initial={{ height: 0 }}
                       whileInView={{ height: `${h}%` }}
-                      viewport={{ once: true }}
+                      viewport={{ once: false, amount: 0.6 }}
                       transition={{ duration: 0.8, delay: 0.2 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
                       className={`w-full ${i === bars.length - 1 ? 'bg-accent-400' : 'bg-brand-600'}`}
                     />
