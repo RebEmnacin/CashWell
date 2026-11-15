@@ -342,17 +342,17 @@ export default function Landing() {
 
           {/* the preview starts big and tipped back, then settles flat, like a screen being lifted into view */}
           <Scrub from={{ scale: 1.4, rotateX: -26, rotateY: -30, y: 110 }} offset={['start end', 'center 0.65']}>
-            <div className="bg-white p-6 text-ink shadow-2xl">
+            <div className="bg-white p-4 text-ink shadow-2xl sm:p-6">
               <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Sample preview</p>
-              <div className="mt-4 grid grid-cols-3 gap-3">
+              <div className="mt-4 grid grid-cols-3 gap-2 sm:gap-3">
                 {[
                   ['Balance', '₱48,200'],
                   ['Income', '₱62,000'],
                   ['Expenses', '₱13,800'],
                 ].map(([k, v]) => (
-                  <div key={k} className="bg-[#f6f8f7] p-3">
+                  <div key={k} className="min-w-0 bg-[#f6f8f7] p-2 sm:p-3">
                     <p className="text-[11px] font-semibold text-slate-500">{k}</p>
-                    <p className="mt-1 text-lg font-extrabold text-brand-700">{v}</p>
+                    <p className="mt-1 text-[13px] font-extrabold text-brand-700 sm:text-lg">{v}</p> {/* small on phones so the amounts fit their boxes */}
                   </div>
                 ))}
               </div>
