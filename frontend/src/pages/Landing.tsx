@@ -8,14 +8,15 @@ import {
   ShieldCheck,
   type LucideIcon,
 } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useState, type ReactNode } from 'react'
+import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from 'motion/react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { errorMessage } from '../api/client'
 import { authApi } from '../api/endpoints'
 import AnimatedIcon from '../components/AnimatedIcon'
 import HandCalculator from '../components/HandCalculator'
 import JarCoins from '../components/JarCoins'
+import Scrub from '../components/Scrub'
 import { useAuthStore } from '../store/authStore'
 
 
@@ -54,18 +55,16 @@ const months = ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov']
 
 /* ---------------- small helpers ---------------- */
 
-/** Fades + slides its children up the first time they scroll into view. */
-function Reveal({ children, delay = 0, className = '' }: { children: ReactNode; delay?: number; className?: string }) {
+/** The line that joins the "How it works" steps. It fills downward as you scroll, step by step. */
+function StepsLine() {
+  const ref = useRef<HTMLSpanElement>(null)
+  const reduce = useReducedMotion()
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.75', 'end 0.55'] })
+  const fill = useSpring(scrollYProgress, { stiffness: 120, damping: 26, mass: 0.4 })
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 28 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }}
-      className={className}
-    >
-      {children}
-    </motion.div>
+    <span ref={ref} className="absolute bottom-6 left-6 top-6 w-0.5 -translate-x-1/2 bg-brand-100" aria-hidden>
+      <motion.span style={{ scaleY: reduce ? 1 : fill, transformOrigin: 'top' }} className="block h-full w-full bg-accent-400" />
+    </span>
   )
 }
 
@@ -233,9 +232,9 @@ export default function Landing() {
       </div>
 
       {/* ============ INTRO ============ */}
-      <section className="mx-auto grid max-w-6xl items-center gap-12 px-6 pb-16 pt-32 md:pl-28 md:pb-20 lg:grid-cols-2">
+      <section className="mx-auto grid max-w-6xl items-center gap-12 overflow-x-clip px-6 pb-16 pt-32 md:pl-28 md:pb-20 lg:grid-cols-2">
         {/* image card with round badges */}
-        <Reveal>
+        <Scrub from={{ x: -170, rotateY: 34, rotateZ: -6, scale: 0.8 }}>
           <div className="relative mx-auto max-w-md">
             <div className="rotate-[-2deg] rounded-[1.75rem] bg-white p-3 shadow-xl ring-1 ring-slate-200">
               <div className="grid aspect-[4/3] place-items-center rounded-[1.25rem] bg-linear-to-br from-brand-900 via-brand-900 to-brand-700">
@@ -249,9 +248,9 @@ export default function Landing() {
               <AnimatedIcon icon={PiggyBank} className="size-6" delay={0.4} />
             </span>
           </div>
-        </Reveal>
+        </Scrub>
 
-        <Reveal delay={0.1}>
+        <Scrub from={{ x: 130, y: 40 }}>
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-accent-700">Home</p>
           <h2 className="mt-3 max-w-xl text-3xl font-extrabold leading-tight text-brand-600 md:text-4xl">
             CashWell: personal finance tracking, made simple
@@ -271,19 +270,19 @@ export default function Landing() {
               About us
             </Link>
           </div>
-        </Reveal>
+        </Scrub>
       </section>
 
       {/* ============ FEATURES ============ */}
-      <section className="bg-brand-50">
+      <section className="overflow-x-clip bg-brand-50">
         <div className="mx-auto max-w-6xl px-6 py-16 md:pl-28 md:py-20">
-          <Reveal className="text-center">
+          <Scrub from={{ scale: 1.35, y: 50 }} offset={['start end', 'start 0.6']} className="text-center">
             <h2 className="text-3xl font-extrabold text-ink">Everything you need, nothing you don't</h2>
             <p className="mx-auto mt-3 max-w-2xl text-slate-600">Four things CashWell does well.</p>
-          </Reveal>
+          </Scrub>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {features.map(({ icon: Icon, title, text }, i) => (
-              <Reveal key={title} delay={i * 0.08}>
+              <Scrub key={title} from={{ y: 110, x: (i - 1.5) * -90, rotateX: 32, scale: 0.85 }}>
                 <div className="group h-full rounded-none bg-white p-8 text-center shadow-md ring-1 ring-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
                   {/* big graphic icon: solid disc with a soft ring around it */}
                   <span className="mx-auto grid size-32 place-items-center rounded-full bg-brand-50 ring-1 ring-brand-100 transition duration-300 group-hover:scale-105">
@@ -295,21 +294,21 @@ export default function Landing() {
                   <span className="mx-auto mt-3 block h-1 w-8 bg-accent-400 transition-all duration-300 group-hover:w-14" />
                   <p className="mt-3 text-sm leading-6 text-slate-600">{text}</p>
                 </div>
-              </Reveal>
+              </Scrub>
             ))}
           </div>
         </div>
       </section>
 
       {/* ============ HOW IT WORKS ============ */}
-      <section className="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-[1fr_2fr] lg:gap-16">
-        <Reveal>
+      <section className="mx-auto grid max-w-6xl gap-10 overflow-x-clip px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-[1fr_2fr] lg:gap-16">
+        <Scrub from={{ x: -120, rotateY: 28 }} offset={['start end', 'start 0.6']}>
           <h2 className="text-3xl font-extrabold text-ink md:text-4xl">How it works</h2>
-        </Reveal>
+        </Scrub>
         <div className="relative">
+          <StepsLine />
           {steps.map((s, i) => (
-            <Reveal key={s.n} delay={i * 0.12} className="group relative pb-12 last:pb-0">
-              <span className="absolute -bottom-6 left-6 top-6 w-0.5 -translate-x-1/2 bg-brand-100 group-last:hidden" aria-hidden />
+            <Scrub key={s.n} from={{ x: 150, rotateY: -30, scale: 0.9 }} className="relative pb-12 last:pb-0">
               <div className="relative flex gap-6">
                 <span className="relative grid size-12 shrink-0 place-items-center rounded-full bg-accent-400 text-base font-extrabold text-brand-900 ring-8 ring-[#f6f8f7]">
                   {i + 1}
@@ -319,15 +318,15 @@ export default function Landing() {
                   <p className="mt-1.5 max-w-lg leading-7 text-slate-600">{s.text}</p>
                 </div>
               </div>
-            </Reveal>
+            </Scrub>
           ))}
         </div>
       </section>
 
       {/* ============ DASHBOARD PREVIEW ============ */}
-      <section className="bg-brand-900 text-white">
+      <section className="overflow-x-clip bg-brand-900 text-white">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 md:pl-28 py-16 md:py-20 lg:grid-cols-2">
-          <Reveal>
+          <Scrub from={{ x: -140, y: 30 }}>
             <h2 className="text-3xl font-extrabold leading-tight md:text-4xl">A dashboard that tells the story at a glance</h2>
             <p className="mt-5 text-lg leading-8 text-white/80">
               Balance, income, expenses and a six month trend sit on one screen. Click around the demo account to see
@@ -336,9 +335,10 @@ export default function Landing() {
             <button type="button" onClick={tryDemo} disabled={busy} className={`${primaryBtn} mt-8`}>
               {busy ? 'Opening…' : 'Explore the demo'} <ArrowRight className="size-4" />
             </button>
-          </Reveal>
+          </Scrub>
 
-          <Reveal delay={0.12}>
+          {/* the preview starts big and tipped back, then settles flat, like a screen being lifted into view */}
+          <Scrub from={{ scale: 1.3, rotateX: -22, rotateY: -24, y: 90 }} offset={['start end', 'center 0.65']}>
             <div className="bg-white p-6 text-ink shadow-2xl">
               <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Sample preview</p>
               <div className="mt-4 grid grid-cols-3 gap-3">
@@ -368,13 +368,13 @@ export default function Landing() {
                 ))}
               </div>
             </div>
-          </Reveal>
+          </Scrub>
         </div>
       </section>
 
       {/* ============ FINAL CTA ============ */}
-      <section className="mx-auto max-w-6xl px-6 md:px-28 py-20 text-center">
-        <Reveal>
+      <section className="mx-auto max-w-6xl overflow-x-clip px-6 md:px-28 py-20 text-center">
+        <Scrub from={{ scale: 0.78, y: 70, rotateX: 20 }}>
           <h2 className="text-3xl font-extrabold text-ink md:text-4xl">Ready to see where your money goes?</h2>
           <p className="mx-auto mt-4 max-w-xl text-slate-600">Create a free account, or have a look around with the demo first.</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
@@ -393,7 +393,7 @@ export default function Landing() {
               Try the demo
             </button>
           </div>
-        </Reveal>
+        </Scrub>
       </section>
 
       {/* ============ FOOTER ============ */}
