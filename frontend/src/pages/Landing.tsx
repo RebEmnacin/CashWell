@@ -116,8 +116,9 @@ export default function Landing() {
 
   const current = slides[slide]
 
+  // the wrapper clips at the SCREEN edge, so panels sliding in from the side are not cut off by their own section
   return (
-    <>
+    <div className="overflow-x-clip">
       {/* ============ HERO ============ */}
       <div className="relative">
         <section className="relative overflow-hidden rounded-b-[50%_60px] bg-brand-900 text-white md:rounded-b-[50%_120px]">
@@ -231,7 +232,7 @@ export default function Landing() {
       </div>
 
       {/* ============ INTRO ============ */}
-      <section className="mx-auto grid max-w-6xl items-center gap-12 overflow-x-clip px-6 pb-16 pt-32 md:pl-28 md:pb-20 lg:grid-cols-2">
+      <section className="mx-auto grid max-w-6xl items-center gap-12  px-6 pb-16 pt-32 md:pl-28 md:pb-20 lg:grid-cols-2">
         {/* image card with round badges */}
         <Scrub from={{ x: -260, rotateY: 48, rotateZ: -9, scale: 0.7 }} offset={['start end', 'center 0.6']}>
           <div className="relative mx-auto max-w-md">
@@ -273,7 +274,7 @@ export default function Landing() {
       </section>
 
       {/* ============ FEATURES ============ */}
-      <section className="overflow-x-clip px-3 md:px-6">
+      <section className="px-3 md:px-6">
        <Scrub from={{ scale: 0.88, y: 70 }} offset={['start end', 'start 0.3']} className="rounded-[2.5rem] bg-brand-50">
         <div className="mx-auto max-w-6xl px-6 py-16 md:pl-28 md:py-20">
           <Scrub from={{ scale: 1.6, y: 70 }} offset={['start end', 'start 0.55']} className="text-center">
@@ -302,7 +303,7 @@ export default function Landing() {
       </section>
 
       {/* ============ HOW IT WORKS ============ */}
-      <section className="mx-auto grid max-w-6xl gap-10 overflow-x-clip px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-[1fr_2fr] lg:gap-16">
+      <section className="mx-auto grid max-w-6xl gap-10  px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-[1fr_2fr] lg:gap-16">
         <Scrub from={{ x: -200, rotateY: 40, scale: 1.3 }} offset={['start end', 'start 0.55']}>
           <h2 className="text-3xl font-extrabold text-ink md:text-4xl">How it works</h2>
         </Scrub>
@@ -325,7 +326,7 @@ export default function Landing() {
       </section>
 
       {/* ============ DASHBOARD PREVIEW ============ */}
-      <section className="overflow-x-clip px-3 md:px-6">
+      <section className="px-3 md:px-6">
        <Scrub from={{ scale: 0.88, y: 80 }} offset={['start end', 'start 0.25']} className="rounded-[2.5rem] bg-brand-900 text-white">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 md:pl-28 py-16 md:py-20 lg:grid-cols-2">
           <Scrub from={{ x: -140, y: 30 }}>
@@ -376,7 +377,7 @@ export default function Landing() {
       </section>
 
       {/* ============ FINAL CTA ============ */}
-      <section className="mx-auto max-w-6xl overflow-x-clip px-6 md:px-28 py-20 text-center">
+      <section className="mx-auto max-w-6xl  px-6 md:px-28 py-20 text-center">
         <Scrub from={{ scale: 0.7, y: 90, rotateX: 28 }}>
           <h2 className="text-3xl font-extrabold text-ink md:text-4xl">Ready to see where your money goes?</h2>
           <p className="mx-auto mt-4 max-w-xl text-slate-600">Create a free account, or have a look around with the demo first.</p>
@@ -410,6 +411,6 @@ export default function Landing() {
           </div>
         </div>
       </footer>
-    </>
+    </div>
   )
 }
