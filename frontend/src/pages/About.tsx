@@ -23,8 +23,9 @@ const stack = [
 ]
 
 export default function About() {
+  // the wrapper clips at the SCREEN edge, so panels sliding in from the side are not cut off by their own section
   return (
-    <>
+    <div className="overflow-x-clip">
       {/* header band */}
       <section className="relative overflow-hidden bg-brand-900 text-white">
         <div className="relative mx-auto max-w-6xl px-6 pb-16 pt-8 md:pl-28 md:pb-24">
@@ -59,7 +60,7 @@ export default function About() {
       </section>
 
       {/* story */}
-      <section className="mx-auto grid max-w-6xl gap-10 overflow-x-clip px-6 md:pl-28 py-16 md:py-20 lg:grid-cols-[1fr_2fr]">
+      <section className="mx-auto grid max-w-6xl gap-10  px-6 md:pl-28 py-16 md:py-20 lg:grid-cols-[1fr_2fr]">
         <Scrub from={{ x: -220, rotateY: 42, scale: 1.25 }} offset={['start end', 'start 0.55']}>
           <h2 className="text-3xl font-extrabold leading-tight text-brand-600">Why CashWell exists</h2>
           <span className="mt-4 block h-1 w-12 bg-accent-400" />
@@ -81,7 +82,7 @@ export default function About() {
       </section>
 
       {/* values */}
-      <section className="overflow-x-clip px-3 md:px-6">
+      <section className="px-3 md:px-6">
        <Scrub from={{ scale: 0.88, y: 70 }} offset={['start end', 'start 0.3']} className="rounded-[2.5rem] bg-brand-50">
         <div className="mx-auto max-w-6xl px-6 py-16 md:pl-28 md:py-20">
           <Scrub from={{ scale: 1.6, y: 70 }} offset={['start end', 'start 0.55']} className="text-center">
@@ -108,7 +109,7 @@ export default function About() {
       </section>
 
       {/* tech stack */}
-      <section className="mx-auto grid max-w-6xl gap-10 overflow-x-clip px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-[1fr_2fr] lg:gap-16">
+      <section className="mx-auto grid max-w-6xl gap-10  px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-[1fr_2fr] lg:gap-16">
         <Scrub from={{ x: -220, rotateY: 42, scale: 1.25 }} offset={['start end', 'start 0.55']}>
           <h2 className="text-3xl font-extrabold text-ink md:text-4xl">What it's built with</h2>
           <p className="mt-3 max-w-sm text-slate-600">Tech Stack used for development</p>
@@ -131,7 +132,7 @@ export default function About() {
       </section>
 
       {/* CTA */}
-      <section className="overflow-x-clip px-3 pb-3 md:px-6 md:pb-6">
+      <section className="px-3 pb-3 md:px-6 md:pb-6">
        <Scrub from={{ scale: 0.86, y: 80 }} offset={['start end', 'start 0.4']} className="rounded-[2.5rem] bg-brand-900 text-white">
         <Scrub from={{ scale: 0.7, y: 90, rotateX: 28 }} className="mx-auto max-w-6xl px-6 md:px-28 py-16 text-center">
           <h2 className="text-3xl font-extrabold md:text-4xl">Give it a try</h2>
@@ -145,6 +146,6 @@ export default function About() {
         </Scrub>
        </Scrub>
       </section>
-    </>
+    </div>
   )
 }
