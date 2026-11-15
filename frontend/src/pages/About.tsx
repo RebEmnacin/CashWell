@@ -1,9 +1,9 @@
 import { ArrowRight, Check, Eye, Feather, Lock, type LucideIcon } from 'lucide-react'
 import { motion } from 'motion/react'
-import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import AnimatedIcon from '../components/AnimatedIcon'
 import ReceiptPrinter from '../components/ReceiptPrinter'
+import Scrub from '../components/Scrub'
 
 /* ---------------- content (edit the text here) ---------------- */
 
@@ -21,20 +21,6 @@ const stack = [
   { name: 'SQLAlchemy', why: 'One data layer that runs on SQLite locally and Postgres online.' },
   { name: 'JWT sessions', why: 'Stateless login that works well with a separate frontend.' },
 ]
-
-function Reveal({ children, delay = 0, className = '' }: { children: ReactNode; delay?: number; className?: string }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 28 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  )
-}
 
 export default function About() {
   return (
@@ -73,32 +59,37 @@ export default function About() {
       </section>
 
       {/* story */}
-      <section className="mx-auto grid max-w-6xl gap-10 px-6 md:pl-28 py-16 md:py-20 lg:grid-cols-[1fr_2fr]">
-        <Reveal>
+      <section className="mx-auto grid max-w-6xl gap-10 overflow-x-clip px-6 md:pl-28 py-16 md:py-20 lg:grid-cols-[1fr_2fr]">
+        <Scrub from={{ x: -220, rotateY: 42, scale: 1.25 }} offset={['start end', 'start 0.55']}>
           <h2 className="text-3xl font-extrabold leading-tight text-brand-600">Why CashWell exists</h2>
           <span className="mt-4 block h-1 w-12 bg-accent-400" />
-        </Reveal>
-        <Reveal delay={0.1} className="space-y-5 text-lg leading-8 text-slate-600">
+        </Scrub>
+        <div className="space-y-5 text-lg leading-8 text-slate-600">
+         <Scrub from={{ x: 200, rotateY: -22, y: 40 }} offset={['start end', 'center 0.7']}>
           <p>
             CashWell is a personal finance tracker built as a full-stack portfolio project. The idea is simple: most
             people do not track their money because the tools feel like work.
           </p>
+         </Scrub>
+         <Scrub from={{ x: 260, rotateY: -22, y: 60 }} offset={['start end', 'center 0.7']}>
           <p>
             So CashWell keeps it light. Log a transaction in a few taps, give each category a monthly budget, and the
             dashboard shows where you stand: what came in, what went out, and where it went.
           </p>
-        </Reveal>
+         </Scrub>
+        </div>
       </section>
 
       {/* values */}
-      <section className="bg-brand-50">
+      <section className="overflow-x-clip px-3 md:px-6">
+       <Scrub from={{ scale: 0.88, y: 70 }} offset={['start end', 'start 0.3']} className="rounded-[2.5rem] bg-brand-50">
         <div className="mx-auto max-w-6xl px-6 py-16 md:pl-28 md:py-20">
-          <Reveal className="text-center">
+          <Scrub from={{ scale: 1.6, y: 70 }} offset={['start end', 'start 0.55']} className="text-center">
             <h2 className="text-3xl font-extrabold text-ink">What we care about</h2>
-          </Reveal>
+          </Scrub>
           <div className="mt-10 grid gap-6 md:grid-cols-3">
             {values.map(({ icon: Icon, title, text }, i) => (
-              <Reveal key={title} delay={i * 0.1}>
+              <Scrub key={title} from={{ y: 150, x: (i - 1) * -160, rotateX: 40, rotateZ: (i - 1) * 6, scale: 0.8 }}>
                 <div className="group h-full rounded-none bg-white p-8 text-center shadow-md ring-1 ring-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
                   <span className="mx-auto grid size-32 place-items-center rounded-full bg-brand-50 ring-1 ring-brand-100 transition duration-300 group-hover:scale-105">
                     <span className="grid size-24 place-items-center rounded-full bg-brand-600 text-white shadow-lg">
@@ -109,21 +100,22 @@ export default function About() {
                   <span className="mx-auto mt-3 block h-1 w-8 bg-accent-400 transition-all duration-300 group-hover:w-14" />
                   <p className="mt-3 leading-7 text-slate-600">{text}</p>
                 </div>
-              </Reveal>
+              </Scrub>
             ))}
           </div>
         </div>
+       </Scrub>
       </section>
 
       {/* tech stack */}
-      <section className="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-[1fr_2fr] lg:gap-16">
-        <Reveal>
+      <section className="mx-auto grid max-w-6xl gap-10 overflow-x-clip px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-[1fr_2fr] lg:gap-16">
+        <Scrub from={{ x: -220, rotateY: 42, scale: 1.25 }} offset={['start end', 'start 0.55']}>
           <h2 className="text-3xl font-extrabold text-ink md:text-4xl">What it's built with</h2>
           <p className="mt-3 max-w-sm text-slate-600">Tech Stack used for development</p>
-        </Reveal>
+        </Scrub>
         <div className="grid gap-4 sm:grid-cols-2">
           {stack.map((s, i) => (
-            <Reveal key={s.name} delay={(i % 2) * 0.08}>
+            <Scrub key={s.name} from={{ x: i % 2 ? 200 : -200, rotateY: i % 2 ? -34 : 34, y: 40, scale: 0.9 }}>
               <div className="flex h-full gap-4 rounded-none bg-white p-5 shadow-sm ring-1 ring-slate-200/70">
                 <span className="grid size-9 shrink-0 place-items-center rounded-full bg-brand-600 text-white">
                   <AnimatedIcon icon={Check} className="size-4" strokeWidth={3} delay={0.25 + (i % 2) * 0.1} />
@@ -133,14 +125,15 @@ export default function About() {
                   <p className="mt-1 text-sm leading-6 text-slate-600">{s.why}</p>
                 </div>
               </div>
-            </Reveal>
+            </Scrub>
           ))}
         </div>
       </section>
 
       {/* CTA */}
-      <section className="bg-brand-900 text-white">
-        <Reveal className="mx-auto max-w-6xl px-6 md:px-28 py-16 text-center">
+      <section className="overflow-x-clip px-3 pb-3 md:px-6 md:pb-6">
+       <Scrub from={{ scale: 0.86, y: 80 }} offset={['start end', 'start 0.4']} className="rounded-[2.5rem] bg-brand-900 text-white">
+        <Scrub from={{ scale: 0.7, y: 90, rotateX: 28 }} className="mx-auto max-w-6xl px-6 md:px-28 py-16 text-center">
           <h2 className="text-3xl font-extrabold md:text-4xl">Give it a try</h2>
           <p className="mx-auto mt-4 max-w-xl text-white/80">Create an account, or open the demo from the login page.</p>
           <Link
@@ -149,7 +142,8 @@ export default function About() {
           >
             Login / Sign up <ArrowRight className="size-4" />
           </Link>
-        </Reveal>
+        </Scrub>
+       </Scrub>
       </section>
     </>
   )
