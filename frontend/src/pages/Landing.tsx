@@ -16,7 +16,7 @@ import { authApi } from '../api/endpoints'
 import AnimatedIcon from '../components/AnimatedIcon'
 import HandCalculator from '../components/HandCalculator'
 import JarCoins from '../components/JarCoins'
-import Scrub from '../components/Scrub'
+import Scrub, { useLatched } from '../components/Scrub'
 import { useAuthStore } from '../store/authStore'
 
 
@@ -59,7 +59,7 @@ const months = ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov']
 function StepsLine() {
   const ref = useRef<HTMLSpanElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.75', 'end 0.55'] })
-  const fill = useSpring(scrollYProgress, { stiffness: 120, damping: 26, mass: 0.4 })
+  const fill = useSpring(useLatched(scrollYProgress), { stiffness: 120, damping: 26, mass: 0.4 })
   return (
     <span ref={ref} className="absolute bottom-6 left-6 top-6 w-0.5 -translate-x-1/2 bg-brand-100" aria-hidden>
       <motion.span style={{ scaleY: fill, transformOrigin: 'top' }} className="block h-full w-full bg-accent-400" />
@@ -362,7 +362,7 @@ export default function Landing() {
                     <motion.div
                       initial={{ height: 0 }}
                       whileInView={{ height: `${h}%` }}
-                      viewport={{ once: false, amount: 0.6 }}
+                      viewport={{ once: true }}
                       transition={{ duration: 0.8, delay: 0.2 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
                       className={`w-full ${i === bars.length - 1 ? 'bg-accent-400' : 'bg-brand-600'}`}
                     />
