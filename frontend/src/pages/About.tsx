@@ -26,7 +26,7 @@ const stack = [
 export default function About() {
   // the wrapper clips at the SCREEN edge, so panels sliding in from the side are not cut off by their own section
   return (
-    <div className="overflow-x-clip">
+    <div className="overflow-clip">
       {/* header band */}
       <section className="relative overflow-hidden bg-brand-900 text-white">
         <div className="relative mx-auto max-w-6xl px-6 pb-16 pt-8 md:pl-28 md:pb-24">
