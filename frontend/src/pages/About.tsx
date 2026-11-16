@@ -62,21 +62,21 @@ export default function About() {
 
       {/* story */}
       <section className="pt-6">
-       <Scrub from={{ scale: 0.9, rotateX: -12, y: 70 }} offset={['start end', 'start 0.3']}>
-       <SpreadSheet className="bg-white shadow-sm ring-1 ring-slate-200/70">
+       <Scrub from={{ y: 40 }} offset={['start end', 'start 0.3']}>
+       <SpreadSheet inset="0%" radius={0}>
        <div className="mx-auto grid max-w-6xl gap-10  px-6 md:pl-28 py-16 md:py-20 lg:grid-cols-[1fr_2fr]">
-        <Scrub from={{ x: -50, rotateY: 42, scale: 1.25 }} offset={['start end', 'start 0.55']}>
+        <Scrub from={{ y: 40 }} offset={['start end', 'start 0.55']}>
           <h2 className="text-3xl font-extrabold leading-tight text-brand-600">Why CashWell exists</h2>
           <span className="mt-4 block h-1 w-12 bg-accent-400" />
         </Scrub>
         <div className="space-y-5 text-lg leading-8 text-slate-600">
-         <Scrub from={{ x: 50, rotateY: -22, y: 40 }} offset={['start end', 'center 0.7']}>
+         <Scrub from={{ y: 40 }} offset={['start end', 'center 0.7']}>
           <p>
             CashWell is a personal finance tracker built as a full-stack portfolio project. The idea is simple: most
             people do not track their money because the tools feel like work.
           </p>
          </Scrub>
-         <Scrub from={{ x: 50, rotateY: -22, y: 60 }} offset={['start end', 'center 0.7']}>
+         <Scrub from={{ y: 40 }} offset={['start end', 'center 0.7']}>
           <p>
             So CashWell keeps it light. Log a transaction in a few taps, give each category a monthly budget, and the
             dashboard shows where you stand: what came in, what went out, and where it went.
@@ -90,15 +90,15 @@ export default function About() {
 
       {/* values */}
       <section className="pt-6">
-       <Scrub from={{ scale: 0.8, rotateX: 18, y: 90 }} offset={['start end', 'start 0.3']}>
-       <SpreadSheet className="bg-accent-50">
+       <Scrub from={{ y: 40 }} offset={['start end', 'start 0.3']}>
+       <SpreadSheet className="bg-brand-900 text-white">
         <div className="mx-auto max-w-6xl px-6 py-16 md:pl-28 md:py-20">
-          <Scrub from={{ scale: 1.6, y: 70 }} offset={['start end', 'start 0.55']} className="text-center">
-            <h2 className="text-3xl font-extrabold text-ink">What we care about</h2>
+          <Scrub from={{ y: 40 }} offset={['start end', 'start 0.55']} className="text-center">
+            <h2 className="text-3xl font-extrabold">What we care about</h2>
           </Scrub>
           <div className="mt-10 grid gap-6 md:grid-cols-3">
             {values.map(({ icon: Icon, title, text }, i) => (
-              <Scrub key={title} from={{ y: 150, rotateX: 40, rotateZ: (i - 1) * 6, scale: 0.8 }}>
+              <Scrub key={title} from={{ y: 40 }}>
                 <div className="group h-full rounded-none bg-white p-8 text-center shadow-md ring-1 ring-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
                   <span className="mx-auto grid size-32 place-items-center rounded-full bg-brand-50 ring-1 ring-brand-100 transition duration-300 group-hover:scale-105">
                     <span className="grid size-24 place-items-center rounded-full bg-brand-600 text-white shadow-lg">
@@ -119,31 +119,31 @@ export default function About() {
 
       {/* tech stack */}
       <section className="pt-6">
-       <Scrub from={{ scale: 0.86, rotateZ: 2.5, y: 110 }} offset={['start end', 'start 0.3']}>
-       <SpreadSheet className="bg-brand-600 text-white">
+       <Scrub from={{ y: 40 }} offset={['start end', 'start 0.3']}>
+       <SpreadSheet inset="0%" radius={0}>
        <div className="mx-auto grid max-w-6xl gap-10  px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-[1fr_2fr] lg:gap-16">
-        <Scrub from={{ x: -50, rotateY: 42, scale: 1.25 }} offset={['start end', 'start 0.55']}>
-          <h2 className="text-3xl font-extrabold md:text-4xl">What it's built with</h2>
-          <p className="mt-3 max-w-sm text-white/80">Tech Stack used for development</p>
+        <Scrub from={{ y: 40 }} offset={['start end', 'start 0.55']}>
+          <h2 className="text-3xl font-extrabold text-ink md:text-4xl">What it's built with</h2>
+          <p className="mt-3 max-w-sm text-slate-600">Tech Stack used for development</p>
         </Scrub>
         {/* each tech hangs on a string like a price tag and swings into place as you scroll */}
         <div className="grid gap-x-5 gap-y-8 pt-2 sm:grid-cols-2">
           {stack.map((s, i) => (
             <Scrub
               key={s.name}
-              from={{ y: -120, rotateZ: i % 2 ? 20 : -20, rotateX: -16, scale: 0.9 }}
+              from={{ y: 40 }}
               offset={['start end', `start ${0.78 - (i % 2) * 0.08}`]}
-              className="origin-top"
+             
             >
               {/* the string */}
-              <span aria-hidden className="mx-auto block h-7 w-px bg-white/60" />
+              <span aria-hidden className="mx-auto block h-7 w-px bg-slate-400" />
               {/* the tag: sharp corners, the top two corners cut off, with a punched hole for the string */}
               <div className="drop-shadow-[0_8px_10px_rgba(15,40,35,0.16)]">
                 <div
                   className="relative flex h-full gap-4 bg-white px-5 pb-5 pt-9"
                   style={{ clipPath: 'polygon(22px 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%, 0 22px)' }}
                 >
-                  <span aria-hidden className="absolute left-1/2 top-3 size-3 -translate-x-1/2 rounded-full bg-brand-600 ring-2 ring-slate-300" />
+                  <span aria-hidden className="absolute left-1/2 top-3 size-3 -translate-x-1/2 rounded-full bg-[#f6f8f7] ring-2 ring-slate-300" />
                   <span className="grid size-9 shrink-0 place-items-center rounded-full bg-brand-600 text-white">
                     <AnimatedIcon icon={Check} className="size-4" strokeWidth={3} delay={0.25 + (i % 2) * 0.1} />
                   </span>
@@ -163,9 +163,9 @@ export default function About() {
 
       {/* CTA */}
       <section className="pb-3 pt-6 md:pb-6">
-       <Scrub from={{ scale: 0.86, y: 80 }} offset={['start end', 'start 0.75']}>
-       <SpreadSheet className="bg-brand-900 text-white">
-        <Scrub from={{ scale: 0.7, y: 90, rotateX: 28 }} className="mx-auto max-w-6xl px-6 md:px-28 py-16 text-center">
+       <Scrub from={{ y: 40 }} offset={['start end', 'start 0.75']}>
+       <SpreadSheet offset={['start end', 'start 0.8']} className="bg-brand-900 text-white">
+        <Scrub from={{ y: 40 }} className="mx-auto max-w-6xl px-6 md:px-28 py-16 text-center">
           <h2 className="text-3xl font-extrabold md:text-4xl">Give it a try</h2>
           <p className="mx-auto mt-4 max-w-xl text-white/80">Create an account, or open the demo from the login page.</p>
           <Link
