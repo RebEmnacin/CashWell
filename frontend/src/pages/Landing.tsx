@@ -16,7 +16,7 @@ import { authApi } from '../api/endpoints'
 import AnimatedIcon from '../components/AnimatedIcon'
 import HandCalculator from '../components/HandCalculator'
 import JarCoins from '../components/JarCoins'
-import Receipt, { Slip, type ReceiptLine } from '../components/Receipt'
+import Receipt, { type ReceiptLine } from '../components/Receipt'
 import Scrub from '../components/Scrub'
 import SpreadSheet from '../components/SpreadSheet'
 import { useAuthStore } from '../store/authStore'
@@ -255,11 +255,11 @@ export default function Landing() {
       {/* ============ INTRO ============ */}
       <section className="pt-24 md:pt-28">
        {/* each section sits on its own coloured sheet, and every sheet arrives differently: this one zooms OUT onto the page */}
-       <Scrub from={{ scale: 0.9, rotateX: -12, y: 70 }} offset={['start end', 'start 0.3']}>
-       <SpreadSheet className="bg-white shadow-sm ring-1 ring-slate-200/70">
+       <Scrub from={{ y: 40 }} offset={['start end', 'start 0.3']}>
+       <SpreadSheet inset="0%" radius={0}>
        <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-2">
         {/* image card with round badges */}
-        <Scrub from={{ y: 110, rotateY: 30, rotateZ: -8, scale: 0.8 }} offset={['start end', 'center 0.6']}>
+        <Scrub from={{ y: 40 }} offset={['start end', 'center 0.6']}>
           <div className="relative mx-auto max-w-md">
             <div className="rotate-[-2deg] rounded-[1.75rem] bg-white p-3 shadow-xl ring-1 ring-slate-200">
               <div className="grid aspect-[4/3] place-items-center rounded-[1.25rem] bg-linear-to-br from-brand-900 via-brand-900 to-brand-700">
@@ -275,7 +275,7 @@ export default function Landing() {
           </div>
         </Scrub>
 
-        <Scrub from={{ x: 50, y: 50, rotateY: -14 }} offset={['start end', 'center 0.6']}>
+        <Scrub from={{ y: 40 }} offset={['start end', 'center 0.6']}>
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-accent-700">Home</p>
           <h2 className="mt-3 max-w-xl text-3xl font-extrabold leading-tight text-brand-600 md:text-4xl">
             CashWell: personal finance tracking, made simple
@@ -303,16 +303,16 @@ export default function Landing() {
 
       {/* ============ FEATURES ============ */}
       <section className="pt-6">
-       <Scrub from={{ scale: 0.8, rotateX: 18, y: 90 }} offset={['start end', 'start 0.3']}>
-       <SpreadSheet className="bg-accent-50">
+       <Scrub from={{ y: 40 }} offset={['start end', 'start 0.3']}>
+       <SpreadSheet className="bg-brand-900 text-white">
         <div className="mx-auto max-w-6xl px-6 py-16 md:pl-28 md:py-20">
-          <Scrub from={{ scale: 1.6, y: 70 }} offset={['start end', 'start 0.55']} className="text-center">
-            <h2 className="text-3xl font-extrabold text-ink">Everything you need, nothing you don't</h2>
-            <p className="mx-auto mt-3 max-w-2xl text-slate-600">Four things CashWell does well.</p>
+          <Scrub from={{ y: 40 }} offset={['start end', 'start 0.55']} className="text-center">
+            <h2 className="text-3xl font-extrabold">Everything you need, nothing you don't</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-white/80">Four things CashWell does well.</p>
           </Scrub>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {features.map(({ icon: Icon, title, text }, i) => (
-              <Scrub key={title} from={{ y: 150, rotateX: 40, rotateZ: (i - 1.5) * 5, scale: 0.8 }}>
+              <Scrub key={title} from={{ y: 40 }}>
                 <div className="group h-full rounded-none bg-white p-8 text-center shadow-md ring-1 ring-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
                   {/* big graphic icon: solid disc with a soft ring around it */}
                   <span className="mx-auto grid size-32 place-items-center rounded-full bg-brand-50 ring-1 ring-brand-100 transition duration-300 group-hover:scale-105">
@@ -334,24 +334,24 @@ export default function Landing() {
 
       {/* ============ HOW IT WORKS ============ */}
       <section className="pt-6">
-       <Scrub from={{ scale: 0.86, rotateZ: -2.5, y: 110 }} offset={['start end', 'start 0.3']}>
-       <SpreadSheet className="bg-brand-600 text-white">
+       <Scrub from={{ y: 40 }} offset={['start end', 'start 0.3']}>
+       <SpreadSheet inset="0%" radius={0}>
        <div className="mx-auto grid max-w-6xl gap-10  px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-[1fr_2.2fr] lg:gap-14">
-        <Scrub from={{ x: -50, rotateY: 40, scale: 1.3 }} offset={['start end', 'start 0.55']}>
-          <h2 className="text-3xl font-extrabold md:text-4xl">How it works</h2>
-          <p className="mt-3 max-w-xs text-white/80">Three receipts, hung up in order. That is the whole setup.</p>
+        <Scrub from={{ y: 40 }} offset={['start end', 'start 0.55']}>
+          <h2 className="text-3xl font-extrabold text-ink md:text-4xl">How it works</h2>
+          <p className="mt-3 max-w-xs text-slate-600">Three receipts, hung up in order. That is the whole setup.</p>
         </Scrub>
 
         {/* three receipts hang from a line and swing into place as you scroll (each one a little later than the last) */}
         <div className="relative pt-4">
-          <span aria-hidden className="absolute inset-x-0 top-4 hidden h-0.5 bg-white/40 md:block" />
+          <span aria-hidden className="absolute inset-x-0 top-4 hidden h-0.5 bg-slate-300 md:block" />
           <div className="grid gap-10 md:grid-cols-3 md:gap-5">
             {steps.map((s, i) => (
               <Scrub
                 key={s.no}
-                from={{ y: -140, rotateZ: i % 2 ? 16 : -16, rotateX: -18, scale: 0.9 }}
+                from={{ y: 40 }}
                 offset={['start end', `start ${0.72 - i * 0.06}`]}
-                className="origin-top"
+               
               >
                 <Receipt no={s.no} title={s.title} lines={s.lines} totalLabel={s.totalLabel} totalValue={s.totalValue} />
               </Scrub>
@@ -365,10 +365,10 @@ export default function Landing() {
 
       {/* ============ DASHBOARD PREVIEW ============ */}
       <section className="pt-6">
-       <Scrub from={{ scale: 0.84, rotateX: -14, y: 100 }} offset={['start end', 'start 0.25']}>
+       <Scrub from={{ y: 40 }} offset={['start end', 'start 0.25']}>
        <SpreadSheet className="bg-brand-900 text-white">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 md:pl-28 py-16 md:py-20 lg:grid-cols-2">
-          <Scrub from={{ x: -50, y: 30 }}>
+          <Scrub from={{ y: 40 }}>
             <h2 className="text-3xl font-extrabold leading-tight md:text-4xl">A dashboard that tells the story at a glance</h2>
             <p className="mt-5 text-lg leading-8 text-white/80">
               Balance, income, expenses and a six month trend sit on one screen. Click around the demo account to see
@@ -379,19 +379,9 @@ export default function Landing() {
             </button>
           </Scrub>
 
-          {/* the preview starts big and tipped back, then settles flat, like a screen being lifted into view */}
+          {/* the preview rises into place */}
           <div className="relative">
-          {/* little transaction slips float around the preview, each one flying in from a different side */}
-          <Scrub from={{ y: 90, rotateZ: 14, scale: 0.8 }} offset={['start end', 'center 0.6']} className="absolute -right-3 -top-7 z-10 hidden sm:block xl:-right-8">
-            <Slip label="Salary" value="+₱62,000" tone="plus" className="rotate-3" />
-          </Scrub>
-          <Scrub from={{ y: 100, rotateZ: -16, scale: 0.8 }} offset={['start end', 'center 0.55']} className="absolute -bottom-6 -left-3 z-10 hidden sm:block xl:-left-10">
-            <Slip label="Groceries" value="-₱1,250" tone="minus" className="-rotate-3" />
-          </Scrub>
-          <Scrub from={{ y: 140, rotateZ: 12, scale: 0.8 }} offset={['start end', 'center 0.5']} className="absolute -bottom-12 right-6 z-10 hidden sm:block">
-            <Slip label="Coffee" value="-₱120" tone="minus" className="rotate-2" />
-          </Scrub>
-          <Scrub from={{ scale: 1.4, rotateX: -26, rotateY: -30, y: 110 }} offset={['start end', 'center 0.65']}>
+          <Scrub from={{ y: 40 }} offset={['start end', 'center 0.65']}>
             <div className="bg-white p-4 text-ink shadow-2xl sm:p-6">
               <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Sample preview</p>
               <div className="mt-4 grid grid-cols-3 gap-2 sm:gap-3">
@@ -429,17 +419,14 @@ export default function Landing() {
       </section>
 
       {/* ============ FINAL CTA ============ */}
-      <section className="py-6">
-       <Scrub from={{ scale: 0.7, rotateX: 24, y: 120 }} offset={['start end', 'start 0.7']}>
-       <SpreadSheet className="bg-accent-400 text-brand-900">
-        <div className="mx-auto max-w-6xl px-6 py-20 text-center md:px-28">
-        <Scrub from={{ scale: 0.8, y: 60 }} offset={['start end', 'center 0.7']}>
-          <h2 className="text-3xl font-extrabold md:text-4xl">Ready to see where your money goes?</h2>
-          <p className="mx-auto mt-4 max-w-xl text-brand-900/80">Create a free account, or have a look around with the demo first.</p>
+      <section className="mx-auto max-w-6xl  px-6 md:px-28 py-20 text-center">
+        <Scrub from={{ y: 40 }}>
+          <h2 className="text-3xl font-extrabold text-ink md:text-4xl">Ready to see where your money goes?</h2>
+          <p className="mx-auto mt-4 max-w-xl text-slate-600">Create a free account, or have a look around with the demo first.</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
               to={token ? '/dashboard' : '/login'}
-              className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-brand-900 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-white shadow-[0_3px_0_0_#000] transition hover:bg-brand-600 active:translate-y-[3px] active:shadow-none"
+              className={primaryBtn}
             >
               {token ? 'Open dashboard' : 'Get started'} <ArrowRight className="size-4" />
             </Link>
@@ -447,15 +434,12 @@ export default function Landing() {
               type="button"
               onClick={tryDemo}
               disabled={busy}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-brand-900 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-brand-900 transition hover:bg-brand-900 hover:text-white active:scale-95 disabled:opacity-60"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-brand-600 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-brand-600 transition hover:bg-brand-50 active:scale-95 disabled:opacity-60"
             >
               Try the demo
             </button>
           </div>
         </Scrub>
-        </div>
-       </SpreadSheet>
-       </Scrub>
       </section>
 
       {/* =========== FOOTER =========== */}
