@@ -252,7 +252,10 @@ export default function Landing() {
       </div>
 
       {/* ============ INTRO ============ */}
-      <section className="mx-auto grid max-w-6xl items-center gap-12  px-6 pb-16 pt-32 md:pl-28 md:pb-20 lg:grid-cols-2">
+      <section className="px-3 pt-24 md:px-6 md:pt-28">
+       {/* each section sits on its own coloured sheet, and every sheet arrives differently: this one zooms OUT onto the page */}
+       <Scrub from={{ scale: 1.16, rotateX: -8, y: 50 }} offset={['start end', 'start 0.3']} className="rounded-[2.5rem] bg-white shadow-sm ring-1 ring-slate-200/70">
+       <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-2">
         {/* image card with round badges */}
         <Scrub from={{ x: -260, rotateY: 48, rotateZ: -9, scale: 0.7 }} offset={['start end', 'center 0.6']}>
           <div className="relative mx-auto max-w-md">
@@ -291,11 +294,13 @@ export default function Landing() {
             </Link>
           </div>
         </Scrub>
+       </div>
+       </Scrub>
       </section>
 
       {/* ============ FEATURES ============ */}
       <section className="px-3 md:px-6">
-       <Scrub from={{ scale: 0.88, y: 70 }} offset={['start end', 'start 0.3']} className="rounded-[2.5rem] bg-accent-50">
+       <Scrub from={{ scale: 0.8, rotateX: 18, y: 90 }} offset={['start end', 'start 0.3']} className="rounded-[2.5rem] bg-accent-50">
         <div className="mx-auto max-w-6xl px-6 py-16 md:pl-28 md:py-20">
           <Scrub from={{ scale: 1.6, y: 70 }} offset={['start end', 'start 0.55']} className="text-center">
             <h2 className="text-3xl font-extrabold text-ink">Everything you need, nothing you don't</h2>
@@ -323,15 +328,17 @@ export default function Landing() {
       </section>
 
       {/* ============ HOW IT WORKS ============ */}
-      <section className="mx-auto grid max-w-6xl gap-10  px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-[1fr_2.2fr] lg:gap-14">
+      <section className="px-3 pt-6 md:px-6">
+       <Scrub from={{ x: -220, rotateY: 14, scale: 0.88 }} offset={['start end', 'start 0.3']} className="rounded-[2.5rem] bg-brand-600 text-white">
+       <div className="mx-auto grid max-w-6xl gap-10  px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-[1fr_2.2fr] lg:gap-14">
         <Scrub from={{ x: -200, rotateY: 40, scale: 1.3 }} offset={['start end', 'start 0.55']}>
-          <h2 className="text-3xl font-extrabold text-ink md:text-4xl">How it works</h2>
-          <p className="mt-3 max-w-xs text-slate-600">Three receipts, hung up in order. That is the whole setup.</p>
+          <h2 className="text-3xl font-extrabold md:text-4xl">How it works</h2>
+          <p className="mt-3 max-w-xs text-white/80">Three receipts, hung up in order. That is the whole setup.</p>
         </Scrub>
 
         {/* three receipts hang from a line and swing into place as you scroll (each one a little later than the last) */}
         <div className="relative pt-4">
-          <span aria-hidden className="absolute inset-x-0 top-4 hidden h-0.5 bg-slate-300 md:block" />
+          <span aria-hidden className="absolute inset-x-0 top-4 hidden h-0.5 bg-white/40 md:block" />
           <div className="grid gap-10 md:grid-cols-3 md:gap-5">
             {steps.map((s, i) => (
               <Scrub
@@ -345,11 +352,13 @@ export default function Landing() {
             ))}
           </div>
         </div>
+       </div>
+       </Scrub>
       </section>
 
       {/* ============ DASHBOARD PREVIEW ============ */}
-      <section className="px-3 md:px-6">
-       <Scrub from={{ scale: 0.88, y: 80 }} offset={['start end', 'start 0.25']} className="rounded-[2.5rem] bg-brand-900 text-white">
+      <section className="px-3 pt-6 md:px-6">
+       <Scrub from={{ scale: 0.84, rotateX: -14, y: 100 }} offset={['start end', 'start 0.25']} className="rounded-[2.5rem] bg-brand-900 text-white">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 md:pl-28 py-16 md:py-20 lg:grid-cols-2">
           <Scrub from={{ x: -140, y: 30 }}>
             <h2 className="text-3xl font-extrabold leading-tight md:text-4xl">A dashboard that tells the story at a glance</h2>
@@ -411,14 +420,16 @@ export default function Landing() {
       </section>
 
       {/* ============ FINAL CTA ============ */}
-      <section className="mx-auto max-w-6xl  px-6 md:px-28 py-20 text-center">
-        <Scrub from={{ scale: 0.7, y: 90, rotateX: 28 }}>
-          <h2 className="text-3xl font-extrabold text-ink md:text-4xl">Ready to see where your money goes?</h2>
-          <p className="mx-auto mt-4 max-w-xl text-slate-600">Create a free account, or have a look around with the demo first.</p>
+      <section className="px-3 py-6 md:px-6">
+       <Scrub from={{ scale: 0.7, rotateX: 24, y: 120 }} offset={['start end', 'start 0.7']} className="rounded-[2.5rem] bg-accent-400 text-brand-900">
+        <div className="mx-auto max-w-6xl px-6 py-20 text-center md:px-28">
+        <Scrub from={{ scale: 0.8, y: 60 }} offset={['start end', 'center 0.7']}>
+          <h2 className="text-3xl font-extrabold md:text-4xl">Ready to see where your money goes?</h2>
+          <p className="mx-auto mt-4 max-w-xl text-brand-900/80">Create a free account, or have a look around with the demo first.</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
               to={token ? '/dashboard' : '/login'}
-              className={primaryBtn}
+              className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-brand-900 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-white shadow-[0_3px_0_0_#000] transition hover:bg-brand-600 active:translate-y-[3px] active:shadow-none"
             >
               {token ? 'Open dashboard' : 'Get started'} <ArrowRight className="size-4" />
             </Link>
@@ -426,12 +437,14 @@ export default function Landing() {
               type="button"
               onClick={tryDemo}
               disabled={busy}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-brand-600 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-brand-600 transition hover:bg-brand-50 active:scale-95 disabled:opacity-60"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-brand-900 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-brand-900 transition hover:bg-brand-900 hover:text-white active:scale-95 disabled:opacity-60"
             >
               Try the demo
             </button>
           </div>
         </Scrub>
+        </div>
+       </Scrub>
       </section>
 
       {/* =========== FOOTER =========== */}
