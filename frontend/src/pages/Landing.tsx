@@ -139,7 +139,7 @@ export default function Landing() {
 
   // the wrapper clips at the SCREEN edge, so panels sliding in from the side are not cut off by their own section
   return (
-    <div className="overflow-x-clip">
+    <div className="overflow-clip">
       {/* ============ HERO ============ */}
       <div className="relative">
         <section className="relative overflow-hidden rounded-b-[50%_60px] bg-brand-900 text-white md:rounded-b-[50%_120px]">
