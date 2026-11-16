@@ -114,16 +114,31 @@ export default function About() {
           <h2 className="text-3xl font-extrabold text-ink md:text-4xl">What it's built with</h2>
           <p className="mt-3 max-w-sm text-slate-600">Tech Stack used for development</p>
         </Scrub>
-        <div className="grid gap-4 sm:grid-cols-2">
+        {/* each tech hangs on a string like a price tag and swings into place as you scroll */}
+        <div className="grid gap-x-5 gap-y-8 pt-2 sm:grid-cols-2">
           {stack.map((s, i) => (
-            <Scrub key={s.name} from={{ x: i % 2 ? 200 : -200, rotateY: i % 2 ? -34 : 34, y: 40, scale: 0.9 }}>
-              <div className="flex h-full gap-4 rounded-none bg-white p-5 shadow-sm ring-1 ring-slate-200/70">
-                <span className="grid size-9 shrink-0 place-items-center rounded-full bg-brand-600 text-white">
-                  <AnimatedIcon icon={Check} className="size-4" strokeWidth={3} delay={0.25 + (i % 2) * 0.1} />
-                </span>
-                <div>
-                  <h3 className="font-extrabold text-ink">{s.name}</h3>
-                  <p className="mt-1 text-sm leading-6 text-slate-600">{s.why}</p>
+            <Scrub
+              key={s.name}
+              from={{ y: -120, rotateZ: i % 2 ? 20 : -20, rotateX: -16, scale: 0.9 }}
+              offset={['start end', `start ${0.78 - (i % 2) * 0.08}`]}
+              className="origin-top"
+            >
+              {/* the string */}
+              <span aria-hidden className="mx-auto block h-7 w-px bg-slate-400" />
+              {/* the tag: sharp corners, the top two corners cut off, with a punched hole for the string */}
+              <div className="drop-shadow-[0_8px_10px_rgba(15,40,35,0.16)]">
+                <div
+                  className="relative flex h-full gap-4 bg-white px-5 pb-5 pt-9"
+                  style={{ clipPath: 'polygon(22px 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%, 0 22px)' }}
+                >
+                  <span aria-hidden className="absolute left-1/2 top-3 size-3 -translate-x-1/2 rounded-full bg-[#f6f8f7] ring-2 ring-slate-300" />
+                  <span className="grid size-9 shrink-0 place-items-center rounded-full bg-brand-600 text-white">
+                    <AnimatedIcon icon={Check} className="size-4" strokeWidth={3} delay={0.25 + (i % 2) * 0.1} />
+                  </span>
+                  <div>
+                    <h3 className="font-extrabold text-ink">{s.name}</h3>
+                    <p className="mt-1 text-sm leading-6 text-slate-600">{s.why}</p>
+                  </div>
                 </div>
               </div>
             </Scrub>
