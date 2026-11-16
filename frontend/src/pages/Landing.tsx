@@ -8,15 +8,16 @@ import {
   ShieldCheck,
   type LucideIcon,
 } from 'lucide-react'
-import { AnimatePresence, motion, useScroll, useSpring } from 'motion/react'
-import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { errorMessage } from '../api/client'
 import { authApi } from '../api/endpoints'
 import AnimatedIcon from '../components/AnimatedIcon'
 import HandCalculator from '../components/HandCalculator'
 import JarCoins from '../components/JarCoins'
-import Scrub, { useLatched } from '../components/Scrub'
+import Receipt, { Slip, type ReceiptLine } from '../components/Receipt'
+import Scrub from '../components/Scrub'
 import { useAuthStore } from '../store/authStore'
 
 
@@ -44,28 +45,47 @@ const features: { icon: LucideIcon; title: string; text: string }[] = [
   { icon: ShieldCheck, title: 'Your data, your login', text: 'Passwords are hashed and sessions use signed tokens. Only you see your numbers.' },
 ]
 
-const steps = [
-  { n: '01', title: 'Create your account', text: 'Sign up with your name, email and a password. It takes less than a minute.' },
-  { n: '02', title: 'Add your money moves', text: 'Record what comes in and what goes out. Pick a category and you are done.' },
-  { n: '03', title: 'Watch the picture appear', text: 'Your dashboard, charts and budgets build themselves from what you enter.' },
+// "How it works": one RECEIPT per step, hanging on a line (see components/Receipt.tsx)
+const steps: { no: string; title: string; lines: ReceiptLine[]; totalLabel: string; totalValue: string }[] = [
+  {
+    no: '0001',
+    title: 'Create your account',
+    lines: [
+      { label: 'Your name', value: 'done' },
+      { label: 'Email', value: 'done' },
+      { label: 'Password', value: 'done' },
+    ],
+    totalLabel: 'Time spent',
+    totalValue: '< 1 min',
+  },
+  {
+    no: '0002',
+    title: 'Add your money moves',
+    lines: [
+      { label: 'Salary', value: '+₱62,000', tone: 'plus' },
+      { label: 'Groceries', value: '-₱1,250', tone: 'minus' },
+      { label: 'Coffee', value: '-₱120', tone: 'minus' },
+    ],
+    totalLabel: 'Balance',
+    totalValue: '₱60,630',
+  },
+  {
+    no: '0003',
+    title: 'Watch the picture appear',
+    lines: [
+      { label: 'Dashboard', value: 'ready' },
+      { label: 'Charts', value: 'ready' },
+      { label: 'Budgets', value: 'ready' },
+    ],
+    totalLabel: 'Built for you',
+    totalValue: 'auto',
+  },
 ]
 
 const bars = [40, 62, 48, 80, 58, 92]
 const months = ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov']
 
 /* ---------------- small helpers ---------------- */
-
-/** The line that joins the "How it works" steps. It fills downward as you scroll, step by step. */
-function StepsLine() {
-  const ref = useRef<HTMLSpanElement>(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.75', 'end 0.55'] })
-  const fill = useSpring(useLatched(scrollYProgress), { stiffness: 120, damping: 26, mass: 0.4 })
-  return (
-    <span ref={ref} className="absolute bottom-6 left-6 top-6 w-0.5 -translate-x-1/2 bg-brand-100" aria-hidden>
-      <motion.span style={{ scaleY: fill, transformOrigin: 'top' }} className="block h-full w-full bg-accent-400" />
-    </span>
-  )
-}
 
 const primaryBtn =
   'inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-accent-400 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-brand-900 shadow-[0_3px_0_0_var(--color-accent-600)] transition hover:bg-accent-500 active:translate-y-[3px] active:shadow-none disabled:opacity-60'
@@ -303,25 +323,27 @@ export default function Landing() {
       </section>
 
       {/* ============ HOW IT WORKS ============ */}
-      <section className="mx-auto grid max-w-6xl gap-10  px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-[1fr_2fr] lg:gap-16">
+      <section className="mx-auto grid max-w-6xl gap-10  px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-[1fr_2.2fr] lg:gap-14">
         <Scrub from={{ x: -200, rotateY: 40, scale: 1.3 }} offset={['start end', 'start 0.55']}>
           <h2 className="text-3xl font-extrabold text-ink md:text-4xl">How it works</h2>
+          <p className="mt-3 max-w-xs text-slate-600">Three receipts, hung up in order. That is the whole setup.</p>
         </Scrub>
-        <div className="relative">
-          <StepsLine />
-          {steps.map((s, i) => (
-            <Scrub key={s.n} from={{ x: 220, rotateY: -40, scale: 0.85 }} className="relative pb-12 last:pb-0">
-              <div className="relative flex gap-6">
-                <span className="relative grid size-12 shrink-0 place-items-center rounded-full bg-accent-400 text-base font-extrabold text-brand-900 ring-8 ring-[#f6f8f7]">
-                  {i + 1}
-                </span>
-                <div className="pt-1.5">
-                  <h3 className="text-xl font-extrabold text-ink">{s.title}</h3>
-                  <p className="mt-1.5 max-w-lg leading-7 text-slate-600">{s.text}</p>
-                </div>
-              </div>
-            </Scrub>
-          ))}
+
+        {/* three receipts hang from a line and swing into place as you scroll (each one a little later than the last) */}
+        <div className="relative pt-4">
+          <span aria-hidden className="absolute inset-x-0 top-4 hidden h-0.5 bg-slate-300 md:block" />
+          <div className="grid gap-10 md:grid-cols-3 md:gap-5">
+            {steps.map((s, i) => (
+              <Scrub
+                key={s.no}
+                from={{ y: -140, rotateZ: i % 2 ? 16 : -16, rotateX: -18, scale: 0.9 }}
+                offset={['start end', `start ${0.72 - i * 0.06}`]}
+                className="origin-top"
+              >
+                <Receipt no={s.no} title={s.title} lines={s.lines} totalLabel={s.totalLabel} totalValue={s.totalValue} />
+              </Scrub>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -341,6 +363,17 @@ export default function Landing() {
           </Scrub>
 
           {/* the preview starts big and tipped back, then settles flat, like a screen being lifted into view */}
+          <div className="relative">
+          {/* little transaction slips float around the preview, each one flying in from a different side */}
+          <Scrub from={{ x: 160, y: 80, rotateZ: 14, scale: 0.8 }} offset={['start end', 'center 0.6']} className="absolute -right-3 -top-7 z-10 hidden sm:block xl:-right-8">
+            <Slip label="Salary" value="+₱62,000" tone="plus" className="rotate-3" />
+          </Scrub>
+          <Scrub from={{ x: -170, y: 90, rotateZ: -16, scale: 0.8 }} offset={['start end', 'center 0.55']} className="absolute -bottom-6 -left-3 z-10 hidden sm:block xl:-left-10">
+            <Slip label="Groceries" value="-₱1,250" tone="minus" className="-rotate-3" />
+          </Scrub>
+          <Scrub from={{ x: 150, y: 130, rotateZ: 12, scale: 0.8 }} offset={['start end', 'center 0.5']} className="absolute -bottom-12 right-6 z-10 hidden sm:block">
+            <Slip label="Coffee" value="-₱120" tone="minus" className="rotate-2" />
+          </Scrub>
           <Scrub from={{ scale: 1.4, rotateX: -26, rotateY: -30, y: 110 }} offset={['start end', 'center 0.65']}>
             <div className="bg-white p-4 text-ink shadow-2xl sm:p-6">
               <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Sample preview</p>
@@ -372,6 +405,7 @@ export default function Landing() {
               </div>
             </div>
           </Scrub>
+          </div>
         </div>
        </Scrub>
       </section>
