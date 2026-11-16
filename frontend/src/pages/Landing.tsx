@@ -295,7 +295,7 @@ export default function Landing() {
 
       {/* ============ FEATURES ============ */}
       <section className="px-3 md:px-6">
-       <Scrub from={{ scale: 0.88, y: 70 }} offset={['start end', 'start 0.3']} className="rounded-[2.5rem] bg-brand-50">
+       <Scrub from={{ scale: 0.88, y: 70 }} offset={['start end', 'start 0.3']} className="rounded-[2.5rem] bg-accent-50">
         <div className="mx-auto max-w-6xl px-6 py-16 md:pl-28 md:py-20">
           <Scrub from={{ scale: 1.6, y: 70 }} offset={['start end', 'start 0.55']} className="text-center">
             <h2 className="text-3xl font-extrabold text-ink">Everything you need, nothing you don't</h2>
