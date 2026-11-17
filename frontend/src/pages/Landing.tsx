@@ -18,7 +18,6 @@ import HandCalculator from '../components/HandCalculator'
 import JarCoins from '../components/JarCoins'
 import Receipt, { type ReceiptLine } from '../components/Receipt'
 import Scrub from '../components/Scrub'
-import SpreadSheet from '../components/SpreadSheet'
 import { useAuthStore } from '../store/authStore'
 
 
@@ -255,11 +254,9 @@ export default function Landing() {
       {/* ============ INTRO ============ */}
       <section className="pt-24 md:pt-28">
        {/* each section sits on its own coloured sheet, and every sheet arrives differently: this one zooms OUT onto the page */}
-       <Scrub from={{ y: 40 }} offset={['start end', 'start 0.3']}>
-       <SpreadSheet inset="0%" radius={0}>
        <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-2">
         {/* image card with round badges */}
-        <Scrub from={{ y: 40 }} offset={['start end', 'center 0.6']}>
+        <Scrub from={{ y: -50, scale: 0.92, rotateX: -14 }} offset={['start end', 'center 0.6']}>
           <div className="relative mx-auto max-w-md">
             <div className="rotate-[-2deg] rounded-[1.75rem] bg-white p-3 shadow-xl ring-1 ring-slate-200">
               <div className="grid aspect-[4/3] place-items-center rounded-[1.25rem] bg-linear-to-br from-brand-900 via-brand-900 to-brand-700">
@@ -297,22 +294,18 @@ export default function Landing() {
           </div>
         </Scrub>
        </div>
-       </SpreadSheet>
-       </Scrub>
       </section>
 
       {/* ============ FEATURES ============ */}
-      <section className="pt-6">
-       <Scrub from={{ y: 40 }} offset={['start end', 'start 0.3']}>
-       <SpreadSheet className="bg-brand-900 text-white">
+      <section>
         <div className="mx-auto max-w-6xl px-6 py-16 md:pl-28 md:py-20">
-          <Scrub from={{ y: 40 }} offset={['start end', 'start 0.55']} className="text-center">
-            <h2 className="text-3xl font-extrabold">Everything you need, nothing you don't</h2>
-            <p className="mx-auto mt-3 max-w-2xl text-white/80">Four things CashWell does well.</p>
+          <Scrub from={{ scale: 1.12, y: 30 }} offset={['start end', 'start 0.55']} className="text-center">
+            <h2 className="text-3xl font-extrabold text-ink">Everything you need, nothing you don't</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-slate-600">Four things CashWell does well.</p>
           </Scrub>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {features.map(({ icon: Icon, title, text }, i) => (
-              <Scrub key={title} from={{ y: 40 }}>
+              <Scrub key={title} from={i % 2 ? { y: -60, rotateX: -16, scale: 0.92 } : { y: 80, rotateX: 20, scale: 0.92 }}>
                 <div className="group h-full rounded-none bg-white p-8 text-center shadow-md ring-1 ring-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
                   {/* big graphic icon: solid disc with a soft ring around it */}
                   <span className="mx-auto grid size-32 place-items-center rounded-full bg-brand-50 ring-1 ring-brand-100 transition duration-300 group-hover:scale-105">
@@ -328,16 +321,12 @@ export default function Landing() {
             ))}
           </div>
         </div>
-       </SpreadSheet>
-       </Scrub>
       </section>
 
       {/* ============ HOW IT WORKS ============ */}
-      <section className="pt-6">
-       <Scrub from={{ y: 40 }} offset={['start end', 'start 0.3']}>
-       <SpreadSheet inset="0%" radius={0}>
+      <section>
        <div className="mx-auto grid max-w-6xl gap-10  px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-[1fr_2.2fr] lg:gap-14">
-        <Scrub from={{ y: 40 }} offset={['start end', 'start 0.55']}>
+        <Scrub from={{ scale: 1.12, y: 30 }} offset={['start end', 'start 0.55']}>
           <h2 className="text-3xl font-extrabold text-ink md:text-4xl">How it works</h2>
           <p className="mt-3 max-w-xs text-slate-600">Three receipts, hung up in order. That is the whole setup.</p>
         </Scrub>
@@ -349,7 +338,7 @@ export default function Landing() {
             {steps.map((s, i) => (
               <Scrub
                 key={s.no}
-                from={{ y: 40 }}
+                from={{ y: -70, rotateX: -14, scale: 0.92 }}
                 offset={['start end', `start ${0.72 - i * 0.06}`]}
                
               >
@@ -359,15 +348,14 @@ export default function Landing() {
           </div>
         </div>
        </div>
-       </SpreadSheet>
-       </Scrub>
       </section>
 
       {/* ============ DASHBOARD PREVIEW ============ */}
-      <section className="pt-6">
-       <Scrub from={{ y: 40 }} offset={['start end', 'start 0.25']}>
-       <SpreadSheet className="bg-brand-900 text-white">
-        <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 md:pl-28 py-16 md:py-20 lg:grid-cols-2">
+      <section className="mx-auto max-w-6xl px-6 py-10 md:pl-28">
+       {/* the dark panel is a CARD, zooming in as it rises */}
+       <Scrub from={{ y: 70, scale: 0.9, rotateX: 12 }} offset={['start end', 'start 0.3']}>
+       <div className="bg-brand-900 text-white">
+        <div className="grid items-center gap-12 px-6 py-12 md:px-12 md:py-16 lg:grid-cols-2">
           <Scrub from={{ y: 40 }}>
             <h2 className="text-3xl font-extrabold leading-tight md:text-4xl">A dashboard that tells the story at a glance</h2>
             <p className="mt-5 text-lg leading-8 text-white/80">
@@ -381,7 +369,7 @@ export default function Landing() {
 
           {/* the preview rises into place */}
           <div className="relative">
-          <Scrub from={{ y: 40 }} offset={['start end', 'center 0.65']}>
+          <Scrub from={{ scale: 1.12, y: 40 }} offset={['start end', 'center 0.65']}>
             <div className="bg-white p-4 text-ink shadow-2xl sm:p-6">
               <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Sample preview</p>
               <div className="mt-4 grid grid-cols-3 gap-2 sm:gap-3">
@@ -414,13 +402,13 @@ export default function Landing() {
           </Scrub>
           </div>
         </div>
-       </SpreadSheet>
+       </div>
        </Scrub>
       </section>
 
       {/* ============ FINAL CTA ============ */}
       <section className="mx-auto max-w-6xl  px-6 md:px-28 py-20 text-center">
-        <Scrub from={{ y: 40 }}>
+        <Scrub from={{ scale: 0.92, y: 40 }}>
           <h2 className="text-3xl font-extrabold text-ink md:text-4xl">Ready to see where your money goes?</h2>
           <p className="mx-auto mt-4 max-w-xl text-slate-600">Create a free account, or have a look around with the demo first.</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
