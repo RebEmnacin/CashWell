@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom'
 import AnimatedIcon from '../components/AnimatedIcon'
 import ReceiptPrinter from '../components/ReceiptPrinter'
 import Scrub from '../components/Scrub'
-import SpreadSheet from '../components/SpreadSheet'
 
 /* ---------------- content (edit the text here) ---------------- */
 
@@ -61,9 +60,7 @@ export default function About() {
       </section>
 
       {/* story */}
-      <section className="pt-6">
-       <Scrub from={{ y: 40 }} offset={['start end', 'start 0.3']}>
-       <SpreadSheet inset="0%" radius={0}>
+      <section>
        <div className="mx-auto grid max-w-6xl gap-10  px-6 md:pl-28 py-16 md:py-20 lg:grid-cols-[1fr_2fr]">
         <Scrub from={{ y: 40 }} offset={['start end', 'start 0.55']}>
           <h2 className="text-3xl font-extrabold leading-tight text-brand-600">Why CashWell exists</h2>
@@ -84,21 +81,17 @@ export default function About() {
          </Scrub>
         </div>
        </div>
-       </SpreadSheet>
-       </Scrub>
       </section>
 
       {/* values */}
-      <section className="pt-6">
-       <Scrub from={{ y: 40 }} offset={['start end', 'start 0.3']}>
-       <SpreadSheet className="bg-brand-900 text-white">
+      <section>
         <div className="mx-auto max-w-6xl px-6 py-16 md:pl-28 md:py-20">
-          <Scrub from={{ y: 40 }} offset={['start end', 'start 0.55']} className="text-center">
-            <h2 className="text-3xl font-extrabold">What we care about</h2>
+          <Scrub from={{ scale: 1.12, y: 30 }} offset={['start end', 'start 0.55']} className="text-center">
+            <h2 className="text-3xl font-extrabold text-ink">What we care about</h2>
           </Scrub>
           <div className="mt-10 grid gap-6 md:grid-cols-3">
             {values.map(({ icon: Icon, title, text }, i) => (
-              <Scrub key={title} from={{ y: 40 }}>
+              <Scrub key={title} from={i % 2 ? { y: -60, rotateX: -16, scale: 0.92 } : { y: 80, rotateX: 20, scale: 0.92 }}>
                 <div className="group h-full rounded-none bg-white p-8 text-center shadow-md ring-1 ring-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
                   <span className="mx-auto grid size-32 place-items-center rounded-full bg-brand-50 ring-1 ring-brand-100 transition duration-300 group-hover:scale-105">
                     <span className="grid size-24 place-items-center rounded-full bg-brand-600 text-white shadow-lg">
@@ -113,14 +106,10 @@ export default function About() {
             ))}
           </div>
         </div>
-       </SpreadSheet>
-       </Scrub>
       </section>
 
       {/* tech stack */}
-      <section className="pt-6">
-       <Scrub from={{ y: 40 }} offset={['start end', 'start 0.3']}>
-       <SpreadSheet inset="0%" radius={0}>
+      <section>
        <div className="mx-auto grid max-w-6xl gap-10  px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-[1fr_2fr] lg:gap-16">
         <Scrub from={{ y: 40 }} offset={['start end', 'start 0.55']}>
           <h2 className="text-3xl font-extrabold text-ink md:text-4xl">What it's built with</h2>
@@ -131,7 +120,7 @@ export default function About() {
           {stack.map((s, i) => (
             <Scrub
               key={s.name}
-              from={{ y: 40 }}
+              from={{ y: -70, rotateX: -14, scale: 0.92 }}
               offset={['start end', `start ${0.78 - (i % 2) * 0.08}`]}
              
             >
@@ -157,15 +146,13 @@ export default function About() {
           ))}
         </div>
        </div>
-       </SpreadSheet>
-       </Scrub>
       </section>
 
       {/* CTA */}
-      <section className="pb-3 pt-6 md:pb-6">
-       <Scrub from={{ y: 40 }} offset={['start end', 'start 0.75']}>
-       <SpreadSheet offset={['start end', 'start 0.8']} className="bg-brand-900 text-white">
-        <Scrub from={{ y: 40 }} className="mx-auto max-w-6xl px-6 md:px-28 py-16 text-center">
+      <section className="mx-auto max-w-6xl px-6 pb-12 pt-6 md:pl-28">
+       <Scrub from={{ y: 70, scale: 0.9, rotateX: 12 }} offset={['start end', 'start 0.8']}>
+       <div className="bg-brand-900 text-white">
+        <Scrub from={{ scale: 0.92, y: 30 }} className="px-6 py-14 text-center">
           <h2 className="text-3xl font-extrabold md:text-4xl">Give it a try</h2>
           <p className="mx-auto mt-4 max-w-xl text-white/80">Create an account, or open the demo from the login page.</p>
           <Link
@@ -175,7 +162,7 @@ export default function About() {
             Login / Sign up <ArrowRight className="size-4" />
           </Link>
         </Scrub>
-       </SpreadSheet>
+       </div>
        </Scrub>
       </section>
     </div>
