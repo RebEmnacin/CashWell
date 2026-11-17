@@ -9,6 +9,7 @@ export interface ScrubFrom {
   rotateX?: number // tip forwards/backwards, in degrees (needs the 3D perspective below)
   rotateY?: number // swing like a door, in degrees
   rotateZ?: number // plain tilt, in degrees
+  scaleX?: number // 0 = starts as nothing and grows sideways (used for lines that draw themselves)
 }
 
 /**
@@ -41,12 +42,14 @@ export default function Scrub({
   offset = ['start end', 'center 0.7'],
   className = '',
   as = 'div',
+  origin = 'center',
 }: {
-  children: ReactNode
+  children?: ReactNode
   from: ScrubFrom
   offset?: [string, string]
   className?: string
   as?: 'div' | 'li' | 'section'
+  origin?: 'center' | 'left' // which side a scaleX growth starts from
 }) {
   const ref = useRef<HTMLElement>(null)
 
@@ -60,9 +63,10 @@ export default function Scrub({
   const rotateX = useTransform(p, [0, 1], [from.rotateX ?? 0, 0])
   const rotateY = useTransform(p, [0, 1], [from.rotateY ?? 0, 0])
   const rotateZ = useTransform(p, [0, 1], [from.rotateZ ?? 0, 0])
+  const scaleX = useTransform(p, [0, 1], [from.scaleX ?? 1, 1])
 
   const Tag = motion[as] as typeof motion.div
-  const style: MotionStyle = { x, y, scale, rotateX, rotateY, rotateZ, transformPerspective: 1200 }
+  const style: MotionStyle = { x, y, scale, scaleX, rotateX, rotateY, rotateZ, transformPerspective: 1200, originX: origin === 'left' ? 0 : 0.5 }
   return (
     <Tag ref={ref as never} style={style} className={className}>
       {children}
