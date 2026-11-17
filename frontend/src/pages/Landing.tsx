@@ -17,7 +17,8 @@ import AnimatedIcon from '../components/AnimatedIcon'
 import HandCalculator from '../components/HandCalculator'
 import JarCoins from '../components/JarCoins'
 import Receipt, { type ReceiptLine } from '../components/Receipt'
-import Scrub from '../components/Scrub'
+import Scrub, { type ScrubFrom } from '../components/Scrub'
+import SpreadSheet from '../components/SpreadSheet'
 import { useAuthStore } from '../store/authStore'
 
 
@@ -91,6 +92,30 @@ const primaryBtn =
   'inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-accent-400 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-brand-900 shadow-[0_3px_0_0_var(--color-accent-600)] transition hover:bg-accent-500 active:translate-y-[3px] active:shadow-none disabled:opacity-60'
 const outlineBtn =
   'inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border border-white/70 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-white/10 active:scale-95 disabled:opacity-60'
+
+// big section titles, small labels, and the colour of each feature panel
+const bigHeading = 'text-balance text-4xl font-black leading-[1.08] tracking-tight text-ink md:text-5xl lg:text-6xl'
+const eyebrowLight = 'text-sm font-bold uppercase tracking-[0.2em] text-accent-700'
+const eyebrowDark = 'inline-block border border-accent-400/50 px-4 py-1.5 text-xs font-extrabold uppercase tracking-[0.18em] text-accent-400'
+const tones = [
+  { card: 'bg-brand-900 text-white', tile: 'bg-white/15 text-white' },
+  { card: 'bg-accent-50 text-ink ring-1 ring-accent-100', tile: 'bg-accent-400 text-brand-900' },
+  { card: 'bg-brand-100 text-ink', tile: 'bg-brand-600 text-white' },
+  { card: 'bg-brand-600 text-white', tile: 'bg-white/20 text-white' },
+]
+
+// where each panel starts: swing in from the left, rise from below, drop from above, swing in from the right
+const poses4: ScrubFrom[] = [
+  { x: -110, rotateY: 35, rotateX: 12, scale: 0.82 },
+  { y: 150, rotateX: 30, scale: 0.72 },
+  { y: -110, rotateX: -26, scale: 0.8 },
+  { x: 110, rotateY: -35, rotateX: 12, scale: 0.82 },
+]
+const poses3: ScrubFrom[] = [
+  { x: -120, rotateY: 35, rotateX: 12, scale: 0.82 },
+  { y: 150, rotateX: 30, scale: 0.72 },
+  { x: 120, rotateY: -35, rotateX: 12, scale: 0.82 },
+]
 
 /* ---------------- the page ---------------- */
 
@@ -253,194 +278,179 @@ export default function Landing() {
 
       {/* ============ INTRO ============ */}
       <section className="pt-24 md:pt-28">
-       {/* each section sits on its own coloured sheet, and every sheet arrives differently: this one zooms OUT onto the page */}
-       <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-2">
-        {/* image card with round badges */}
-        <Scrub from={{ y: -50, scale: 0.92, rotateX: -14 }} offset={['start end', 'center 0.6']}>
-          <div className="relative mx-auto max-w-md">
-            <div className="rotate-[-2deg] rounded-[1.75rem] bg-white p-3 shadow-xl ring-1 ring-slate-200">
-              <div className="grid aspect-[4/3] place-items-center rounded-[1.25rem] bg-linear-to-br from-brand-900 via-brand-900 to-brand-700">
-                <HandCalculator className="-mt-6 w-[80%]" />
-              </div>
-            </div>
-            <span className="absolute -left-5 -top-5 grid size-20 place-items-center rounded-full bg-accent-400 text-center text-[11px] font-extrabold uppercase leading-tight text-brand-900 shadow-lg ring-4 ring-white">
-              Made<br />simple
-            </span>
-            <span className="absolute -bottom-4 -right-4 grid size-14 place-items-center rounded-full bg-white text-brand-600 shadow-lg ring-4 ring-brand-100">
-              <AnimatedIcon icon={PiggyBank} className="size-6" delay={0.4} />
-            </span>
-          </div>
-        </Scrub>
-
-        <Scrub from={{ y: 40 }} offset={['start end', 'center 0.6']}>
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-accent-700">Home</p>
-          <h2 className="mt-3 max-w-xl text-3xl font-extrabold leading-tight text-brand-600 md:text-4xl">
-            CashWell: personal finance tracking, made simple
-          </h2>
-          <p className="mt-5 max-w-xl text-lg leading-8 text-slate-600">
-            CashWell helps you keep an honest eye on your money. Record what you earn and spend, set budgets for the
-            categories that matter, and let the charts do the maths. It is built to be quick to use, so you actually keep using it.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-5">
-            <Link
-              to={token ? '/dashboard' : '/login'}
-              className={primaryBtn}
-            >
-              {token ? 'Open dashboard' : 'Get started'} <ArrowRight className="size-4" />
-            </Link>
-            <Link to="/about" className="text-sm font-bold uppercase tracking-wider text-brand-600 underline-offset-4 hover:underline">
-              About us
-            </Link>
-          </div>
-        </Scrub>
-       </div>
-      </section>
-
-      {/* ============ FEATURES ============ */}
-      <section>
-        <div className="mx-auto max-w-6xl px-6 py-16 md:pl-28 md:py-20">
-          <Scrub from={{ scale: 1.12, y: 30 }} offset={['start end', 'start 0.55']} className="text-center">
-            <h2 className="text-3xl font-extrabold text-ink">Everything you need, nothing you don't</h2>
-            <p className="mx-auto mt-3 max-w-2xl text-slate-600">Four things CashWell does well.</p>
-          </Scrub>
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {features.map(({ icon: Icon, title, text }, i) => (
-              <Scrub key={title} from={i % 2 ? { y: -60, rotateX: -16, scale: 0.92 } : { y: 80, rotateX: 20, scale: 0.92 }}>
-                <div className="group h-full rounded-none bg-white p-8 text-center shadow-md ring-1 ring-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
-                  {/* big graphic icon: solid disc with a soft ring around it */}
-                  <span className="mx-auto grid size-32 place-items-center rounded-full bg-brand-50 ring-1 ring-brand-100 transition duration-300 group-hover:scale-105">
-                    <span className="grid size-24 place-items-center rounded-full bg-brand-600 text-white shadow-lg">
-                      <AnimatedIcon icon={Icon} className="size-12" strokeWidth={1.75} delay={0.2 + i * 0.15} />
-                    </span>
-                  </span>
-                  <h3 className="mt-6 text-lg font-extrabold text-ink">{title}</h3>
-                  <span className="mx-auto mt-3 block h-1 w-8 bg-accent-400 transition-all duration-300 group-hover:w-14" />
-                  <p className="mt-3 text-sm leading-6 text-slate-600">{text}</p>
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-2">
+          {/* image card with round badges */}
+          <Scrub from={{ y: -60, scale: 0.9, rotateX: -16 }} offset={['start end', 'center 0.6']}>
+            <div className="relative mx-auto max-w-md">
+              <div className="rotate-[-2deg] rounded-[1.75rem] bg-white p-3 shadow-[-6px_12px_34px_rgba(5,40,10,0.25)] ring-1 ring-slate-200">
+                <div className="grid aspect-[4/3] place-items-center rounded-[1.25rem] bg-linear-to-br from-brand-900 via-brand-900 to-brand-700">
+                  <HandCalculator className="-mt-6 w-[80%]" />
                 </div>
-              </Scrub>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============ HOW IT WORKS ============ */}
-      <section>
-       <div className="mx-auto grid max-w-6xl gap-10  px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-[1fr_2.2fr] lg:gap-14">
-        <Scrub from={{ scale: 1.12, y: 30 }} offset={['start end', 'start 0.55']}>
-          <h2 className="text-3xl font-extrabold text-ink md:text-4xl">How it works</h2>
-          <p className="mt-3 max-w-xs text-slate-600">Three receipts, hung up in order. That is the whole setup.</p>
-        </Scrub>
-
-        {/* three receipts hang from a line and swing into place as you scroll (each one a little later than the last) */}
-        <div className="relative pt-4">
-          <span aria-hidden className="absolute inset-x-0 top-4 hidden h-0.5 bg-slate-300 md:block" />
-          <div className="grid gap-10 md:grid-cols-3 md:gap-5">
-            {steps.map((s, i) => (
-              <Scrub
-                key={s.no}
-                from={{ y: -70, rotateX: -14, scale: 0.92 }}
-                offset={['start end', `start ${0.72 - i * 0.06}`]}
-               
-              >
-                <Receipt no={s.no} title={s.title} lines={s.lines} totalLabel={s.totalLabel} totalValue={s.totalValue} />
-              </Scrub>
-            ))}
-          </div>
-        </div>
-       </div>
-      </section>
-
-      {/* ============ DASHBOARD PREVIEW ============ */}
-      <section className="mx-auto max-w-6xl px-6 py-10 md:pl-28">
-       {/* the dark panel is a CARD, zooming in as it rises */}
-       <Scrub from={{ y: 70, scale: 0.9, rotateX: 12 }} offset={['start end', 'start 0.3']}>
-       <div className="bg-brand-900 text-white">
-        <div className="grid items-center gap-12 px-6 py-12 md:px-12 md:py-16 lg:grid-cols-2">
-          <Scrub from={{ y: 40 }}>
-            <h2 className="text-3xl font-extrabold leading-tight md:text-4xl">A dashboard that tells the story at a glance</h2>
-            <p className="mt-5 text-lg leading-8 text-white/80">
-              Balance, income, expenses and a six month trend sit on one screen. Click around the demo account to see
-              it with real looking data.
-            </p>
-            <button type="button" onClick={tryDemo} disabled={busy} className={`${primaryBtn} mt-8`}>
-              {busy ? 'Opening…' : 'Explore the demo'} <ArrowRight className="size-4" />
-            </button>
+              </div>
+              <span className="absolute -left-5 -top-5 grid size-20 place-items-center rounded-full bg-accent-400 text-center text-[11px] font-extrabold uppercase leading-tight text-brand-900 shadow-lg ring-4 ring-white">
+                Made<br />simple
+              </span>
+              <span className="absolute -bottom-4 -right-4 grid size-14 place-items-center rounded-full bg-white text-brand-600 shadow-lg ring-4 ring-brand-100">
+                <AnimatedIcon icon={PiggyBank} className="size-6" delay={0.4} />
+              </span>
+            </div>
           </Scrub>
 
-          {/* the preview rises into place */}
-          <div className="relative">
-          <Scrub from={{ scale: 1.12, y: 40 }} offset={['start end', 'center 0.65']}>
-            <div className="bg-white p-4 text-ink shadow-2xl sm:p-6">
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Sample preview</p>
-              <div className="mt-4 grid grid-cols-3 gap-2 sm:gap-3">
-                {[
-                  ['Balance', '₱48,200'],
-                  ['Income', '₱62,000'],
-                  ['Expenses', '₱13,800'],
-                ].map(([k, v]) => (
-                  <div key={k} className="min-w-0 bg-[#f6f8f7] p-2 sm:p-3">
-                    <p className="text-[11px] font-semibold text-slate-500">{k}</p>
-                    <p className="mt-1 text-[13px] font-extrabold text-brand-700 sm:text-lg">{v}</p> {/* small on phones so the amounts fit their boxes */}
-                  </div>
-                ))}
+          <Scrub from={{ y: 60, scale: 0.94 }} offset={['start end', 'center 0.6']}>
+            <p className={eyebrowLight}>Home</p>
+            <h2 className="mt-4 max-w-xl text-balance text-4xl font-black leading-[1.08] tracking-tight text-ink md:text-5xl">
+              Personal finance tracking, <em className="not-italic text-brand-600">made simple.</em>
+            </h2>
+            <p className="mt-5 max-w-xl text-lg leading-8 text-slate-600">
+              CashWell helps you keep an honest eye on your money. Record what you earn and spend, set budgets for the
+              categories that matter, and let the charts do the maths. It is built to be quick to use, so you actually keep using it.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-5">
+              <Link to={token ? '/dashboard' : '/login'} className={primaryBtn}>
+                {token ? 'Open dashboard' : 'Get started'} <ArrowRight className="size-4" />
+              </Link>
+              <Link to="/about" className="text-sm font-bold uppercase tracking-wider text-brand-600 underline-offset-4 hover:underline">
+                About us
+              </Link>
+            </div>
+          </Scrub>
+        </div>
+      </section>
+
+      {/* ============ FEATURES: four coloured panels, each arriving from a different direction ============ */}
+      <section className="mx-auto max-w-6xl px-6 pb-28 pt-8 md:pl-28 md:pb-36">
+        <Scrub from={{ scale: 1.35, y: 60 }} offset={['start end', 'start 0.55']} className="text-center">
+          <h2 className={bigHeading}>
+            Everything you need, <em className="block not-italic text-brand-600">nothing you don't.</em>
+          </h2>
+        </Scrub>
+        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {features.map(({ icon: Icon, title, text }, i) => (
+            <Scrub key={title} from={poses4[i]} offset={['start end', 'start 0.75']}>
+              <div className={`group h-full min-h-[300px] p-7 shadow-[-6px_12px_34px_rgba(5,40,10,0.28)] ${tones[i].card}`}>
+                <span className="block text-5xl font-black leading-none tracking-tighter opacity-90">{`0${i + 1}`}</span>
+                <span className={`mt-5 grid size-12 place-items-center transition duration-300 group-hover:scale-110 ${tones[i].tile}`}>
+                  <AnimatedIcon icon={Icon} className="size-6" strokeWidth={1.75} delay={0.2 + i * 0.15} />
+                </span>
+                <h3 className="mt-5 text-xl font-extrabold leading-snug">{title}</h3>
+                <p className="mt-2 text-[0.95rem] leading-6 opacity-80">{text}</p>
               </div>
-              <div className="mt-6 flex h-40 items-end gap-3">
-                {bars.map((h, i) => (
-                  <div key={i} className="flex h-full flex-1 flex-col items-center justify-end gap-2">
-                    <motion.div
-                      initial={{ height: 0 }}
-                      whileInView={{ height: `${h}%` }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.8, delay: 0.2 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                      className={`w-full ${i === bars.length - 1 ? 'bg-accent-400' : 'bg-brand-600'}`}
-                    />
-                    <span className="text-[10px] font-semibold text-slate-400">{months[i]}</span>
+            </Scrub>
+          ))}
+        </div>
+      </section>
+
+      {/* ============ THE DARK SHEET: starts as a small rounded panel and spreads to the edges (like HireRise) ============ */}
+      <SpreadSheet className="bg-brand-900 text-white" inset="4%" radius={56} offset={['start end', 'start 0.3']}>
+        {/* HOW IT WORKS */}
+        <section className="mx-auto max-w-6xl px-6 pb-16 pt-24 md:pl-28 md:pt-32">
+          <Scrub from={{ scale: 1.35, y: 60 }} offset={['start end', 'start 0.55']} className="text-center">
+            <p className={eyebrowDark}>How it works</p>
+            <h2 className={`${bigHeading} mt-5 text-white`}>
+              Three receipts, <em className="block not-italic text-accent-400">hung up in order.</em>
+            </h2>
+          </Scrub>
+
+          {/* three receipts hang on a line that fills as you scroll; they swing in from left, below and right */}
+          <div className="relative mt-16 pt-4">
+            <div aria-hidden className="absolute inset-x-[6%] top-4 hidden h-0.5 bg-white/15 md:block">
+              <Scrub from={{ scaleX: 0 }} origin="left" offset={['start 0.95', 'start 0.45']} className="h-full bg-accent-400" />
+            </div>
+            <div className="grid gap-10 md:grid-cols-3 md:gap-6">
+              {steps.map((s, i) => (
+                <Scrub key={s.no} from={poses3[i]} offset={['start end', 'start 0.7']}>
+                  <Receipt no={s.no} title={s.title} lines={s.lines} totalLabel={s.totalLabel} totalValue={s.totalValue} />
+                </Scrub>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* DASHBOARD PREVIEW: a lighter green panel that zooms out from a big, tilted view */}
+        <section className="mx-auto max-w-6xl px-6 py-16 md:pl-28">
+          <Scrub from={{ scale: 1.25, rotateX: -14, y: 80 }} offset={['start end', 'start 0.25']}>
+            <div className="bg-[#0a4a12] px-6 py-12 shadow-[0_30px_70px_rgba(0,0,0,0.35)] md:px-12 md:py-16">
+              <div className="grid items-center gap-12 lg:grid-cols-2">
+                <div>
+                  <p className={eyebrowDark}>Dashboard</p>
+                  <h2 className="mt-5 text-balance text-3xl font-black leading-[1.1] tracking-tight md:text-5xl">
+                    The story of your money, <em className="not-italic text-accent-400">at a glance.</em>
+                  </h2>
+                  <p className="mt-5 text-lg leading-8 text-white/80">
+                    Balance, income, expenses and a six month trend sit on one screen. Click around the demo account to see
+                    it with real looking data.
+                  </p>
+                  <button type="button" onClick={tryDemo} disabled={busy} className={`${primaryBtn} mt-8`}>
+                    {busy ? 'Opening…' : 'Explore the demo'} <ArrowRight className="size-4" />
+                  </button>
+                </div>
+
+                <Scrub from={{ y: 60, rotateZ: 4, scale: 0.92 }} offset={['start end', 'center 0.65']}>
+                  <div className="bg-white p-4 text-ink shadow-2xl sm:p-6">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Sample preview</p>
+                    <div className="mt-4 grid grid-cols-3 gap-2 sm:gap-3">
+                      {[
+                        ['Balance', '₱48,200'],
+                        ['Income', '₱62,000'],
+                        ['Expenses', '₱13,800'],
+                      ].map(([k, v]) => (
+                        <div key={k} className="min-w-0 bg-[#f6f8f7] p-2 sm:p-3">
+                          <p className="text-[11px] font-semibold text-slate-500">{k}</p>
+                          <p className="mt-1 text-[13px] font-extrabold text-brand-700 sm:text-lg">{v}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-6 flex h-40 items-end gap-3">
+                      {bars.map((h, i) => (
+                        <div key={i} className="flex h-full flex-1 flex-col items-center justify-end gap-2">
+                          <motion.div
+                            initial={{ height: 0 }}
+                            whileInView={{ height: `${h}%` }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8, delay: 0.2 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                            className={`w-full ${i === bars.length - 1 ? 'bg-accent-400' : 'bg-brand-600'}`}
+                          />
+                          <span className="text-[10px] font-semibold text-slate-400">{months[i]}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                ))}
+                </Scrub>
               </div>
             </div>
           </Scrub>
-          </div>
-        </div>
-       </div>
-       </Scrub>
-      </section>
+        </section>
 
-      {/* ============ FINAL CTA ============ */}
-      <section className="mx-auto max-w-6xl  px-6 md:px-28 py-20 text-center">
-        <Scrub from={{ scale: 0.92, y: 40 }}>
-          <h2 className="text-3xl font-extrabold text-ink md:text-4xl">Ready to see where your money goes?</h2>
-          <p className="mx-auto mt-4 max-w-xl text-slate-600">Create a free account, or have a look around with the demo first.</p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link
-              to={token ? '/dashboard' : '/login'}
-              className={primaryBtn}
-            >
-              {token ? 'Open dashboard' : 'Get started'} <ArrowRight className="size-4" />
-            </Link>
-            <button
-              type="button"
-              onClick={tryDemo}
-              disabled={busy}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-brand-600 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-brand-600 transition hover:bg-brand-50 active:scale-95 disabled:opacity-60"
-            >
-              Try the demo
-            </button>
-          </div>
-        </Scrub>
-      </section>
+        {/* FINAL CTA */}
+        <section className="mx-auto max-w-6xl px-6 pb-24 pt-20 text-center md:px-28">
+          <Scrub from={{ scale: 1.2, y: 50 }} offset={['start end', 'start 0.6']}>
+            <h2 className={`${bigHeading} text-white`}>
+              Ready to see <em className="block not-italic text-accent-400">where your money goes?</em>
+            </h2>
+            <p className="mx-auto mt-5 max-w-xl text-white/80">Create a free account, or have a look around with the demo first.</p>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <Link to={token ? '/dashboard' : '/login'} className={primaryBtn}>
+                {token ? 'Open dashboard' : 'Get started'} <ArrowRight className="size-4" />
+              </Link>
+              <button type="button" onClick={tryDemo} disabled={busy} className={outlineBtn}>
+                Try the demo
+              </button>
+            </div>
+          </Scrub>
+        </section>
 
-      {/* =========== FOOTER =========== */}
-      <footer className="border-t border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 md:pl-28 py-6 text-sm text-slate-500">
-          <p>© 2026 CashWell. A full-stack portfolio project.</p>
-          <div className="flex gap-5 font-semibold">
-            <Link to="/" className="hover:text-brand-600">Home</Link>
-            <Link to="/login" className="hover:text-brand-600">Login / Sign up</Link>
-            <Link to="/about" className="hover:text-brand-600">About us</Link>
+        {/* =========== FOOTER =========== */}
+        <footer className="border-t border-white/10">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-6 text-sm text-white/60 md:pl-28">
+            <p>© 2026 CashWell. A full-stack portfolio project.</p>
+            <div className="flex gap-5 font-semibold">
+              <Link to="/" className="hover:text-white">Home</Link>
+              <Link to="/login" className="hover:text-white">Login / Sign up</Link>
+              <Link to="/about" className="hover:text-white">About us</Link>
+            </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      </SpreadSheet>
     </div>
   )
 }
