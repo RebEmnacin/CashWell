@@ -111,9 +111,8 @@ export default function About() {
         <div className="mt-14 grid gap-6 md:grid-cols-3">
           {values.map(({ icon: Icon, title, text }, i) => (
             <Scrub key={title} from={poses3[i]} offset={['start end', 'start 0.75']}>
-              <div className={`group h-full min-h-[300px] p-7 shadow-[-6px_12px_34px_rgba(5,40,10,0.28)] ${tones[i].card}`}>
-                <span className="block text-5xl font-black leading-none tracking-tighter opacity-90">{`0${i + 1}`}</span>
-                <span className={`mt-5 grid size-12 place-items-center transition duration-300 group-hover:scale-110 ${tones[i].tile}`}>
+              <div className={`group h-full min-h-[240px] p-7 shadow-[-6px_12px_34px_rgba(5,40,10,0.28)] ${tones[i].card}`}>
+                <span className={`grid size-12 place-items-center transition duration-300 group-hover:scale-110 ${tones[i].tile}`}>
                   <AnimatedIcon icon={Icon} className="size-6" strokeWidth={1.75} delay={0.25 + i * 0.1} />
                 </span>
                 <h3 className="mt-5 text-xl font-extrabold">{title}</h3>
@@ -175,7 +174,7 @@ export default function About() {
             <p className="mx-auto mt-5 max-w-xl text-white/80">Create an account, or open the demo from the login page.</p>
             <Link
               to="/login"
-              className="mt-8 inline-flex items-center gap-2 rounded-full bg-accent-400 px-8 py-4 text-sm font-bold uppercase tracking-wider text-brand-900 shadow-[0_3px_0_0_var(--color-accent-600)] transition hover:bg-accent-500 active:translate-y-[3px] active:shadow-none"
+              className="mt-8 inline-flex items-center gap-2 rounded-[18px] bg-accent-400 px-8 py-4 text-sm font-bold uppercase tracking-wider text-brand-900 shadow-[0_3px_0_0_var(--color-accent-600)] transition hover:bg-accent-500 active:translate-y-[3px] active:shadow-none"
             >
               Login / Sign up <ArrowRight className="size-4" />
             </Link>
