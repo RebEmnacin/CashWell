@@ -77,3 +77,12 @@ body {
   from { transform: scale(0.4); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
+
+/* Squircle corners: every corner uses the smooth, squarer "squircle" curve instead of a plain round one.
+   Buttons, tabs and chips are squircles (not pills); the radius numbers decide how soft they look.
+   Browsers without corner-shape (older Safari and Firefox) ignore this and keep the normal round corner. */
+*,
+*::before,
+*::after {
+  corner-shape: squircle;
+}
