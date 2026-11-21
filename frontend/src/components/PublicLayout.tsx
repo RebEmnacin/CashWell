@@ -29,7 +29,7 @@ function Tab({ to, end, label, icon: Icon }: (typeof tabs)[number]) {
                   initial={{ x: '-100%' }}
                   animate={{ x: 0 }}
                   transition={{ duration: 0.3, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-                  className="flex h-16 items-center whitespace-nowrap rounded-r-full bg-white pl-9 pr-7 text-[15px] font-semibold text-brand-700"
+                  className="flex h-16 items-center whitespace-nowrap rounded-r-[20px] bg-white pl-9 pr-7 text-[15px] font-semibold text-brand-700"
                 >
                   {label}
                 </motion.span>
@@ -39,7 +39,7 @@ function Tab({ to, end, label, icon: Icon }: (typeof tabs)[number]) {
 
           {/* the circle (always on top) */}
           <span
-            className={`absolute inset-0 grid place-items-center rounded-full shadow-lg transition-colors duration-200 ${
+            className={`absolute inset-0 grid place-items-center rounded-[20px] shadow-lg transition-colors duration-200 ${
               isActive
                 ? 'bg-brand-600 text-white ring-4 ring-white'
                 : 'bg-white text-brand-700 group-hover:bg-brand-50'
@@ -84,7 +84,7 @@ function MobileMenu() {
         aria-label={open ? 'Close menu' : 'Open menu'}
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
-        className="fixed right-4 top-4 z-[70] grid size-12 cursor-pointer place-items-center rounded-full bg-white text-brand-700 shadow-lg ring-1 ring-black/5 transition active:scale-95"
+        className="fixed right-4 top-4 z-[70] grid size-12 cursor-pointer place-items-center rounded-[16px] bg-white text-brand-700 shadow-lg ring-1 ring-black/5 transition active:scale-95"
       >
         <AnimatePresence mode="wait" initial={false}>
           <motion.span
@@ -128,7 +128,7 @@ function MobileMenu() {
                   {({ isActive }) => (
                     <>
                       <span
-                        className={`grid size-12 shrink-0 place-items-center rounded-full ${
+                        className={`grid size-12 shrink-0 place-items-center rounded-[16px] ${
                           isActive ? 'bg-white text-brand-700' : 'bg-white/10 text-white'
                         }`}
                       >
