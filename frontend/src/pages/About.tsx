@@ -141,9 +141,10 @@ export default function About() {
                     key={s.name}
                     from={{ x: i % 2 ? 110 : -110, y: 70, rotateZ: i % 2 ? 7 : -7 }}
                     offset={['start end', 'center 0.85']}
+                    className="flex h-full flex-col"
                   >
                     <span aria-hidden className="mx-auto block h-7 w-px bg-white/30" />
-                    <div className="drop-shadow-[0_8px_10px_rgba(0,0,0,0.3)]">
+                    <div className="flex-1 drop-shadow-[0_8px_10px_rgba(0,0,0,0.3)]">
                       <div
                         className="relative flex h-full gap-4 bg-white px-5 pb-5 pt-9 text-ink"
                         style={{ clipPath: 'polygon(22px 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%, 0 22px)' }}
