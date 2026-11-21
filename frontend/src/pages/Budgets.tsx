@@ -14,8 +14,8 @@ function Bar({ percent }: { percent: number }) {
   const { width } = useSpring({ from: { width: 0 }, to: { width: Math.min(percent, 100) }, config: { tension: 140, friction: 24 } })
   const color = percent >= 100 ? 'bg-rose-500' : percent >= 80 ? 'bg-amber-500' : 'bg-brand-500'
   return (
-    <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
-      <animated.div className={`h-full rounded-full ${color}`} style={{ width: width.to((w) => `${w}%`) }} />
+    <div className="h-2.5 overflow-hidden rounded-[4px] bg-slate-100">
+      <animated.div className={`h-full rounded-[4px] ${color}`} style={{ width: width.to((w) => `${w}%`) }} />
     </div>
   )
 }
