@@ -119,7 +119,7 @@ export default function Login() {
               <input className={`${fieldClass('password')} pr-12`} aria-invalid={!!invalid.password} type={showPw ? 'text' : 'password'} placeholder="Password" autoComplete="current-password" value={password} onChange={(e) => { setPassword(e.target.value); clear('password') }} />
               <button type="button" onClick={() => setShowPw((v) => !v)} aria-label={showPw ? 'Hide password' : 'Show password'} aria-pressed={showPw}
                 className="absolute right-2 top-1/2 grid size-8 -translate-y-1/2 cursor-pointer place-items-center rounded-[10px] text-slate-500 transition hover:bg-slate-200/70 hover:text-brand-900">
-                {showPw ? <EyeOff className="size-[18px]" /> : <Eye className="size-[18px]" />}
+                {showPw ? <Eye className="size-[18px]" /> : <EyeOff className="size-[18px]" />}
               </button>
             </div>
             {hint('password')}
@@ -158,7 +158,7 @@ export default function Login() {
               <input className={`${fieldClass('password')} pr-12`} aria-invalid={!!invalid.password} type={showPw ? 'text' : 'password'} placeholder="Password (min. 6)" autoComplete="new-password" value={password} onChange={(e) => { setPassword(e.target.value); clear('password') }} />
               <button type="button" onClick={() => setShowPw((v) => !v)} aria-label={showPw ? 'Hide password' : 'Show password'} aria-pressed={showPw}
                 className="absolute right-2 top-1/2 grid size-8 -translate-y-1/2 cursor-pointer place-items-center rounded-[10px] text-slate-500 transition hover:bg-slate-200/70 hover:text-brand-900">
-                {showPw ? <EyeOff className="size-[18px]" /> : <Eye className="size-[18px]" />}
+                {showPw ? <Eye className="size-[18px]" /> : <EyeOff className="size-[18px]" />}
               </button>
             </div>
             {hint('password')}
