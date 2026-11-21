@@ -1,6 +1,6 @@
 import { Home, Info, LogIn, Menu, X, type LucideIcon } from 'lucide-react'
 import { AnimatePresence, MotionConfig, motion } from 'motion/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 
 // The three public pages
@@ -150,10 +150,15 @@ function MobileMenu() {
 export default function PublicLayout() {
   const { pathname } = useLocation()
 
-  // every time you change page, start from the top
-  useEffect(() => {
+  // every time you change page, start from the top.
+  // This must happen DURING render (before the new page mounts), not in an effect: the scroll animations read the
+  // scroll position the moment they mount, and if it were still the old page's position they would think they
+  // had already been scrolled past and skip their animation.
+  const lastPath = useRef(pathname)
+  if (lastPath.current !== pathname) {
+    lastPath.current = pathname
     window.scrollTo(0, 0)
-  }, [pathname])
+  }
 
   return (
     <MotionConfig reducedMotion="never">
