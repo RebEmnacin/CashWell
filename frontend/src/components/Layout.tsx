@@ -45,7 +45,7 @@ function Pocket({ label }: { label: string }) {
       </span>
 
       {/* the green circle that carries the icon (sits on top of the label) */}
-      <span className="absolute left-4 top-1/2 size-12 -translate-y-1/2 rounded-full bg-brand-600" />
+      <span className="absolute left-4 top-1/2 size-12 -translate-y-1/2 rounded-[18px] bg-brand-600" />
     </motion.span>
   )
 }
@@ -81,7 +81,7 @@ function NavTab({ to, end = false, label, icon }: { to: string; end?: boolean; l
 /** The Log out button: a circle that stretches into a pill on hover (it is not a page, so no pocket). */
 function HoverPill({ icon, children }: { icon: ReactNode; children: ReactNode }) {
   return (
-    <span className="absolute left-4 top-1/2 flex h-12 max-w-12 -translate-y-1/2 items-center overflow-hidden rounded-full bg-transparent text-emerald-100/70 transition-[max-width,background-color] duration-300 ease-out group-hover/item:max-w-64 group-hover/item:bg-brand-600 group-hover/item:text-white">
+    <span className="absolute left-4 top-1/2 flex h-12 max-w-12 -translate-y-1/2 items-center overflow-hidden rounded-[18px] bg-transparent text-emerald-100/70 transition-[max-width,background-color] duration-300 ease-out group-hover/item:max-w-64 group-hover/item:bg-brand-600 group-hover/item:text-white">
       <span className="grid size-12 shrink-0 place-items-center">{icon}</span>
       <span className="whitespace-nowrap pr-5 text-sm font-semibold opacity-0 transition-opacity duration-200 group-hover/item:opacity-100 group-hover/item:delay-100">
         {children}
