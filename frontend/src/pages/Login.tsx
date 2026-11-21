@@ -9,10 +9,10 @@ const field =
   'my-2.5 block w-full border-0 border-b-2 border-transparent bg-slate-100 px-5 py-4 text-base text-ink outline-none transition-colors placeholder:text-slate-400 focus:border-accent-500 focus:bg-accent-50'
 
 const solidBtn =
-  'mt-4 cursor-pointer rounded-full bg-accent-400 px-14 py-4 text-sm font-bold uppercase tracking-wider text-brand-900 shadow-[0_3px_0_0_var(--color-accent-600)] transition hover:bg-accent-500 active:translate-y-[3px] active:shadow-none disabled:cursor-default disabled:opacity-60'
+  'mt-4 cursor-pointer rounded-[18px] bg-accent-400 px-14 py-4 text-sm font-bold uppercase tracking-wider text-brand-900 shadow-[0_3px_0_0_var(--color-accent-600)] transition hover:bg-accent-500 active:translate-y-[3px] active:shadow-none disabled:cursor-default disabled:opacity-60'
 
 const ghostBtn =
-  'cursor-pointer rounded-full border border-white bg-transparent px-14 py-4 text-sm font-bold uppercase tracking-wider text-white transition hover:border-accent-400 hover:bg-accent-400 hover:text-brand-900 active:scale-95'
+  'cursor-pointer rounded-[18px] border border-white bg-transparent px-14 py-4 text-sm font-bold uppercase tracking-wider text-white transition hover:border-accent-400 hover:bg-accent-400 hover:text-brand-900 active:scale-95'
 
 // Everything moves with transform only (GPU-friendly). The forms slide across with the green panel and are covered
 // by it as it passes; the text fades so the swap is clean (old text leaves early, new text arrives late).
