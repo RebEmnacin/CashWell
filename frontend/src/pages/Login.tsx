@@ -1,3 +1,4 @@
+import { Eye, EyeOff } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { errorMessage } from '../api/client'
@@ -34,6 +35,7 @@ export default function Login() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPw, setShowPw] = useState(false) // the eye button: true = the password is shown as text
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   // which fields failed the check on submit (field name -> message); they get a red box instead of the browser bubble
@@ -113,7 +115,13 @@ export default function Login() {
             <p className="mb-4 mt-3 text-sm text-slate-500">Use your CashWell account</p>
             <input className={fieldClass('email')} aria-invalid={!!invalid.email} type="email" placeholder="Email" autoComplete="email" value={email} onChange={(e) => { setEmail(e.target.value); clear('email') }} />
             {hint('email')}
-            <input className={fieldClass('password')} aria-invalid={!!invalid.password} type="password" placeholder="Password" autoComplete="current-password" value={password} onChange={(e) => { setPassword(e.target.value); clear('password') }} />
+            <div className="relative w-full">
+              <input className={`${fieldClass('password')} pr-12`} aria-invalid={!!invalid.password} type={showPw ? 'text' : 'password'} placeholder="Password" autoComplete="current-password" value={password} onChange={(e) => { setPassword(e.target.value); clear('password') }} />
+              <button type="button" onClick={() => setShowPw((v) => !v)} aria-label={showPw ? 'Hide password' : 'Show password'} aria-pressed={showPw}
+                className="absolute right-2 top-1/2 grid size-8 -translate-y-1/2 cursor-pointer place-items-center rounded-[10px] text-slate-500 transition hover:bg-slate-200/70 hover:text-brand-900">
+                {showPw ? <EyeOff className="size-[18px]" /> : <Eye className="size-[18px]" />}
+              </button>
+            </div>
             {hint('password')}
             {!signUp && errorBox}
             <button type="submit" disabled={loading} className={solidBtn}>
@@ -146,7 +154,13 @@ export default function Login() {
             {hint('name')}
             <input className={fieldClass('email')} aria-invalid={!!invalid.email} type="email" placeholder="Email" autoComplete="email" value={email} onChange={(e) => { setEmail(e.target.value); clear('email') }} />
             {hint('email')}
-            <input className={fieldClass('password')} aria-invalid={!!invalid.password} type="password" placeholder="Password (min. 6)" autoComplete="new-password" value={password} onChange={(e) => { setPassword(e.target.value); clear('password') }} />
+            <div className="relative w-full">
+              <input className={`${fieldClass('password')} pr-12`} aria-invalid={!!invalid.password} type={showPw ? 'text' : 'password'} placeholder="Password (min. 6)" autoComplete="new-password" value={password} onChange={(e) => { setPassword(e.target.value); clear('password') }} />
+              <button type="button" onClick={() => setShowPw((v) => !v)} aria-label={showPw ? 'Hide password' : 'Show password'} aria-pressed={showPw}
+                className="absolute right-2 top-1/2 grid size-8 -translate-y-1/2 cursor-pointer place-items-center rounded-[10px] text-slate-500 transition hover:bg-slate-200/70 hover:text-brand-900">
+                {showPw ? <EyeOff className="size-[18px]" /> : <Eye className="size-[18px]" />}
+              </button>
+            </div>
             {hint('password')}
             {signUp && errorBox}
             <button type="submit" disabled={loading} className={solidBtn}>
