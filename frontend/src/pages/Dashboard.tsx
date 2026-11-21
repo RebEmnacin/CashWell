@@ -1,213 +1,455 @@
-import { ArrowDownRight, ArrowUpRight, Percent, Plus, TrendingDown, TrendingUp, Wallet } from 'lucide-react'
-import { useCallback, useEffect, useState, type ComponentType } from 'react'
 import {
-  Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
-} from 'recharts'
-import { analyticsApi, transactionApi } from '../api/endpoints'
-import AnimatedNumber from '../components/AnimatedNumber'
-import PageHeader from '../components/PageHeader'
-import TransactionModal from '../components/TransactionModal'
-import { useCategories } from '../hooks/useCategories'
-import { compact, currentMonth, money, pctChange, prettyDate, prettyMonth } from '../lib/format'
-import type { CategoryTotal, MonthlyPoint, Summary, Transaction } from '../types'
+  ArrowRight,
+  BarChart3,
+  ChevronLeft,
+  ChevronRight,
+  PiggyBank,
+  ReceiptText,
+  ShieldCheck,
+  type LucideIcon,
+} from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { errorMessage } from '../api/client'
+import { authApi } from '../api/endpoints'
+import AnimatedIcon from '../components/AnimatedIcon'
+import HandCalculator from '../components/HandCalculator'
+import JarCoins from '../components/JarCoins'
+import Receipt, { type ReceiptLine } from '../components/Receipt'
+import Scrub, { type ScrubFrom } from '../components/Scrub'
+import SpreadSheet from '../components/SpreadSheet'
+import { useAuthStore } from '../store/authStore'
 
-interface StatProps {
-  label: string
-  value: number
-  format: (n: number) => string
-  icon: ComponentType<{ className?: string }>
-  tone: string // tailwind classes for the icon bubble
-  change: number | null // % vs last month
-  goodWhenUp: boolean
-  delay: number
-}
 
-function StatCard({ label, value, format, icon: Icon, tone, change, goodWhenUp, delay }: StatProps) {
-  const up = (change ?? 0) >= 0
-  const good = change === null ? true : up === goodWhenUp
-  return (
-    <div className="card animate-rise" style={{ animationDelay: `${delay}ms` }}>
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-semibold text-slate-500">{label}</span>
-        <span className={`grid size-9 place-items-center rounded-xl ${tone}`}><Icon className="size-[18px]" /></span>
-      </div>
-      <p className="mt-3 text-2xl font-extrabold tracking-tight md:text-[1.7rem]">
-        <AnimatedNumber value={value} format={format} />
-      </p>
-      <p className="mt-2 flex items-center gap-1 text-xs font-semibold text-slate-400">
-        {change === null ? (
-          'No data last month'
-        ) : (
-          <>
-            <span className={`inline-flex items-center ${good ? 'text-emerald-600' : 'text-rose-600'}`}>
-              {up ? <ArrowUpRight className="size-3.5" /> : <ArrowDownRight className="size-3.5" />}
-              {Math.abs(change).toFixed(1)}%
-            </span>
-            vs last month
-          </>
-        )}
-      </p>
-    </div>
-  )
-}
+/* ---------------- content (edit the text here) ---------------- */
 
-export default function Dashboard() {
-  const [month, setMonth] = useState(currentMonth())
-  const [summary, setSummary] = useState<Summary | null>(null)
-  const [byCategory, setByCategory] = useState<CategoryTotal[]>([])
-  const [monthly, setMonthly] = useState<MonthlyPoint[]>([])
-  const [recent, setRecent] = useState<Transaction[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [modalOpen, setModalOpen] = useState(false)
-  const categories = useCategories()
+const slides = [
+  {
+    title: 'Know where every peso goes',
+    body: 'CashWell turns your income and spending into one clear picture. Add a transaction in seconds and watch your balance, categories and trends update right away.',
+  },
+  {
+    title: 'Budgets that keep you honest',
+    body: 'Set a monthly limit for each category and see how much is left at a glance. No spreadsheets, no guessing, just a bar that tells you when to slow down.',
+  },
+  {
+    title: 'See it before you sign up',
+    body: 'Curious? Open the demo account and explore a dashboard filled with six months of sample data. One click, no email needed.',
+  },
+]
 
-  const load = useCallback(async () => {
-    setLoading(true)
-    setError('')
+const features: { icon: LucideIcon; title: string; text: string }[] = [
+  { icon: ReceiptText, title: 'Track every transaction', text: 'Log income and expenses with a category, date and note. Search and filter them later.' },
+  { icon: PiggyBank, title: 'Monthly budgets', text: 'Give each category a limit and see your progress bar fill as you spend.' },
+  { icon: BarChart3, title: 'Clear charts', text: 'Spending by category and income vs expenses over time, drawn for you.' },
+  { icon: ShieldCheck, title: 'Your data, your login', text: 'Passwords are hashed and sessions use signed tokens. Only you see your numbers.' },
+]
+
+// "How it works": one RECEIPT per step, hanging on a line (see components/Receipt.tsx)
+const steps: { no: string; title: string; lines: ReceiptLine[]; totalLabel: string; totalValue: string }[] = [
+  {
+    no: '0001',
+    title: 'Create your account',
+    lines: [
+      { label: 'Your name', value: 'done' },
+      { label: 'Email', value: 'done' },
+      { label: 'Password', value: 'done' },
+    ],
+    totalLabel: 'Time spent',
+    totalValue: '< 1 min',
+  },
+  {
+    no: '0002',
+    title: 'Add your money moves',
+    lines: [
+      { label: 'Salary', value: '+₱62,000', tone: 'plus' },
+      { label: 'Groceries', value: '-₱1,250', tone: 'minus' },
+      { label: 'Coffee', value: '-₱120', tone: 'minus' },
+    ],
+    totalLabel: 'Balance',
+    totalValue: '₱60,630',
+  },
+  {
+    no: '0003',
+    title: 'Watch the picture appear',
+    lines: [
+      { label: 'Dashboard', value: 'ready' },
+      { label: 'Charts', value: 'ready' },
+      { label: 'Budgets', value: 'ready' },
+    ],
+    totalLabel: 'Built for you',
+    totalValue: 'auto',
+  },
+]
+
+const bars = [40, 62, 48, 80, 58, 92]
+const months = ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov']
+
+/* ---------------- small helpers ---------------- */
+
+const primaryBtn =
+  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-[18px] bg-accent-400 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-brand-900 shadow-[0_3px_0_0_var(--color-accent-600)] transition hover:bg-accent-500 active:translate-y-[3px] active:shadow-none disabled:opacity-60'
+const outlineBtn =
+  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-[18px] border border-white/70 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-white/10 active:scale-95 disabled:opacity-60'
+
+// big section titles, small labels, and the colour of each feature panel
+const bigHeading = 'text-balance text-4xl font-black leading-[1.08] tracking-tight text-ink md:text-5xl lg:text-6xl'
+const eyebrowLight = 'text-sm font-bold uppercase tracking-[0.2em] text-accent-700'
+const eyebrowDark = 'inline-block border border-accent-400/50 px-4 py-1.5 text-xs font-extrabold uppercase tracking-[0.18em] text-accent-400'
+const tones = [
+  { card: 'bg-brand-900 text-white', tile: 'bg-white/15 text-white' },
+  { card: 'bg-accent-50 text-ink ring-1 ring-accent-100', tile: 'bg-accent-400 text-brand-900' },
+  { card: 'bg-brand-100 text-ink', tile: 'bg-brand-600 text-white' },
+  { card: 'bg-brand-600 text-white', tile: 'bg-white/20 text-white' },
+]
+
+// where each panel starts: swing in from the left, rise from below, drop from above, swing in from the right
+const poses4: ScrubFrom[] = [
+  { x: -110, rotateY: 35, rotateX: 12, scale: 0.82 },
+  { y: 150, rotateX: 30, scale: 0.72 },
+  { y: -110, rotateX: -26, scale: 0.8 },
+  { x: 110, rotateY: -35, rotateX: 12, scale: 0.82 },
+]
+const poses3: ScrubFrom[] = [
+  { x: -120, rotateY: 35, rotateX: 12, scale: 0.82 },
+  { y: 150, rotateX: 30, scale: 0.72 },
+  { x: 120, rotateY: -35, rotateX: 12, scale: 0.82 },
+]
+
+/* ---------------- the page ---------------- */
+
+export default function Landing() {
+  const token = useAuthStore((s) => s.token)
+  const setAuth = useAuthStore((s) => s.setAuth)
+  const navigate = useNavigate()
+
+  const [slide, setSlide] = useState(0)
+  const [busy, setBusy] = useState(false)
+  const [demoError, setDemoError] = useState('')
+
+  // auto-advance the hero; picking a slide by hand restarts the timer
+  useEffect(() => {
+    const id = setTimeout(() => setSlide((s) => (s + 1) % slides.length), 7000)
+    return () => clearTimeout(id)
+  }, [slide])
+
+  const go = (dir: 1 | -1) => setSlide((s) => (s + dir + slides.length) % slides.length)
+
+  const tryDemo = async () => {
+    setBusy(true)
+    setDemoError('')
     try {
-      const [s, c, m, r] = await Promise.all([
-        analyticsApi.summary(month),
-        analyticsApi.byCategory(month),
-        analyticsApi.monthly(6),
-        transactionApi.list({ limit: 6 }),
-      ])
-      setSummary(s)
-      setByCategory(c)
-      setMonthly(m)
-      setRecent(r.items)
-    } catch {
-      setError('Could not load your dashboard. Is the backend running?')
-    } finally {
-      setLoading(false)
+      const res = await authApi.demo()
+      setAuth(res.access_token, res.user)
+      navigate('/dashboard')
+    } catch (err) {
+      setDemoError(errorMessage(err))
+      setBusy(false)
     }
-  }, [month])
+  }
 
-  useEffect(() => { load() }, [load])
+  const startBtn = token ? (
+    <Link to="/dashboard" className={primaryBtn}>
+      Open dashboard <ArrowRight className="size-4" />
+    </Link>
+  ) : (
+    <Link to="/login" className={primaryBtn}>
+      Get started <ArrowRight className="size-4" />
+    </Link>
+  )
 
-  const expenseTotal = byCategory.reduce((sum, c) => sum + c.total, 0)
+  const current = slides[slide]
 
+  // the wrapper clips at the SCREEN edge, so panels sliding in from the side are not cut off by their own section
   return (
-    <>
-      <PageHeader title="Dashboard" subtitle={prettyMonth(month)}>
-        <input type="month" aria-label="Month" className="input w-auto" value={month} max={currentMonth()}
-          onChange={(e) => e.target.value && setMonth(e.target.value)} />
-        <button className="btn-primary" onClick={() => setModalOpen(true)}>
-          <Plus className="size-4" /> Add
-        </button>
-      </PageHeader>
+    <div className="overflow-clip">
+      {/* ============ HERO ============ */}
+      <div className="relative">
+        <section className="relative overflow-hidden rounded-b-[50%_60px] bg-brand-900 text-white md:rounded-b-[50%_120px]">
+          <div className="relative mx-auto max-w-6xl px-6 pb-32 pt-8 md:pl-28 md:pb-36">
+            {/* brand mark, top left */}
+            <div className="flex items-center gap-3">
+              <img src="/CashWell_Logo.png" alt="" className="size-9 object-contain" />
+              <span className="text-lg font-extrabold tracking-tight">CashWell</span>
+            </div>
 
-      {error && <p role="alert" className="mb-5 rounded-xl bg-rose-50 px-4 py-3 text-sm font-medium text-rose-600">{error}</p>}
+            <div className="mt-10 grid items-center gap-x-12 gap-y-8 lg:mt-6 lg:grid-cols-[1fr_380px]">
+              {/* text side */}
+              <div className="lg:col-start-1 lg:row-start-1">
+                <div className="min-h-[300px] sm:min-h-[280px] lg:min-h-[240px]">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={slide}
+                      initial={{ opacity: 0, x: 40 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -40 }}
+                      transition={{ duration: 0.35, ease: 'easeOut' }}
+                    >
+                      <h1 className="max-w-2xl text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
+                        {current.title}
+                      </h1>
+                      <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/85">{current.body}</p>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
 
-      {loading && !summary ? (
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {[0, 1, 2, 3].map((i) => <div key={i} className="card h-32 animate-pulse bg-slate-100" />)}
-        </div>
-      ) : summary && (
-        <>
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            <StatCard label="Net balance" value={summary.balance} format={money} icon={Wallet}
-              tone="bg-brand-50 text-brand-600" change={null} goodWhenUp delay={0} />
-            <StatCard label="Income" value={summary.income} format={money} icon={TrendingUp}
-              tone="bg-emerald-50 text-emerald-600" change={pctChange(summary.income, summary.prev_income)} goodWhenUp delay={60} />
-            <StatCard label="Expenses" value={summary.expense} format={money} icon={TrendingDown}
-              tone="bg-rose-50 text-rose-600" change={pctChange(summary.expense, summary.prev_expense)} goodWhenUp={false} delay={120} />
-            <StatCard label="Savings rate" value={summary.savings_rate} format={(n) => `${n.toFixed(1)}%`} icon={Percent}
-              tone="bg-accent-100 text-accent-700" change={null} goodWhenUp delay={180} />
+                <div className="mt-8 flex flex-wrap items-center gap-3">
+                  {startBtn}
+                  <button type="button" onClick={tryDemo} disabled={busy} className={outlineBtn}>
+                    {busy ? 'Opening…' : 'Try the demo'}
+                  </button>
+                </div>
+                {demoError && <p className="mt-3 text-sm font-medium text-red-300">{demoError}</p>}
+              </div>
+
+              {/* image side: a jar tipping over and pouring coins (animated SVG) */}
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+                className="relative order-3 mx-auto grid w-full max-w-[300px] place-items-center lg:order-none lg:col-start-2 lg:row-start-1 lg:max-w-[380px]"
+              >
+                <JarCoins className="w-full max-w-[380px]" />
+              </motion.div>
+              {/* slide controls: plain arrows only (plus horizontal dots on phones), no hover highlight.
+                  Phones: right under the buttons. Desktop: under the text column. */}
+            <div className="order-2 flex items-center gap-4 lg:order-none lg:col-start-1 lg:row-start-2">
+                <button type="button" aria-label="Previous slide" onClick={() => go(-1)} className="grid size-10 cursor-pointer place-items-center text-white">
+                  <ChevronLeft className="size-8" strokeWidth={1.75} />
+                </button>
+                <div className="flex gap-2 lg:hidden">
+                  {slides.map((_, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      aria-label={`Go to slide ${i + 1}`}
+                      onClick={() => setSlide(i)}
+                      className={`h-1.5 cursor-pointer rounded-[3px] transition-all duration-300 ${i === slide ? 'w-10 bg-accent-400' : 'w-5 bg-white/30'}`}
+                    />
+                  ))}
+                </div>
+                <button type="button" aria-label="Next slide" onClick={() => go(1)} className="grid size-10 cursor-pointer place-items-center text-white">
+                  <ChevronRight className="size-8" strokeWidth={1.75} />
+                </button>
+              </div>
+            </div>
           </div>
 
-          <div className="mt-5 grid gap-5 lg:grid-cols-5">
-            <section className="card animate-rise lg:col-span-3" style={{ animationDelay: '240ms' }}>
-              <h2 className="font-extrabold">Income vs expenses</h2>
-              <p className="mb-4 text-xs text-slate-400">Last 6 months</p>
-              <div className="h-72">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={monthly} barGap={4} barCategoryGap="22%">
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                    <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
-                    <YAxis tickLine={false} axisLine={false} width={48} tick={{ fontSize: 12, fill: '#64748b' }}
-                      tickFormatter={(v) => compact(Number(v))} />
-                    <Tooltip cursor={{ fill: 'rgba(148,163,184,0.12)' }} formatter={(v) => money(Number(v))}
-                      contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 13 }} />
-                    <Legend iconType="circle" wrapperStyle={{ fontSize: 12 }} />
-                    <Bar dataKey="income" name="Income" fill="#139A43" radius={[6, 6, 0, 0]} />
-                    <Bar dataKey="expense" name="Expenses" fill="#f43f5e" radius={[6, 6, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </section>
+          {/* vertical slide dots on the right edge (desktop) */}
+          <div className="absolute right-6 top-1/2 hidden -translate-y-1/2 flex-col gap-3 lg:flex">
+            {slides.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                aria-label={`Go to slide ${i + 1}`}
+                onClick={() => setSlide(i)}
+                className={`w-1.5 cursor-pointer rounded-[3px] transition-all duration-300 ${i === slide ? 'h-10 bg-accent-400' : 'h-5 bg-white/30 hover:bg-white/50'}`}
+              />
+            ))}
+          </div>
+        </section>
 
-            <section className="card animate-rise lg:col-span-2" style={{ animationDelay: '300ms' }}>
-              <h2 className="font-extrabold">Spending by category</h2>
-              <p className="mb-2 text-xs text-slate-400">{prettyMonth(month)}</p>
-              {byCategory.length === 0 ? (
-                <p className="grid h-64 place-items-center text-sm text-slate-400">No expenses this month yet.</p>
-              ) : (
-                <>
-                  <div className="relative h-48">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie data={byCategory} dataKey="total" nameKey="name" innerRadius={58} outerRadius={84}
-                          paddingAngle={2} stroke="none">
-                          {byCategory.map((c) => <Cell key={c.category_id} fill={c.color} />)}
-                        </Pie>
-                        <Tooltip formatter={(v) => money(Number(v))}
-                          contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 13 }} />
-                      </PieChart>
-                    </ResponsiveContainer>
-                    <div className="pointer-events-none absolute inset-0 grid place-items-center text-center">
-                      <div>
-                        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Total</p>
-                        <p className="text-sm font-extrabold">{compact(expenseTotal)}</p>
-                      </div>
+        {/* floating pill bar straddling the bottom edge of the hero (the old "NEW here?" card) */}
+        <div className="absolute inset-x-0 bottom-0 z-10 translate-y-1/2">
+         <div className="mx-auto max-w-6xl px-6 md:pl-28">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="flex w-full flex-col items-stretch gap-3 rounded-[2rem] bg-brand-100 p-3 shadow-2xl ring-[10px] ring-[#f6f8f7] md:flex-row md:items-center md:rounded-full"
+          >
+            <div className="flex flex-1 items-center justify-between gap-4 rounded-[16px] bg-white px-6 py-3.5 text-brand-900">
+              <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-accent-700">Free for everyone</p>
+              <p className="text-lg font-black uppercase tracking-wide">
+                New <span className="text-accent-600">here?</span>
+              </p>
+            </div>
+            <Link
+              to={token ? '/dashboard' : '/login'}
+              className="inline-flex items-center justify-center gap-2 rounded-[18px] bg-accent-400 px-8 py-4 text-sm font-black uppercase italic tracking-wider text-brand-900 shadow-[0_3px_0_0_var(--color-accent-600)] transition hover:bg-accent-500 active:translate-y-[3px] active:shadow-none"
+            >
+              {token ? 'Open app' : 'Join now'} <ArrowRight className="size-4" />
+            </Link>
+          </motion.div>
+         </div>
+        </div>
+      </div>
+
+      {/* ============ INTRO ============ */}
+      <section className="pt-24 md:pt-28">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-16 md:pl-28 md:py-20 lg:grid-cols-2">
+          {/* image card with round badges */}
+          <Scrub from={{ y: -60, scale: 0.9, rotateX: -16 }} offset={['start end', 'center 0.6']}>
+            <div className="relative mx-auto max-w-md">
+              <div className="rotate-[-2deg] rounded-[1.75rem] bg-white p-3 shadow-[-6px_12px_34px_rgba(5,40,10,0.25)] ring-1 ring-slate-200">
+                <div className="grid aspect-[4/3] place-items-center rounded-[1.25rem] bg-linear-to-br from-brand-900 via-brand-900 to-brand-700">
+                  <HandCalculator className="-mt-6 w-[80%]" />
+                </div>
+              </div>
+              <span className="absolute -left-5 -top-5 grid size-20 place-items-center rounded-full bg-accent-400 text-center text-[11px] font-extrabold uppercase leading-tight text-brand-900 shadow-lg ring-4 ring-white">
+                Made<br />simple
+              </span>
+              <span className="absolute -bottom-4 -right-4 grid size-14 place-items-center rounded-full bg-white text-brand-600 shadow-lg ring-4 ring-brand-100">
+                <AnimatedIcon icon={PiggyBank} className="size-6" delay={0.4} />
+              </span>
+            </div>
+          </Scrub>
+
+          <Scrub from={{ y: 60, scale: 0.94 }} offset={['start end', 'center 0.6']}>
+            <p className={eyebrowLight}>Home</p>
+            <h2 className="mt-4 max-w-xl text-balance text-4xl font-black leading-[1.08] tracking-tight text-ink md:text-5xl">
+              Personal finance tracking, <em className="not-italic text-brand-600">made simple.</em>
+            </h2>
+            <p className="mt-5 max-w-xl text-lg leading-8 text-slate-600">
+              CashWell helps you keep an honest eye on your money. Record what you earn and spend, set budgets for the
+              categories that matter, and let the charts do the maths. It is built to be quick to use, so you actually keep using it.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-5">
+              <Link to={token ? '/dashboard' : '/login'} className={primaryBtn}>
+                {token ? 'Open dashboard' : 'Get started'} <ArrowRight className="size-4" />
+              </Link>
+              <Link to="/about" className="text-sm font-bold uppercase tracking-wider text-brand-600 underline-offset-4 hover:underline">
+                About us
+              </Link>
+            </div>
+          </Scrub>
+        </div>
+      </section>
+
+      {/* ============ FEATURES: four coloured panels, each arriving from a different direction ============ */}
+      <section className="mx-auto max-w-6xl px-6 pb-28 pt-8 md:pl-28 md:pb-36">
+        <Scrub from={{ scale: 1.35, y: 60 }} offset={['start end', 'start 0.55']} className="text-center">
+          <h2 className={bigHeading}>
+            Everything you need, <em className="block not-italic text-brand-600">nothing you don't.</em>
+          </h2>
+        </Scrub>
+        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {features.map(({ icon: Icon, title, text }, i) => (
+            <Scrub key={title} from={poses4[i]} offset={['start end', 'start 0.75']}>
+              <div className={`group h-full min-h-[240px] p-7 shadow-[-6px_12px_34px_rgba(5,40,10,0.28)] ${tones[i].card}`}>
+                <span className={`grid size-12 place-items-center transition duration-300 group-hover:scale-110 ${tones[i].tile}`}>
+                  <AnimatedIcon icon={Icon} className="size-6" strokeWidth={1.75} delay={0.2 + i * 0.15} />
+                </span>
+                <h3 className="mt-5 text-xl font-extrabold leading-snug">{title}</h3>
+                <p className="mt-2 text-[0.95rem] leading-6 opacity-80">{text}</p>
+              </div>
+            </Scrub>
+          ))}
+        </div>
+      </section>
+
+      {/* ============ THE DARK SHEET: starts as a small rounded panel and spreads to the edges (like HireRise) ============ */}
+      <SpreadSheet className="bg-brand-900 text-white" inset="4%" radius={56} offset={['start end', 'start 0.3']}>
+        {/* HOW IT WORKS */}
+        <section className="mx-auto max-w-6xl px-6 pb-16 pt-24 md:pl-28 md:pt-32">
+          <Scrub from={{ scale: 1.35, y: 60 }} offset={['start end', 'start 0.55']} className="text-center">
+            <p className={eyebrowDark}>How it works</p>
+            <h2 className={`${bigHeading} mt-5 text-white`}>
+              Three receipts, <em className="block not-italic text-accent-400">hung up in order.</em>
+            </h2>
+          </Scrub>
+
+          {/* three receipts hang on a line that fills as you scroll; they swing in from left, below and right */}
+          <div className="relative mt-16 pt-4">
+            <div aria-hidden className="absolute inset-x-[6%] top-4 hidden h-0.5 bg-white/15 md:block">
+              <Scrub from={{ scaleX: 0 }} origin="left" offset={['start 0.95', 'start 0.45']} className="h-full bg-accent-400" />
+            </div>
+            <div className="grid gap-10 md:grid-cols-3 md:gap-6">
+              {steps.map((s, i) => (
+                <Scrub key={s.no} from={poses3[i]} offset={['start end', 'start 0.7']}>
+                  <Receipt no={s.no} title={s.title} lines={s.lines} totalLabel={s.totalLabel} totalValue={s.totalValue} />
+                </Scrub>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* DASHBOARD PREVIEW: a lighter green panel that zooms out from a big, tilted view */}
+        <section className="mx-auto max-w-6xl px-6 py-16 md:pl-28">
+          <Scrub from={{ scale: 1.25, rotateX: -14, y: 80 }} offset={['start end', 'start 0.25']}>
+            <div className="bg-[#0a4a12] px-6 py-12 shadow-[0_30px_70px_rgba(0,0,0,0.35)] md:px-12 md:py-16">
+              <div className="grid items-center gap-12 lg:grid-cols-2">
+                <div>
+                  <p className={eyebrowDark}>Dashboard</p>
+                  <h2 className="mt-5 text-balance text-3xl font-black leading-[1.1] tracking-tight md:text-5xl">
+                    The story of your money, <em className="not-italic text-accent-400">at a glance.</em>
+                  </h2>
+                  <p className="mt-5 text-lg leading-8 text-white/80">
+                    Balance, income, expenses and a six month trend sit on one screen. Click around the demo account to see
+                    it with real looking data.
+                  </p>
+                  <button type="button" onClick={tryDemo} disabled={busy} className={`${primaryBtn} mt-8`}>
+                    {busy ? 'Opening…' : 'Explore the demo'} <ArrowRight className="size-4" />
+                  </button>
+                </div>
+
+                <Scrub from={{ y: 60, rotateZ: 4, scale: 0.92 }} offset={['start end', 'center 0.65']}>
+                  <div className="bg-white p-4 text-ink shadow-2xl sm:p-6">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Sample preview</p>
+                    <div className="mt-4 grid grid-cols-3 gap-2 sm:gap-3">
+                      {[
+                        ['Balance', '₱48,200'],
+                        ['Income', '₱62,000'],
+                        ['Expenses', '₱13,800'],
+                      ].map(([k, v]) => (
+                        <div key={k} className="min-w-0 bg-[#f6f8f7] p-2 sm:p-3">
+                          <p className="text-[11px] font-semibold text-slate-500">{k}</p>
+                          <p className="mt-1 text-[13px] font-extrabold text-brand-700 sm:text-lg">{v}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-6 flex h-40 items-end gap-3">
+                      {bars.map((h, i) => (
+                        <div key={i} className="flex h-full flex-1 flex-col items-center justify-end gap-2">
+                          <motion.div
+                            initial={{ height: 0 }}
+                            whileInView={{ height: `${h}%` }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8, delay: 0.2 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                            className={`w-full ${i === bars.length - 1 ? 'bg-accent-400' : 'bg-brand-600'}`}
+                          />
+                          <span className="text-[10px] font-semibold text-slate-400">{months[i]}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                  <ul className="mt-2 space-y-2">
-                    {byCategory.slice(0, 5).map((c) => (
-                      <li key={c.category_id} className="flex items-center justify-between text-sm">
-                        <span className="flex items-center gap-2 font-medium">
-                          <span className="size-2.5 rounded-full" style={{ background: c.color }} />{c.name}
-                        </span>
-                        <span className="font-semibold text-slate-600">
-                          {money(c.total)} <span className="text-xs text-slate-400">· {Math.round((c.total / expenseTotal) * 100)}%</span>
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            </section>
+                </Scrub>
+              </div>
+            </div>
+          </Scrub>
+        </section>
+
+        {/* FINAL CTA */}
+        <section className="mx-auto max-w-6xl px-6 pb-24 pt-20 text-center md:px-28">
+          <Scrub from={{ scale: 1.2, y: 50 }} offset={['start end', 'start 0.6']}>
+            <h2 className={`${bigHeading} text-white`}>
+              Ready to see <em className="block not-italic text-accent-400">where your money goes?</em>
+            </h2>
+            <p className="mx-auto mt-5 max-w-xl text-white/80">Create a free account, or have a look around with the demo first.</p>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <Link to={token ? '/dashboard' : '/login'} className={primaryBtn}>
+                {token ? 'Open dashboard' : 'Get started'} <ArrowRight className="size-4" />
+              </Link>
+              <button type="button" onClick={tryDemo} disabled={busy} className={outlineBtn}>
+                Try the demo
+              </button>
+            </div>
+          </Scrub>
+        </section>
+
+        {/* =========== FOOTER =========== */}
+        <footer className="border-t border-white/10">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-6 text-sm text-white/60 md:pl-28">
+            <p>© 2026 CashWell. A full-stack portfolio project.</p>
+            <div className="flex gap-5 font-semibold">
+              <Link to="/" className="hover:text-white">Home</Link>
+              <Link to="/login" className="hover:text-white">Login / Sign up</Link>
+              <Link to="/about" className="hover:text-white">About us</Link>
+            </div>
           </div>
-
-          <section className="card mt-5 animate-rise" style={{ animationDelay: '360ms' }}>
-            <h2 className="mb-3 font-extrabold">Recent transactions</h2>
-            {recent.length === 0 ? (
-              <p className="py-8 text-center text-sm text-slate-400">Nothing here yet. Add your first transaction!</p>
-            ) : (
-              <ul className="divide-y divide-slate-100">
-                {recent.map((t) => (
-                  <li key={t.id} className="flex items-center gap-3 py-3">
-                    <span className="grid size-10 shrink-0 place-items-center rounded-xl text-white"
-                      style={{ background: t.category.color }}>
-                      {t.type === 'income' ? <ArrowUpRight className="size-5" /> : <ArrowDownRight className="size-5" />}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold">{t.description || t.category.name}</p>
-                      <p className="text-xs text-slate-400">{t.category.name} · {prettyDate(t.date)}</p>
-                    </div>
-                    <p className={`text-sm font-extrabold ${t.type === 'income' ? 'text-emerald-600' : 'text-slate-800'}`}>
-                      {t.type === 'income' ? '+' : '−'}{money(t.amount)}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-        </>
-      )}
-
-      <TransactionModal open={modalOpen} editing={null} categories={categories}
-        onClose={() => setModalOpen(false)} onSaved={load} />
-    </>
+        </footer>
+      </SpreadSheet>
+    </div>
   )
 }
