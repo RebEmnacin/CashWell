@@ -214,7 +214,7 @@ export default function Transactions() {
                     <p className="text-xs text-slate-400 md:hidden">{t.category.name} · {prettyDate(t.date)}</p>
                   </td>
                   <td className="hidden px-5 py-3.5 md:table-cell">
-                    <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold">
+                    <span className="inline-flex items-center gap-2 rounded-[10px] bg-slate-100 px-2.5 py-1 text-xs font-semibold">
                       <span className="size-2 rounded-full" style={{ background: t.category.color }} />{t.category.name}
                     </span>
                   </td>
