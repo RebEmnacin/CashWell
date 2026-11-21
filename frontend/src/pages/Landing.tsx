@@ -89,9 +89,9 @@ const months = ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov']
 /* ---------------- small helpers ---------------- */
 
 const primaryBtn =
-  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-accent-400 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-brand-900 shadow-[0_3px_0_0_var(--color-accent-600)] transition hover:bg-accent-500 active:translate-y-[3px] active:shadow-none disabled:opacity-60'
+  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-[18px] bg-accent-400 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-brand-900 shadow-[0_3px_0_0_var(--color-accent-600)] transition hover:bg-accent-500 active:translate-y-[3px] active:shadow-none disabled:opacity-60'
 const outlineBtn =
-  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border border-white/70 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-white/10 active:scale-95 disabled:opacity-60'
+  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-[18px] border border-white/70 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-white/10 active:scale-95 disabled:opacity-60'
 
 // big section titles, small labels, and the colour of each feature panel
 const bigHeading = 'text-balance text-4xl font-black leading-[1.08] tracking-tight text-ink md:text-5xl lg:text-6xl'
@@ -225,7 +225,7 @@ export default function Landing() {
                       type="button"
                       aria-label={`Go to slide ${i + 1}`}
                       onClick={() => setSlide(i)}
-                      className={`h-1.5 cursor-pointer rounded-full transition-all duration-300 ${i === slide ? 'w-10 bg-accent-400' : 'w-5 bg-white/30'}`}
+                      className={`h-1.5 cursor-pointer rounded-[3px] transition-all duration-300 ${i === slide ? 'w-10 bg-accent-400' : 'w-5 bg-white/30'}`}
                     />
                   ))}
                 </div>
@@ -244,7 +244,7 @@ export default function Landing() {
                 type="button"
                 aria-label={`Go to slide ${i + 1}`}
                 onClick={() => setSlide(i)}
-                className={`w-1.5 cursor-pointer rounded-full transition-all duration-300 ${i === slide ? 'h-10 bg-accent-400' : 'h-5 bg-white/30 hover:bg-white/50'}`}
+                className={`w-1.5 cursor-pointer rounded-[3px] transition-all duration-300 ${i === slide ? 'h-10 bg-accent-400' : 'h-5 bg-white/30 hover:bg-white/50'}`}
               />
             ))}
           </div>
@@ -259,7 +259,7 @@ export default function Landing() {
             transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="flex w-full flex-col items-stretch gap-3 rounded-[2rem] bg-brand-100 p-3 shadow-2xl ring-[10px] ring-[#f6f8f7] md:flex-row md:items-center md:rounded-full"
           >
-            <div className="flex flex-1 items-center justify-between gap-4 rounded-full bg-white px-6 py-3.5 text-brand-900">
+            <div className="flex flex-1 items-center justify-between gap-4 rounded-[16px] bg-white px-6 py-3.5 text-brand-900">
               <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-accent-700">Free for everyone</p>
               <p className="text-lg font-black uppercase tracking-wide">
                 New <span className="text-accent-600">here?</span>
@@ -267,7 +267,7 @@ export default function Landing() {
             </div>
             <Link
               to={token ? '/dashboard' : '/login'}
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-accent-400 px-8 py-4 text-sm font-black uppercase italic tracking-wider text-brand-900 shadow-[0_3px_0_0_var(--color-accent-600)] transition hover:bg-accent-500 active:translate-y-[3px] active:shadow-none"
+              className="inline-flex items-center justify-center gap-2 rounded-[18px] bg-accent-400 px-8 py-4 text-sm font-black uppercase italic tracking-wider text-brand-900 shadow-[0_3px_0_0_var(--color-accent-600)] transition hover:bg-accent-500 active:translate-y-[3px] active:shadow-none"
             >
               {token ? 'Open app' : 'Join now'} <ArrowRight className="size-4" />
             </Link>
@@ -327,9 +327,8 @@ export default function Landing() {
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {features.map(({ icon: Icon, title, text }, i) => (
             <Scrub key={title} from={poses4[i]} offset={['start end', 'start 0.75']}>
-              <div className={`group h-full min-h-[300px] p-7 shadow-[-6px_12px_34px_rgba(5,40,10,0.28)] ${tones[i].card}`}>
-                <span className="block text-5xl font-black leading-none tracking-tighter opacity-90">{`0${i + 1}`}</span>
-                <span className={`mt-5 grid size-12 place-items-center transition duration-300 group-hover:scale-110 ${tones[i].tile}`}>
+              <div className={`group h-full min-h-[240px] p-7 shadow-[-6px_12px_34px_rgba(5,40,10,0.28)] ${tones[i].card}`}>
+                <span className={`grid size-12 place-items-center transition duration-300 group-hover:scale-110 ${tones[i].tile}`}>
                   <AnimatedIcon icon={Icon} className="size-6" strokeWidth={1.75} delay={0.2 + i * 0.15} />
                 </span>
                 <h3 className="mt-5 text-xl font-extrabold leading-snug">{title}</h3>
